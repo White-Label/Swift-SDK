@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'WhiteLabel_Example' do
+  pod 'WhiteLabel', :path => '../'
+
+  target 'WhiteLabel_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
