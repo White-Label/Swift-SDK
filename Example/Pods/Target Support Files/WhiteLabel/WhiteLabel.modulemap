@@ -1,0 +1,6 @@
+framework module WhiteLabel {
+  umbrella header "WhiteLabel-umbrella.h"
+
+  export *
+  module * { export * }
+}

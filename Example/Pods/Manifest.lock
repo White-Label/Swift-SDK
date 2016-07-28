@@ -1,0 +1,16 @@
+PODS:
+  - WhiteLabel (0.1.0)
+
+DEPENDENCIES:
+  - WhiteLabel (from `../`)
+
+EXTERNAL SOURCES:
+  WhiteLabel:
+    :path: ../
+
+SPEC CHECKSUMS:
+  WhiteLabel: 0f2899947c26497a219af149d47b7c284f5a3b88
+
+PODFILE CHECKSUM: 3dd031d528dc8151ba0fcd0010cacbc1f311e202
+
+COCOAPODS: 1.0.1
