@@ -24,7 +24,7 @@
 //
 
 
-public class Track: Equatable {
+public class Track : NSObject {
     
     public var artistName : String!
     public var title : String!
@@ -38,6 +38,6 @@ public class Track: Equatable {
     
 }
 
-public func ==(lhs: Track, rhs: Track) -> Bool {
-    return lhs.id == rhs.id
-}
+//public func ==(lhs: Track, rhs: Track) -> Bool {
+//    return lhs.id == rhs.id
+//}

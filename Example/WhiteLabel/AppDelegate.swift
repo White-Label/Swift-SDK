@@ -7,15 +7,23 @@
 //
 
 import UIKit
+import WhiteLabel
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        // Setup White Label SDK
+        
+        if let clientID = getClientID() {
+            WhiteLabel.clientID = clientID
+        } else {
+            assertionFailure("Client ID was not loaded from keys.plist. Please ensure you provide your Client ID for the app as per the README.")
+        }
+
         return true
     }
 
@@ -41,6 +49,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
+    func getClientID() -> String? {
+        // Retrieve White Label Client ID from keys.plist
+        
+        if let path = NSBundle.mainBundle().pathForResource("keys", ofType: "plist") {
+            if let keysDictionary = NSDictionary(contentsOfFile: path) {
+                let clientID = keysDictionary["WhiteLabelClientID"] as? String
+                return clientID
+            }
+        }
+        
+        return nil
+    }
 }
 

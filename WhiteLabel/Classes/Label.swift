@@ -24,7 +24,7 @@
 //
 
 
-public class Label {
+public class Label : NSObject {
     
     public var id : Int!
     public var name : String!

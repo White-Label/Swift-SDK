@@ -24,22 +24,25 @@
 //
 
 
-public class Mixtape: Equatable {
+public class Mixtape : NSObject {
     
-    public var coverLarge : String!
-    public var name : String!
     public var id : Int!
-    public var coverArtistName : String!
-    public var coverArtistURL : String!
-    public var sponsorDescription : String!
+    public var title : String!
+    public var slug : String!
+    public var _description : String!
+    public var artworkURL : String!
+    public var artworkCredit : String!
+    public var artworkCreditURL : String!
+    public var sponsor : String!
     public var sponsorURL : String!
+    public var product : String!
+    public var productURL : String!
     public var releaseDate : String!
-    public var playlistNumber : Int!
     public var trackCount : Int!
-    public var tracks = [Track]()
+    public var collectionID : Int!
     
 }
 
-public func ==(lhs: Mixtape, rhs: Mixtape) -> Bool {
-    return lhs.id == rhs.id
-}
+//public func ==(lhs: Mixtape, rhs: Mixtape) -> Bool {
+//    return lhs.id == rhs.id
+//}

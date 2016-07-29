@@ -24,12 +24,12 @@
 //
 
 
-public class Collection: Equatable {
+public class Collection : NSObject {
     
     public var id : Int!
     public var title : String!
     public var slug : String!
-    public var description : String?
+    public var _description : String?
     public var artworkURL : String?
     public var artworkCredit : String?
     public var artworkCreditURL : String?
@@ -38,6 +38,6 @@ public class Collection: Equatable {
 
 }
 
-public func ==(lhs: Collection, rhs: Collection) -> Bool {
-    return lhs.id == rhs.id
-}
+//public func ==(lhs: Collection, rhs: Collection) -> Bool {
+//    return lhs.id == rhs.id
+//}
