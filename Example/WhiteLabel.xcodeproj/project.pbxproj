@@ -16,6 +16,7 @@
 		7E59E5C3179F93874114E4AD /* Pods_WhiteLabel_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44F8E31B6E42156794AA58BB /* Pods_WhiteLabel_Tests.framework */; };
 		A56FE6131D4B3D6700A8BED0 /* MixtapeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56FE6121D4B3D6700A8BED0 /* MixtapeTableViewController.swift */; };
 		A5E007181D4BE69900A306E1 /* keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = A5E007171D4BE69900A306E1 /* keys.plist */; };
+		A5E0071A1D4BF67800A306E1 /* TrackTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E007191D4BF67800A306E1 /* TrackTableViewController.swift */; };
 		BEC45600D669F8F8BA78D14A /* Pods_WhiteLabel_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE019A99FA6838B1A9AF8814 /* Pods_WhiteLabel_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +51,7 @@
 		86723345376AB5BA8249F77A /* Pods-WhiteLabel_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhiteLabel_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-WhiteLabel_Tests/Pods-WhiteLabel_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		A56FE6121D4B3D6700A8BED0 /* MixtapeTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MixtapeTableViewController.swift; sourceTree = "<group>"; };
 		A5E007171D4BE69900A306E1 /* keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = keys.plist; sourceTree = SOURCE_ROOT; };
+		A5E007191D4BF67800A306E1 /* TrackTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackTableViewController.swift; sourceTree = "<group>"; };
 		DE019A99FA6838B1A9AF8814 /* Pods_WhiteLabel_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WhiteLabel_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -100,6 +102,7 @@
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* CollectionTableViewController.swift */,
 				A56FE6121D4B3D6700A8BED0 /* MixtapeTableViewController.swift */,
+				A5E007191D4BF67800A306E1 /* TrackTableViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
@@ -367,6 +370,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACD81AFB9204008FA782 /* CollectionTableViewController.swift in Sources */,
+				A5E0071A1D4BF67800A306E1 /* TrackTableViewController.swift in Sources */,
 				A56FE6131D4B3D6700A8BED0 /* MixtapeTableViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);

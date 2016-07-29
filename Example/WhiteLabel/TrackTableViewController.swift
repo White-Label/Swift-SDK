@@ -1,5 +1,5 @@
 //
-//  CollectionTableViewController.swift
+//  TrackTableViewController.swift
 //
 //  Created by Alex Givens http://alexgivens.com on 7/28/16
 //  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
@@ -27,31 +27,24 @@
 import UIKit
 import WhiteLabel
 
-class CollectionTableViewController: UITableViewController {
-    
-    var label : Label?
-    var collections : [Collection] = []
+class TrackTableViewController: UITableViewController {
 
+    var mixtape : Mixtape?
+    var tracks : [Track] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        WhiteLabel.getCollections(
-            nil,
-            search: nil,
-            success: { collections in
-                self.collections = collections
-                
-                for collection in self.collections {
-                    print(collection._description)
-                }
-                
+        WhiteLabel.getTracks(
+            self.mixtape,
+            success: { tracks in
+                self.tracks = tracks
                 self.tableView.reloadData()
             },
             failure: { error in
-                print("Error retrieving collections")
+                print("Error retrieving tracks")
             }
         )
-    
     }
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -59,28 +52,18 @@ class CollectionTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return collections.count
+        return tracks.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("CollectionCell", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("TrackCell", forIndexPath: indexPath)
         
-        let collection = collections[indexPath.row]
+        let track = tracks[indexPath.row]
         
-        cell.textLabel!.text = collection.title;
-        cell.detailTextLabel!.text = collection.slug;
+        cell.textLabel!.text = track.title;
+        cell.detailTextLabel!.text = track.artist;
         
         return cell;
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "CollectionsToMixtapes" {
-            if let mixtapeTableViewController = segue.destinationViewController as? MixtapeTableViewController {
-                if let selectedIndexPath = self.tableView.indexPathsForSelectedRows?[0] {
-                    mixtapeTableViewController.collection = collections[selectedIndexPath.row]
-                }
-                
-            }
-        }
-    }
 }
