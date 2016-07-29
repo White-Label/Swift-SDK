@@ -37,7 +37,3 @@ public class Collection : NSObject {
     public var mixtapes: [Mixtape]? = nil
 
 }
-
-//public func ==(lhs: Collection, rhs: Collection) -> Bool {
-//    return lhs.id == rhs.id
-//}

@@ -26,9 +26,11 @@
 
 public class Track : NSObject {
     
-    public var artistName : String!
-    public var title : String!
     public var id : Int!
+    public var title : String!
+    public var artist : String!
+    public var slug : String!
+    
     public var soundCloudID : Int!
     public var soundCloudStreamURL : String!
     public var soundCloudPermalink : String!

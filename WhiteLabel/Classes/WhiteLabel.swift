@@ -50,7 +50,8 @@ public class WhiteLabel {
         
         let collectionAttributeMap = [
             "title" : "title",
-            "slug" : "slug"
+            "slug" : "slug",
+            "description":  "_description",
         ]
         
         collectionMapping.addAttributeMappingsFromDictionary(collectionAttributeMap)
@@ -69,8 +70,8 @@ public class WhiteLabel {
         let mixtapeMapping = RKObjectMapping(forClass: Mixtape.self)
         
         let mixtapeAttributeMap = [
-            "title" : "title",
-            "slug" : "slug"
+            "title":        "title",
+            "slug":         "slug"
         ]
         
         mixtapeMapping.addAttributeMappingsFromDictionary(mixtapeAttributeMap)
@@ -84,6 +85,27 @@ public class WhiteLabel {
         )
         
         objectManager.addResponseDescriptor(mixtapeResponseDescriptor)
+        
+        // Setup Track Mapping
+        let trackMapping = RKObjectMapping(forClass: Track.self)
+        
+        let trackAttributeMap = [
+            "title" : "title",
+            "artist" : "artist",
+            "slug" : "slug"
+        ]
+        
+        trackMapping.addAttributeMappingsFromDictionary(trackAttributeMap)
+        
+        let trackResponseDescriptor = RKResponseDescriptor(
+            mapping: trackMapping,
+            method: .GET,
+            pathPattern: "/api/tracks/",
+            keyPath: "results",
+            statusCodes: NSIndexSet(index: 200)
+        )
+        
+        objectManager.addResponseDescriptor(trackResponseDescriptor)
     }
     
     public class func getLabel(success: (Label!), failure: (NSError!)) {
@@ -160,8 +182,8 @@ public class WhiteLabel {
         
         var parameters = [NSObject: AnyObject]()
         
-        if forMixtape != nil {
-            parameters["mixtape"] = String(forMixtape!.id)
+        if let mixtape = forMixtape {
+            parameters["mixtape"] = mixtape.slug
         }
         
         RKObjectManager.sharedManager().getObjectsAtPath(
