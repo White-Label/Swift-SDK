@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import RestKit
+import WhiteLabel
 
 class ViewController: UIViewController {
 
@@ -19,6 +21,46 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func configureRestKit() {
+        
+        // initialize AFRKHTTPClient
+        let baseURL = NSURL(string: "https://beta.whitelabel.cool/api")
+        let client = AFRKHTTPClient(baseURL: baseURL)
+        
+        // initialize RestKit
+        let objectManager = RKObjectManager(HTTPClient: client)
+        
+        // setup object mappings
+//        let labelMapping = RKObjectMapping(forClass: Label.class)
+    }
 
 }
 
+/*
+
+- (void)configureRestKit
+    {
+        // initialize AFNetworking HTTPClient
+        NSURL *baseURL = [NSURL URLWithString:@"https://api.foursquare.com"];
+        AFHTTPClient *client = [[AFHTTPClient alloc] initWithBaseURL:baseURL];
+        
+        // initialize RestKit
+        RKObjectManager *objectManager = [[RKObjectManager alloc] initWithHTTPClient:client];
+        
+        // setup object mappings
+        RKObjectMapping *venueMapping = [RKObjectMapping mappingForClass:[Venue class]];
+        [venueMapping addAttributeMappingsFromArray:@[@"name"]];
+        
+        // register mappings with the provider using a response descriptor
+        RKResponseDescriptor *responseDescriptor =
+        [RKResponseDescriptor responseDescriptorWithMapping:venueMapping
+        method:RKRequestMethodGET
+        pathPattern:@"/v2/venues/search"
+        keyPath:@"response.venues"
+        statusCodes:[NSIndexSet indexSetWithIndex:200]];
+        
+        [objectManager addResponseDescriptor:responseDescriptor];
+}
+ 
+ */

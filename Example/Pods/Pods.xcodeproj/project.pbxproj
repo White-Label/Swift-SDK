@@ -121,6 +121,11 @@
 		9E727C97DACAC08C5F6DEFD1CB74C9A7 /* AFRKNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F69DFCEE395B2893EF58E5FE532D225D /* AFRKNetworkActivityIndicatorManager.m */; };
 		A1A7C5933427F1F75C6F0AFC0EF2AE9A /* RKEntityMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 43507AD47BF8C83610A6F4DA5BF75498 /* RKEntityMapping.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A28ECECA3AC7E7119F834DA34E3C9FF5 /* ISO8601DateFormatterValueTransformer-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 072E23474B3453A6D5C37F3EBE72EB75 /* ISO8601DateFormatterValueTransformer-dummy.m */; };
+		A56FE6091D4B0EEB00A8BED0 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56FE6081D4B0EEB00A8BED0 /* Label.swift */; };
+		A56FE60B1D4B0F2100A8BED0 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56FE60A1D4B0F2100A8BED0 /* Service.swift */; };
+		A56FE60D1D4B0F6500A8BED0 /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56FE60C1D4B0F6500A8BED0 /* Collection.swift */; };
+		A56FE60F1D4B2B9700A8BED0 /* Mixtape.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56FE60E1D4B2B9700A8BED0 /* Mixtape.swift */; };
+		A56FE6111D4B2BC800A8BED0 /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56FE6101D4B2BC800A8BED0 /* Track.swift */; };
 		A984E9D6D03F9E3DEBE75EB087D1D316 /* UIImageView+AFRKNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = A90738E4076AEFCB113D877F1170B227 /* UIImageView+AFRKNetworking.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A994D55A5DF01453A9ABAEA7B16BE170 /* AFRKJSONRequestOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = EDD566A57A16CBFB6593D2A07C6ECC92 /* AFRKJSONRequestOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9B78304D8BF1C9D4245BFB074C25A48 /* RKObjectUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = FDB9DA474083FB21D81CC966E393FEAE /* RKObjectUtilities.m */; };
@@ -436,6 +441,11 @@
 		A46A83714651F350A41E6485C80112E4 /* WhiteLabel.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = WhiteLabel.xcconfig; sourceTree = "<group>"; };
 		A4BE7FE3857EBC325EA175DF4256AE0A /* RKObjectRequestOperation.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = RKObjectRequestOperation.m; path = Code/Network/RKObjectRequestOperation.m; sourceTree = "<group>"; };
 		A56FE6061D4B07ED00A8BED0 /* WhiteLabel-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "WhiteLabel-Bridging-Header.h"; sourceTree = "<group>"; };
+		A56FE6081D4B0EEB00A8BED0 /* Label.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
+		A56FE60A1D4B0F2100A8BED0 /* Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
+		A56FE60C1D4B0F6500A8BED0 /* Collection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
+		A56FE60E1D4B2B9700A8BED0 /* Mixtape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mixtape.swift; sourceTree = "<group>"; };
+		A56FE6101D4B2BC800A8BED0 /* Track.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Track.swift; sourceTree = "<group>"; };
 		A5D55724DEA4276EA207BAACCA5EF13B /* RKObjectManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = RKObjectManager.h; path = Code/Network/RKObjectManager.h; sourceTree = "<group>"; };
 		A63547714A656DB5B6AB10B72BFF8F64 /* TKTransition.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TKTransition.h; path = Code/TKTransition.h; sourceTree = "<group>"; };
 		A727036092E969AADB1887915873FD7C /* RKPathUtilities.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = RKPathUtilities.m; path = Code/Support/RKPathUtilities.m; sourceTree = "<group>"; };
@@ -1059,6 +1069,11 @@
 			isa = PBXGroup;
 			children = (
 				516B7A94800459C708E07681482F9481 /* WhiteLabel.swift */,
+				A56FE6081D4B0EEB00A8BED0 /* Label.swift */,
+				A56FE60C1D4B0F6500A8BED0 /* Collection.swift */,
+				A56FE60E1D4B2B9700A8BED0 /* Mixtape.swift */,
+				A56FE6101D4B2BC800A8BED0 /* Track.swift */,
+				A56FE60A1D4B0F2100A8BED0 /* Service.swift */,
 				A56FE6061D4B07ED00A8BED0 /* WhiteLabel-Bridging-Header.h */,
 			);
 			path = Classes;
@@ -1416,7 +1431,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E17ABDAE25F17F860C4214523646737C /* WhiteLabel-dummy.m in Sources */,
+				A56FE60D1D4B0F6500A8BED0 /* Collection.swift in Sources */,
+				A56FE60B1D4B0F2100A8BED0 /* Service.swift in Sources */,
 				F3566BF726BF87BD700227F4F25C44F8 /* WhiteLabel.swift in Sources */,
+				A56FE60F1D4B2B9700A8BED0 /* Mixtape.swift in Sources */,
+				A56FE6091D4B0EEB00A8BED0 /* Label.swift in Sources */,
+				A56FE6111D4B2BC800A8BED0 /* Track.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
