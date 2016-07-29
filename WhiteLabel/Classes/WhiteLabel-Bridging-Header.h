@@ -6,8 +6,4 @@
 //
 //
 
-#ifndef WhiteLabel_Bridging_Header_h
-#define WhiteLabel_Bridging_Header_h
-
-
-#endif /* WhiteLabel_Bridging_Header_h */
+#import <RestKit/RestKit.h>
