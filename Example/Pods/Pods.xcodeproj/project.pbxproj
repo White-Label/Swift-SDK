@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		0268D072390831418C5605F4D9B0C0C6 /* Pods-WhiteLabel_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 421E95554F04C932FFA4D45518715722 /* Pods-WhiteLabel_Tests-dummy.m */; };
 		1198DD1188FE22CA7AEB1115D3BFF69F /* Pods-WhiteLabel_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 38C2CB7C316222944C049C6EDA7E953F /* Pods-WhiteLabel_Example-dummy.m */; };
-		1A902F05373FA00C14DCD2443B7E1946 /* ReplaceMe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E46550179760BF927C06DC7570972E /* ReplaceMe.swift */; };
 		1FE986F51BFE16544EEA0CC41571DCA3 /* Pods-WhiteLabel_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D42A988A6FE1BA946DBCF84648F542D /* Pods-WhiteLabel_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		32F27714F746A2B81F6782CB87449DF0 /* WhiteLabel-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A891E65E569D9E80D18F46DF4C1B5F6 /* WhiteLabel-dummy.m */; };
 		463DE513DF0727DD06896E1AB5F8AFBA /* WhiteLabel-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = E9C0F933148E59C0B0F52A6A2D6414C3 /* WhiteLabel-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -32,7 +31,6 @@
 /* Begin PBXFileReference section */
 		084E318A75D50B5B5025B72DBA153214 /* Pods-WhiteLabel_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-WhiteLabel_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		0B0C38C4BDEB9080841B4FFD27413D17 /* Pods-WhiteLabel_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-WhiteLabel_Example.release.xcconfig"; sourceTree = "<group>"; };
-		10E46550179760BF927C06DC7570972E /* ReplaceMe.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ReplaceMe.swift; sourceTree = "<group>"; };
 		1C5DDF61F6A2052144BE34B074D39595 /* Pods_WhiteLabel_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WhiteLabel_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		29B35A947B88A183525881244A9CD37E /* Pods-WhiteLabel_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-WhiteLabel_Example-resources.sh"; sourceTree = "<group>"; };
 		2E759BD4AD272010131C025474641AC1 /* Pods-WhiteLabel_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-WhiteLabel_Tests.modulemap"; sourceTree = "<group>"; };
@@ -48,6 +46,13 @@
 		93EB06D09BFA992F9633043656C637E8 /* Pods-WhiteLabel_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-WhiteLabel_Example-frameworks.sh"; sourceTree = "<group>"; };
 		9A891E65E569D9E80D18F46DF4C1B5F6 /* WhiteLabel-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "WhiteLabel-dummy.m"; sourceTree = "<group>"; };
 		A46A83714651F350A41E6485C80112E4 /* WhiteLabel.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = WhiteLabel.xcconfig; sourceTree = "<group>"; };
+		A56FE5FE1D4ABA8100A8BED0 /* WhiteLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteLabel.swift; sourceTree = "<group>"; };
+		A56FE5FF1D4ABD0D00A8BED0 /* Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
+		A56FE6001D4AD64900A8BED0 /* Collection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
+		A56FE6011D4ADEA000A8BED0 /* Mixtape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mixtape.swift; sourceTree = "<group>"; };
+		A56FE6021D4ADF0600A8BED0 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		A56FE6031D4AE06900A8BED0 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
+		A56FE6041D4AE0D900A8BED0 /* Track.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Track.swift; sourceTree = "<group>"; };
 		A731723A41E96DC5C9D29CCE6A5596B5 /* Pods-WhiteLabel_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-WhiteLabel_Tests-resources.sh"; sourceTree = "<group>"; };
 		ABA97D78ABC50092DDAAB9B1B92486CA /* WhiteLabel.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = WhiteLabel.modulemap; sourceTree = "<group>"; };
 		BC2135E0C22C405F372EFE125D46FCC6 /* Pods-WhiteLabel_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-WhiteLabel_Tests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -95,7 +100,13 @@
 		0376AF341D37188F872DBE1584B18691 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				10E46550179760BF927C06DC7570972E /* ReplaceMe.swift */,
+				A56FE5FE1D4ABA8100A8BED0 /* WhiteLabel.swift */,
+				A56FE5FF1D4ABD0D00A8BED0 /* Label.swift */,
+				A56FE6001D4AD64900A8BED0 /* Collection.swift */,
+				A56FE6011D4ADEA000A8BED0 /* Mixtape.swift */,
+				A56FE6031D4AE06900A8BED0 /* Service.swift */,
+				A56FE6041D4AE0D900A8BED0 /* Track.swift */,
+				A56FE6021D4ADF0600A8BED0 /* Request.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -345,7 +356,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A902F05373FA00C14DCD2443B7E1946 /* ReplaceMe.swift in Sources */,
 				32F27714F746A2B81F6782CB87449DF0 /* WhiteLabel-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
