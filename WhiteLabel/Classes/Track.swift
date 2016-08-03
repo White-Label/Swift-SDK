@@ -26,20 +26,20 @@
 
 public class Track : NSObject {
     
-    public var id : Int!
+    public var id : NSNumber!
     public var title : String!
     public var artist : String!
     public var slug : String!
-    
-    public var soundCloudID : Int!
-    public var soundCloudStreamURL : String!
-    public var soundCloudPermalink : String!
-    public var sourceNotFound : Bool!
-    public var trackID : Int!
-    public var number : Int!
+    public var streamable : Bool!
+    public var duration : NSNumber!
+    public var externalID : NSNumber!
+    public var streamURL : String!
+    public var permalinkURL : String!
+    public var artworkURL : String!
+    public var purchaseURL : String!
+    public var downloadURL : String!
+    public var ticketURL : String!
+    public var playCount : NSNumber!
+    public var order : NSNumber!
     
 }
-
-//public func ==(lhs: Track, rhs: Track) -> Bool {
-//    return lhs.id == rhs.id
-//}

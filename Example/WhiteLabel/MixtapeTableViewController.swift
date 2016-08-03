@@ -29,53 +29,76 @@ import WhiteLabel
 
 class MixtapeTableViewController: UITableViewController {
 
-    var collection : Collection?
-    var mixtapes : [Mixtape] = []
+    private let cellIdentifier = "MixtapeCell"
+    private var paging = PagingGenerator<Mixtape>(startPage: 1)
+    internal var collection: Collection!
+    private var mixtapes = [Mixtape]() {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        WhiteLabel.getMixtapes(
-            self.collection,
-            success: { mixtapes in
-                self.mixtapes = mixtapes
-                self.tableView.reloadData()
-            },
-            failure: { error in
-                print("Error retrieving mixtapes")
-            }
-        )
+        title = self.collection?.title
         
+        paging.next = { page, completion in
+            
+            WhiteLabel.getMixtapesForCollection(self.collection,
+                page: page,
+                success: { mixtapes in
+                    completion(objects: mixtapes)
+                }, failure: { error in
+                    print("Error getting mixtapes for page \(page): \(error)")
+                }
+            )
+            
+        }
+
+        // Initial load
+        paging.getNext(onFinish: updateDataSource)
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
+    private func updateDataSource(mixtapes: [Mixtape]) {
+        self.mixtapes += mixtapes
     }
+    
+    //MARK: Data Source
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return mixtapes.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("MixtapeCell", forIndexPath: indexPath)
-        
+        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath)
+
         let mixtape = mixtapes[indexPath.row]
         
         cell.textLabel!.text = mixtape.title;
-        cell.detailTextLabel!.text = mixtape.slug;
+        cell.detailTextLabel!.text = String(mixtape.trackCount);
         
         return cell;
     }
 
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        // Quick and easy infinite scroll trigger
+        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && mixtapes.count >= WhiteLabel.pageSize {
+            paging.getNext(onFinish: updateDataSource)
+        }
+    }
+    
+    //MARK: Navigation
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "MixtapesToTracks" {
-            if let trackTableViewController = segue.destinationViewController as? TrackTableViewController {
-                if let selectedIndexPath = self.tableView.indexPathsForSelectedRows?[0] {
-                    trackTableViewController.mixtape = mixtapes[selectedIndexPath.row]
-                }
-                
+            if let trackTableViewController = segue.destinationViewController as? TrackTableViewController,
+                let selectedIndexPath = self.tableView.indexPathsForSelectedRows?[0] {
+                trackTableViewController.mixtape = mixtapes[selectedIndexPath.row]
             }
         }
     }
-
 }
+
+

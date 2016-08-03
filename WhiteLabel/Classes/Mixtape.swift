@@ -26,7 +26,7 @@
 
 public class Mixtape : NSObject {
     
-    public var id : Int!
+    public var id : NSNumber!
     public var title : String!
     public var slug : String!
     public var _description : String!
@@ -38,11 +38,7 @@ public class Mixtape : NSObject {
     public var product : String!
     public var productURL : String!
     public var releaseDate : String!
-    public var trackCount : Int!
-    public var collectionID : Int!
+    public var trackCount : NSNumber!
+    public var collectionID : NSNumber!
     
 }
-
-//public func ==(lhs: Mixtape, rhs: Mixtape) -> Bool {
-//    return lhs.id == rhs.id
-//}

@@ -26,11 +26,10 @@
 
 public class Label : NSObject {
     
-    public var id : Int!
+    public var id : NSNumber!
     public var name : String!
     public var slug : String!
-    public var icon : String?
+    public var iconURL : String?
     public var service : Service!
-    public var collections : [Collection]? = nil
     
 }

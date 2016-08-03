@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WhiteLabel'
-  s.version          = '0.1.3'
+  s.version          = '0.1.4'
   s.summary          = 'WhiteLabel is a Swift interface for the White Label API.'
 
 # This description is used to generate tags and improve search results.

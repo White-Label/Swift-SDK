@@ -26,14 +26,14 @@
 
 public class Collection : NSObject {
     
-    public var id : Int!
+    public var id : NSNumber!
     public var title : String!
     public var slug : String!
     public var _description : String?
     public var artworkURL : String?
     public var artworkCredit : String?
     public var artworkCreditURL : String?
-    public var mixtapeCount : Int!
-    public var mixtapes: [Mixtape]? = nil
+    public var createdDate : String?
+    public var mixtapeCount : NSNumber!
 
 }

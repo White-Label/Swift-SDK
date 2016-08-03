@@ -26,7 +26,7 @@
 
 public class Service : NSObject {
     
-    public var id : Int!
+    public var id : NSNumber!
     public var name : String!
     public var slug : String!
     public var externalURL : String?

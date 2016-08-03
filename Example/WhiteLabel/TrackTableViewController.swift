@@ -29,34 +29,50 @@ import WhiteLabel
 
 class TrackTableViewController: UITableViewController {
 
-    var mixtape : Mixtape?
-    var tracks : [Track] = []
+    private let cellIdentifier = "TrackCell"
+    internal var mixtape : Mixtape!
+    private var tracks = [Track]()  {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+    private var paging = PagingGenerator<Track>(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        WhiteLabel.getTracks(
-            self.mixtape,
-            success: { tracks in
-                self.tracks = tracks
-                self.tableView.reloadData()
-            },
-            failure: { error in
-                print("Error retrieving tracks")
-            }
-        )
+        self.title = self.mixtape?.title
+        
+        // Closure to trigger when a new batch of tracks is needed
+        paging.next = { page, completion in
+            
+            WhiteLabel.getTracksForMixtape(self.mixtape,
+                page: page,
+                success: { tracks in
+                    completion(objects: tracks)
+                }, failure: { error in
+                    print("Error getting tracks for page \(page): \(error)")
+                }
+            )
+            
+        }
+        
+        // Initial load
+        paging.getNext(onFinish: updateDataSource)
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
+    private func updateDataSource(tracks: [Track]) {
+        self.tracks += tracks
     }
+
+    //MARK: Data Source
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tracks.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("TrackCell", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath)
         
         let track = tracks[indexPath.row]
         
@@ -66,4 +82,22 @@ class TrackTableViewController: UITableViewController {
         return cell;
     }
     
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        // Quick and easy infinite scroll trigger
+        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && tracks.count >= WhiteLabel.pageSize {
+            paging.getNext(onFinish: updateDataSource)
+        }
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let title = "The Sound of Silence 🌴"
+        let message = "Take it from here and play some music!"
+        
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.Default,handler: nil))
+        
+        self.presentViewController(alertController, animated: true, completion: nil)
+    }
 }
+

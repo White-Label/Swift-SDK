@@ -1,7 +1,7 @@
 //
-//  WhiteLabel-Bridging-Header.h
+//  Service.swift
 //
-//  Created by Alex Givens http://alexgivens.com on 1/13/16
+//  Created by Alex Givens http://alexgivens.com on 7/1/16
 //  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,4 +24,15 @@
 //
 
 
-#import <RestKit/RestKit.h>
+public class Response : NSObject {
+    
+    public var id : NSNumber!
+    public var name : String!
+    public var slug : String!
+    public var externalURL : String?
+    
+    public enum Result {
+        case Success, Failure
+    }
+    
+}

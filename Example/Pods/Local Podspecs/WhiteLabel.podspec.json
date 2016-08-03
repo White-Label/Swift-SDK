@@ -1,6 +1,6 @@
 {
   "name": "WhiteLabel",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "summary": "WhiteLabel is a Swift interface for the White Label API.",
   "description": "TODO: Add long description of the pod here.",
   "homepage": "https://github.com/NoonPacific/White-Label-Swift",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/NoonPacific/White-Label-Swift",
-    "tag": "0.1.3"
+    "tag": "0.1.4"
   },
   "platforms": {
     "ios": "8.0"

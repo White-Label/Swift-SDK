@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let clientID = getClientID() {
             WhiteLabel.clientID = clientID
         } else {
-            assertionFailure("Client ID was not loaded from keys.plist. Please ensure you provide your Client ID for the app as per the README.")
+            assertionFailure("Client ID was not loaded from keys.plist. Please ensure you provide a White Label Client ID as per the README.")
         }
 
         return true
