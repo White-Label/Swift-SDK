@@ -179,7 +179,7 @@ public class WhiteLabel {
             "title":            "title",
             "artist":           "artist",
             "slug":             "slug",
-//            "streamable":       "streamable",
+            "streamable":       "streamable",
             "duration":         "duration",
             "external_id":      "externalID",
             "stream_url":       "streamURL",
@@ -203,24 +203,6 @@ public class WhiteLabel {
         )
         
         objectManager.addResponseDescriptor(trackResponseDescriptor)
-    }
-    
-    private class func get(returnType: ReturnType.List, forPage page: UInt, withParameters parameters: [NSObject: AnyObject]?, success: (objects: [AnyObject]) -> Void, failure: (error: NSError) -> Void) -> Void {
-        
-        let path = returnType.path() + "?page=:currentPage"
-        
-        let paginator = RKObjectManager.sharedManager().paginatorWithPathPattern(path, parameters: parameters)
-        paginator.perPage = 20
-        
-        paginator.setCompletionBlockWithSuccess({ paginator, objects, page in
-                success(objects: objects)
-            },
-            failure: { paginator, error in
-                failure(error: error)
-            }
-        )
-        
-        paginator.loadPage(page)
     }
     
     public class func getLabel(success success: (Label! -> Void), failure: (NSError! -> Void)) {
@@ -313,5 +295,23 @@ public class WhiteLabel {
                 failure(error)
             }
         )
+    }
+    
+    private class func get(returnType: ReturnType.List, forPage page: UInt, withParameters parameters: [NSObject: AnyObject]?, success: (objects: [AnyObject]) -> Void, failure: (error: NSError) -> Void) -> Void {
+        
+        let path = returnType.path() + "?page=:currentPage"
+        
+        let paginator = RKObjectManager.sharedManager().paginatorWithPathPattern(path, parameters: parameters)
+        paginator.perPage = 20
+        
+        paginator.setCompletionBlockWithSuccess({ paginator, objects, page in
+            success(objects: objects)
+            },
+                                                failure: { paginator, error in
+                                                    failure(error: error)
+            }
+        )
+        
+        paginator.loadPage(page)
     }
 }

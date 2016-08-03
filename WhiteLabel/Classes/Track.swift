@@ -30,7 +30,7 @@ public class Track : NSObject {
     public var title : String!
     public var artist : String!
     public var slug : String!
-    public var streamable : Bool!
+    public var streamable : NSNumber!
     public var duration : NSNumber!
     public var externalID : NSNumber!
     public var streamURL : String!

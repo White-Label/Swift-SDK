@@ -29,7 +29,6 @@ import Foundation
 public protocol AsyncGeneratorType {
     associatedtype Element
     associatedtype Fetch
-//    mutating func next(fetchNextBatch: Fetch, onFinish: ((Element) -> Void)?)
     mutating func getNext(onFinish onFinish: ((Element) -> Void)?)
 }
 
@@ -37,6 +36,7 @@ public class PagingGenerator<T>: AsyncGeneratorType {
     public typealias Element = Array<T>
     public typealias Fetch = (page: UInt, completion: (objects: Element) -> Void) -> Void
     
+    public var next:Fetch!
     private(set) var page: UInt
     public var startPage: UInt
     
@@ -45,18 +45,9 @@ public class PagingGenerator<T>: AsyncGeneratorType {
         self.page = startPage
     }
     
-//    public func next(fetchNextBatch: Fetch, onFinish: ((Element) -> Void)? = nil) {
-//        fetchNextBatch(page: page) { [unowned self] (items) in
-//            onFinish?(items)
-//            self.page += 1
-//        }
-//    }
-    
-    public var next:Fetch!
-    
     public func getNext(onFinish onFinish: ((Element) -> Void)? = nil) {
-        next(page: page) { [unowned self] (items) in
-            onFinish?(items)
+        next(page: page) { [unowned self] (objects) in
+            onFinish?(objects)
             self.page += 1
         }
     }

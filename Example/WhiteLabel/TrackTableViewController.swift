@@ -100,11 +100,11 @@ class TrackTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let title = "Just Add Music 🔊"
-        let message = "Now that your networking code is done, check out our NPAudioStream library to start streaming your White Label tracks."
+        let message = "Now that your networking code is done, check out our NPAudioStream library to start streaming your White Label tracks!"
         
         let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
         alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.Cancel, handler: nil));
-        alertController.addAction(UIAlertAction(title: "Let's go!", style: UIAlertActionStyle.Default, handler: {(action:UIAlertAction) in
+        alertController.addAction(UIAlertAction(title: "View", style: UIAlertActionStyle.Default, handler: {(action:UIAlertAction) in
             UIApplication.sharedApplication().openURL(NSURL(string: "https://github.com/NoonPacific/NPAudioStream")!)
         }));
         
