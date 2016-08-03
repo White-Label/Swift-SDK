@@ -30,19 +30,22 @@ import WhiteLabel
 class MixtapeTableViewController: UITableViewController {
 
     private let cellIdentifier = "MixtapeCell"
-    private var paging = PagingGenerator<Mixtape>(startPage: 1)
     internal var collection: Collection!
     private var mixtapes = [Mixtape]() {
         didSet {
             tableView.reloadData()
+            self.refreshControl?.endRefreshing()
         }
     }
+    private var paging = PagingGenerator<Mixtape>(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = self.collection?.title
+        self.refreshControl?.addTarget(self, action: #selector(MixtapeTableViewController.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
         
+        // Setup your paging generator with the White Label downloader
         paging.next = { page, completion in
             
             WhiteLabel.getMixtapesForCollection(self.collection,
@@ -62,6 +65,12 @@ class MixtapeTableViewController: UITableViewController {
     
     private func updateDataSource(mixtapes: [Mixtape]) {
         self.mixtapes += mixtapes
+    }
+    
+    func handleRefresh(refreshControl: UIRefreshControl) {
+        paging.reset()
+        mixtapes = []
+        paging.getNext(onFinish: updateDataSource) // Initial load
     }
     
     //MARK: Data Source

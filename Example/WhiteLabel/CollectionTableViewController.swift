@@ -34,12 +34,16 @@ class CollectionTableViewController: UITableViewController {
     var collections : [Collection] = [] {
         didSet {
             tableView.reloadData()
+            self.refreshControl?.endRefreshing()
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.refreshControl?.addTarget(self, action: #selector(CollectionTableViewController.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        
+        // Setup your paging generator with the White Label downloader
         paging.next = { page, completion in
             
             WhiteLabel.getCollections(
@@ -56,11 +60,11 @@ class CollectionTableViewController: UITableViewController {
         }
         
         // Initial load
-        self.getLabel()
         paging.getNext(onFinish: updateDataSource)
+        self.getLabel()
     }
     
-    func getLabel() {
+    private func getLabel() {
         
         WhiteLabel.getLabel(
             success: { label in
@@ -75,6 +79,12 @@ class CollectionTableViewController: UITableViewController {
     
     private func updateDataSource(collections: [Collection]) {
         self.collections += collections
+    }
+    
+    func handleRefresh(refreshControl: UIRefreshControl) {
+        paging.reset()
+        collections = []
+        paging.getNext(onFinish: updateDataSource) // Initial load
     }
     
     //MARK: Data Source

@@ -34,6 +34,7 @@ class TrackTableViewController: UITableViewController {
     private var tracks = [Track]()  {
         didSet {
             tableView.reloadData()
+            self.refreshControl?.endRefreshing()
         }
     }
     private var paging = PagingGenerator<Track>(startPage: 1)
@@ -42,8 +43,9 @@ class TrackTableViewController: UITableViewController {
         super.viewDidLoad()
         
         self.title = self.mixtape?.title
+        self.refreshControl?.addTarget(self, action: #selector(TrackTableViewController.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
         
-        // Closure to trigger when a new batch of tracks is needed
+        // Setup your paging generator with the White Label downloader
         paging.next = { page, completion in
             
             WhiteLabel.getTracksForMixtape(self.mixtape,
@@ -63,6 +65,12 @@ class TrackTableViewController: UITableViewController {
     
     private func updateDataSource(tracks: [Track]) {
         self.tracks += tracks
+    }
+    
+    func handleRefresh(refreshControl: UIRefreshControl) {
+        paging.reset()
+        tracks = []
+        paging.getNext(onFinish: updateDataSource) // Initial load
     }
 
     //MARK: Data Source

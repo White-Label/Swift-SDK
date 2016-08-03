@@ -29,9 +29,9 @@ import RestKit
 
 public class WhiteLabel {
     
-    private static let baseURL: String = "https://beta.whitelabel.cool"
-    private static let apiVersion: String = "1.0"
-    public static let pageSize: Int = 20
+    public static var baseURL: String = "https://beta.whitelabel.cool"
+    public static var apiVersion: String = "1.0"
+    public static var pageSize: Int = 20
     public static var clientID: String? {
         didSet {
             WhiteLabel.initializeRestKit()
@@ -205,48 +205,6 @@ public class WhiteLabel {
         objectManager.addResponseDescriptor(trackResponseDescriptor)
     }
     
-    public class func getLabel(success success: (Label! -> Void), failure: (NSError! -> Void)) {
-        
-        RKObjectManager.sharedManager().getObjectsAtPath( "/api/label/",
-            parameters: nil,
-            success: { operation, result in
-                if let label = result.firstObject as? Label {
-                    success(label)
-                } else {
-                    let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, userInfo: nil)
-                    failure(error)
-                }
-            },
-            failure: { operation, error in
-                failure(error)
-            }
-        )
-    }
-    
-//    public class func getCollections(filters filters: [Filter]?, success: ([Collection]! -> Void), failure: (NSError! -> Void)) {
-//        
-//        RKObjectManager.sharedManager().getObjectsAtPath(
-//            "/api/collections/",
-//            parameters: nil,
-//            success: { operation, result in
-//                if let collections = result.array() as? [Collection] {
-//                    success(collections)
-//                } else {
-//                    let error = NSError(
-//                        domain: NSURLErrorDomain,
-//                        code: NSURLErrorCannotOpenFile,
-//                        userInfo: nil)
-//                    failure(error)
-//                }
-//            },
-//            failure: { operation, error in
-//                failure(error)
-//            }
-//        )
-//    }
-//    
-    
-    
     private class func get(returnType: ReturnType.List, forPage page: UInt, withParameters parameters: [NSObject: AnyObject]?, success: (objects: [AnyObject]) -> Void, failure: (error: NSError) -> Void) -> Void {
         
         let path = returnType.path() + "?page=:currentPage"
@@ -265,8 +223,28 @@ public class WhiteLabel {
         paginator.loadPage(page)
     }
     
+    public class func getLabel(success success: (Label! -> Void), failure: (NSError! -> Void)) {
+        
+        RKObjectManager.sharedManager().getObjectsAtPath(
+            "/api/label/",
+            parameters: nil,
+            success: { operation, result in
+                if let label = result.firstObject as? Label {
+                    success(label)
+                } else {
+                    let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, userInfo: nil)
+                    failure(error)
+                }
+            },
+            failure: { operation, error in
+                failure(error)
+            }
+        )
+    }
+    
     public class func getCollections(parameters parameters: [NSObject: AnyObject]?, page: UInt, success: ([Collection]! -> Void), failure: (NSError! -> Void)) {
-        WhiteLabel.get(.Collections,
+        WhiteLabel.get(
+            .Collections,
             forPage: page,
             withParameters: parameters,
             success: { objects in
@@ -292,7 +270,8 @@ public class WhiteLabel {
     }
     
     public class func getMixtapes(parameters parameters: [NSObject: AnyObject]?, page: UInt, success: ([Mixtape]! -> Void), failure: (NSError! -> Void)) {
-        WhiteLabel.get(.Mixtapes,
+        WhiteLabel.get(
+            .Mixtapes,
             forPage: page,
             withParameters: parameters,
             success: { objects in
@@ -318,7 +297,8 @@ public class WhiteLabel {
     }
     
     public class func getTracks(parameters parameters: [NSObject: AnyObject]?, page: UInt, success: ([Track]! -> Void), failure: (NSError! -> Void)) {
-        WhiteLabel.get(.Tracks,
+        WhiteLabel.get(
+            .Tracks,
             forPage: page,
             withParameters: parameters,
             success: { objects in
@@ -334,122 +314,4 @@ public class WhiteLabel {
             }
         )
     }
-    
-//    public class func getMixtapesForCollection(collection: Collection, page: UInt = 1, parameters: [NSObject: AnyObject]?, success: ([Mixtape]! -> Void), failure: (NSError! -> Void)) {
-//        
-//        var params = [NSObject: AnyObject]()
-//        if parameters != nil && !params.isEmpty { params = parameters! }
-//        params["collection"] = String(collection.id)
-//        
-//        WhiteLabel.get(.Mixtapes,
-//            forPage: page,
-//            withParameters: parameters,
-//            success: { objects in
-//                if let mixtapes = objects as? [Mixtape] {
-//                    success(mixtapes)
-//                } else {
-//                    let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, userInfo: nil)
-//                    failure(error)
-//                }
-//            },
-//            failure: { error in
-//                failure(error)
-//            }
-//        )
-//    }
-//    
-//    public class func getMixtapes(parameters: [NSObject: AnyObject]?, success: ([Mixtape]! -> Void), failure: (NSError! -> Void)) {
-//        
-//        var parameters: [NSObject: AnyObject]? = nil
-//        var page : UInt = 1
-//        
-//        if filters != nil {
-//            parameters = [NSObject: AnyObject]()
-//            for filter in filters! {
-//                switch filter {
-//                case let .Order(ordering, direction):
-//                    var orderingString = ""
-//                    if direction == .Ascending {
-//                        orderingString = "-"
-//                    }
-//                    for order in ordering {
-//                        orderingString += order
-//                        orderingString += ","
-//                    }
-//                    parameters!["ordering"] = orderingString
-//                case let .Search(string):
-//                    parameters!["search"] = string
-//                case let .Collection(id):
-//                    parameters!["collection"] = String(id)
-//                case let .Mixtape(id):
-//                    parameters!["mixtape"] = String(id)
-//                }
-//            }
-//        }
-//        
-//        let mixtapePath = "/api/mixtapes/?page=:currentPage"
-//        
-//        let paginator = RKObjectManager.sharedManager().paginatorWithPathPattern(mixtapePath, parameters: parameters)
-//        paginator.perPage = 20
-//        
-//        paginator.setCompletionBlockWithSuccess(
-//            { paginator, objects, page in
-//                print("Loaded page \(page)")
-//                if let mixtapes = objects as? [Mixtape] {
-//                    success(mixtapes)
-//                } else {
-//                    let error = NSError(
-//                        domain: NSURLErrorDomain,
-//                        code: NSURLErrorCannotOpenFile,
-//                        userInfo: nil)
-//                    failure(error)
-//                }
-//            },
-//            failure: { paginator, error in
-//                failure(error)
-//            }
-//        )
-//        
-//        paginator.loadPage(page)
-//    }
-    
-//    public class func getDetailForMixtape(mixtape: AnyObject!, success: (Mixtape! -> Void), failure: (NSError! -> Void)) {
-//        
-//    }
-    
-//    public class func getTracks(forMixtape: Mixtape?, success: ([Track]! -> Void), failure: (NSError! -> Void)) {
-//        
-//        var parameters = [NSObject: AnyObject]()
-//        
-//        if let mixtape = forMixtape {
-//            parameters["mixtape"] = String(mixtape.id)
-//        }
-//        
-//        RKObjectManager.sharedManager().getObjectsAtPath(
-//            "/api/tracks/",
-//            parameters: parameters,
-//            success: { operation, result in
-//                if let tracks = result.array() as? [Track] {
-//                    success(tracks)
-//                } else {
-//                    let error = NSError(
-//                        domain: NSURLErrorDomain,
-//                        code: NSURLErrorCannotOpenFile,
-//                        userInfo: nil)
-//                    failure(error)
-//                }
-//            },
-//            failure: { operation, error in
-//                failure(error)
-//            }
-//        )
-//        
-//        
-//    }
-    
-//    public class func getDetailForTrack(track: AnyObject!, success: (Track! -> Void), failure: (NSError! -> Void)) {
-//        
-//    }
 }
-
-
