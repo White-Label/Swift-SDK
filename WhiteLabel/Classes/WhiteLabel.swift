@@ -73,15 +73,13 @@ public class WhiteLabel {
         
         // Setup Label Mapping
         let labelMapping = RKObjectMapping(forClass: Label.self)
-        
-        let labelAttributeMap = [
+        labelMapping.addAttributeMappingsFromDictionary([
             "id":       "id",
             "name":     "name",
             "slug":     "slug",
             "icon":     "iconURL",
-        ]
-        
-        labelMapping.addAttributeMappingsFromDictionary(labelAttributeMap)
+            ]
+        )
         
         let labelResponseDescriptor = RKResponseDescriptor(
             mapping: labelMapping,
@@ -105,9 +103,8 @@ public class WhiteLabel {
         objectManager.paginationMapping = paginationMapping
         
         // Setup Collection Mapping
-        let collectionMap = RKObjectMapping(forClass: Collection.self)
-        
-        let collectionAttributeMap = [
+        let collectionMapping = RKObjectMapping(forClass: Collection.self)
+        collectionMapping.addAttributeMappingsFromDictionary([
             "id":                   "id",
             "title":                "title",
             "slug":                 "slug",
@@ -117,12 +114,11 @@ public class WhiteLabel {
             "artwork_credit_url":   "artworkCreditURL",
             "created":              "createdDate",
             "mixtape_count":        "mixtapeCount",
-        ]
-        
-        collectionMap.addAttributeMappingsFromDictionary(collectionAttributeMap)
+            ]
+        )
         
         let collectionList = RKResponseDescriptor(
-            mapping: collectionMap,
+            mapping: collectionMapping,
             method: .GET,
             pathPattern: Path.Collection.List(),
             keyPath: "results",
@@ -132,19 +128,18 @@ public class WhiteLabel {
         objectManager.addResponseDescriptor(collectionList)
         
         let collectionDetail = RKResponseDescriptor(
-            mapping: collectionMap,
+            mapping: collectionMapping,
             method: .GET,
             pathPattern: Path.Collection.Detail(),
             keyPath: nil,
             statusCodes: NSIndexSet(index: 200)
         )
-        
+
         objectManager.addResponseDescriptor(collectionDetail)
         
         // Setup Mixtape Mapping
-        let mixtapeMap = RKObjectMapping(forClass: Mixtape.self)
-        
-        let mixtapeAttributeMap = [
+        let mixtapeMapping = RKObjectMapping(forClass: Mixtape.self)
+        mixtapeMapping.addAttributeMappingsFromDictionary([
             "id":                   "id",
             "title":                "title",
             "slug":                 "slug",
@@ -159,12 +154,11 @@ public class WhiteLabel {
             "release":              "releaseDate",
             "track_count":          "trackCount",
             "collection":           "collectionID",
-        ]
-        
-        mixtapeMap.addAttributeMappingsFromDictionary(mixtapeAttributeMap)
+            ]
+        )
         
         let mixtapeList = RKResponseDescriptor(
-            mapping: mixtapeMap,
+            mapping: mixtapeMapping,
             method: .GET,
             pathPattern: Path.Mixtape.List(),
             keyPath: "results",
@@ -174,7 +168,7 @@ public class WhiteLabel {
         objectManager.addResponseDescriptor(mixtapeList)
         
         let mixtapeDetail = RKResponseDescriptor(
-            mapping: mixtapeMap,
+            mapping: mixtapeMapping,
             method: .GET,
             pathPattern: Path.Mixtape.Detail(),
             keyPath: nil,
@@ -184,9 +178,8 @@ public class WhiteLabel {
         objectManager.addResponseDescriptor(mixtapeDetail)
         
         // Setup Track Mapping
-        let trackMap = RKObjectMapping(forClass: Track.self)
-        
-        let trackAttributeMap = [
+        let trackMapping = RKObjectMapping(forClass: Track.self)
+        trackMapping.addAttributeMappingsFromDictionary([
             "id":             "id",
             "title":            "title",
             "artist":           "artist",
@@ -202,12 +195,11 @@ public class WhiteLabel {
             "ticket_url":       "ticketURL",
             "play_count":       "playCount",
             "order":            "order",
-        ]
-        
-        trackMap.addAttributeMappingsFromDictionary(trackAttributeMap)
+            ]
+        )
         
         let trackList = RKResponseDescriptor(
-            mapping: trackMap,
+            mapping: trackMapping,
             method: .GET,
             pathPattern: Path.Track.List(),
             keyPath: "results",
@@ -217,7 +209,7 @@ public class WhiteLabel {
         objectManager.addResponseDescriptor(trackList)
         
         let trackDetail = RKResponseDescriptor(
-            mapping: trackMap,
+            mapping: trackMapping,
             method: .GET,
             pathPattern: Path.Track.Detail(),
             keyPath: nil,
