@@ -81,6 +81,17 @@ public class WhiteLabel {
             ]
         )
         
+        let serviceMapping = RKObjectMapping(forClass: Service.self)
+        serviceMapping.addAttributeMappingsFromDictionary([
+            "id":               "id",
+            "name":             "name",
+            "slug":             "slug",
+            "external_url":     "externalURL",
+            ]
+        )
+        
+        labelMapping.addPropertyMapping(RKRelationshipMapping(fromKeyPath: "service", toKeyPath: "service", withMapping: serviceMapping))
+        
         let labelResponseDescriptor = RKResponseDescriptor(
             mapping: labelMapping,
             method: .GET,
@@ -218,7 +229,7 @@ public class WhiteLabel {
         
         objectManager.addResponseDescriptor(trackDetail)
         
-//        RKlcl_configure_by_name("*", RKlcl_vOff.rawValue);
+        RKlcl_configure_by_name("*", RKlcl_vOff.rawValue);
     }
     
     public class func getLabelDetail(success success: (Label! -> Void), failure: (NSError! -> Void)) {
