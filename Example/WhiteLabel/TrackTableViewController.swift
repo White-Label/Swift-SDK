@@ -48,7 +48,8 @@ class TrackTableViewController: UITableViewController {
         // Setup your paging generator with the White Label downloader
         paging.next = { page, completion in
             
-            WhiteLabel.getTracksForMixtape(self.mixtape,
+            WhiteLabel.getTracksForMixtape(
+                self.mixtape,
                 page: page,
                 success: { tracks in
                     completion(objects: tracks)

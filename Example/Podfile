@@ -5,7 +5,6 @@ target 'WhiteLabel_Example' do
 
   target 'WhiteLabel_Tests' do
     inherit! :search_paths
-
     
   end
 end

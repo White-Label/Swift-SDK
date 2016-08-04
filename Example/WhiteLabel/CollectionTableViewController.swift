@@ -66,7 +66,7 @@ class CollectionTableViewController: UITableViewController {
     
     private func getLabel() {
         
-        WhiteLabel.getLabel(
+        WhiteLabel.getLabelDetail(
             success: { label in
                 self.title = label.name
             },

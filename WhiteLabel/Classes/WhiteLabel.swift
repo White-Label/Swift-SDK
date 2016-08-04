@@ -37,36 +37,28 @@ public class WhiteLabel {
             WhiteLabel.initializeRestKit()
         }
     }
+    public static let errorDomain: String = "cool.whitelabel.swift"
     
-    public enum Filter {
-        case Order([String], Direction)
-        case Search(string: String)
-        case Collection(id: NSNumber)
-        case Mixtape(id: NSNumber)
-        public enum Direction {
-            case Ascending
-            case Descending
+    public enum Path: String {
+        case Label = "/api/label/"
+        case Collection = "/api/collections/"
+        case Mixtape = "/api/mixtapes/"
+        case Track = "/api/tracks/"
+        func List() -> String {
+            return self.rawValue
         }
-    }
-    
-    public enum ReturnType {
-        public enum List {
-            case Collections
-            case Mixtapes
-            case Tracks
-            func path() -> String {
-                switch self {
-                case .Collections: return "/api/collections/"
-                case .Mixtapes: return "/api/mixtapes/"
-                case .Tracks: return "/api/tracks/"
-                }
+        func Detail() -> String {
+            if self == Label {
+                return self.rawValue
             }
+            return self.rawValue + ":id/"
         }
-        public enum Detail {
-            case Label, Collection, Mixtape, Track
+        func detailWith(identifier: String?) -> String {
+            if identifier == nil || self == Label {
+                return self.rawValue
+            }
+            return self.rawValue + identifier! + "/"
         }
-        
-        
     }
     
     private class func initializeRestKit() {
@@ -94,7 +86,7 @@ public class WhiteLabel {
         let labelResponseDescriptor = RKResponseDescriptor(
             mapping: labelMapping,
             method: .GET,
-            pathPattern: "/api/label/",
+            pathPattern: Path.Label.rawValue,
             keyPath: nil,
             statusCodes: NSIndexSet(index: 200)
         )
@@ -113,7 +105,7 @@ public class WhiteLabel {
         objectManager.paginationMapping = paginationMapping
         
         // Setup Collection Mapping
-        let collectionMapping = RKObjectMapping(forClass: Collection.self)
+        let collectionMap = RKObjectMapping(forClass: Collection.self)
         
         let collectionAttributeMap = [
             "id":                   "id",
@@ -127,20 +119,30 @@ public class WhiteLabel {
             "mixtape_count":        "mixtapeCount",
         ]
         
-        collectionMapping.addAttributeMappingsFromDictionary(collectionAttributeMap)
+        collectionMap.addAttributeMappingsFromDictionary(collectionAttributeMap)
         
-        let collectionResponseDescriptor = RKResponseDescriptor(
-            mapping: collectionMapping,
+        let collectionList = RKResponseDescriptor(
+            mapping: collectionMap,
             method: .GET,
-            pathPattern: ReturnType.List.Collections.path(),
+            pathPattern: Path.Collection.List(),
             keyPath: "results",
             statusCodes: NSIndexSet(index: 200)
         )
         
-        objectManager.addResponseDescriptor(collectionResponseDescriptor)
+        objectManager.addResponseDescriptor(collectionList)
+        
+        let collectionDetail = RKResponseDescriptor(
+            mapping: collectionMap,
+            method: .GET,
+            pathPattern: Path.Collection.Detail(),
+            keyPath: nil,
+            statusCodes: NSIndexSet(index: 200)
+        )
+        
+        objectManager.addResponseDescriptor(collectionDetail)
         
         // Setup Mixtape Mapping
-        let mixtapeMapping = RKObjectMapping(forClass: Mixtape.self)
+        let mixtapeMap = RKObjectMapping(forClass: Mixtape.self)
         
         let mixtapeAttributeMap = [
             "id":                   "id",
@@ -159,20 +161,30 @@ public class WhiteLabel {
             "collection":           "collectionID",
         ]
         
-        mixtapeMapping.addAttributeMappingsFromDictionary(mixtapeAttributeMap)
+        mixtapeMap.addAttributeMappingsFromDictionary(mixtapeAttributeMap)
         
-        let mixtapeResponseDescriptor = RKResponseDescriptor(
-            mapping: mixtapeMapping,
+        let mixtapeList = RKResponseDescriptor(
+            mapping: mixtapeMap,
             method: .GET,
-            pathPattern: ReturnType.List.Mixtapes.path(),
+            pathPattern: Path.Mixtape.List(),
             keyPath: "results",
             statusCodes: NSIndexSet(index: 200)
         )
         
-        objectManager.addResponseDescriptor(mixtapeResponseDescriptor)
+        objectManager.addResponseDescriptor(mixtapeList)
+        
+        let mixtapeDetail = RKResponseDescriptor(
+            mapping: mixtapeMap,
+            method: .GET,
+            pathPattern: Path.Mixtape.Detail(),
+            keyPath: nil,
+            statusCodes: NSIndexSet(index: 200)
+        )
+        
+        objectManager.addResponseDescriptor(mixtapeDetail)
         
         // Setup Track Mapping
-        let trackMapping = RKObjectMapping(forClass: Track.self)
+        let trackMap = RKObjectMapping(forClass: Track.self)
         
         let trackAttributeMap = [
             "id":             "id",
@@ -192,54 +204,91 @@ public class WhiteLabel {
             "order":            "order",
         ]
         
-        trackMapping.addAttributeMappingsFromDictionary(trackAttributeMap)
+        trackMap.addAttributeMappingsFromDictionary(trackAttributeMap)
         
-        let trackResponseDescriptor = RKResponseDescriptor(
-            mapping: trackMapping,
+        let trackList = RKResponseDescriptor(
+            mapping: trackMap,
             method: .GET,
-            pathPattern: ReturnType.List.Tracks.path(),
+            pathPattern: Path.Track.List(),
             keyPath: "results",
             statusCodes: NSIndexSet(index: 200)
         )
         
-        objectManager.addResponseDescriptor(trackResponseDescriptor)
+        objectManager.addResponseDescriptor(trackList)
+        
+        let trackDetail = RKResponseDescriptor(
+            mapping: trackMap,
+            method: .GET,
+            pathPattern: Path.Track.Detail(),
+            keyPath: nil,
+            statusCodes: NSIndexSet(index: 200)
+        )
+        
+        objectManager.addResponseDescriptor(trackDetail)
+        
+//        RKlcl_configure_by_name("*", RKlcl_vOff.rawValue);
     }
     
-    public class func getLabel(success success: (Label! -> Void), failure: (NSError! -> Void)) {
+    public class func getLabelDetail(success success: (Label! -> Void), failure: (NSError! -> Void)) {
         
-        RKObjectManager.sharedManager().getObjectsAtPath(
-            "/api/label/",
-            parameters: nil,
-            success: { operation, result in
-                if let label = result.firstObject as? Label {
+        WhiteLabel.getDetail(
+            .Label,
+            identifier: nil, // Identity is inferred
+            success: { object in
+                if let label = object as? Label {
                     success(label)
                 } else {
-                    let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, userInfo: nil)
+                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
+                        NSLocalizedDescriptionKey: "Unable to cast returned obect as Label."
+                        ])
                     failure(error)
                 }
             },
-            failure: { operation, error in
-                failure(error)
-            }
+            failure: failure
         )
     }
     
     public class func getCollections(parameters parameters: [NSObject: AnyObject]?, page: UInt, success: ([Collection]! -> Void), failure: (NSError! -> Void)) {
-        WhiteLabel.get(
-            .Collections,
+        WhiteLabel.getList(
+            .Collection,
             forPage: page,
             withParameters: parameters,
             success: { objects in
                 if let collections = objects as? [Collection] {
                     success(collections)
                 } else {
-                    let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, userInfo: nil)
+                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
+                        NSLocalizedDescriptionKey: "Unable to cast returned obects as Array<Collection>."
+                        ])
                     failure(error)
                 }
             },
-            failure: { error in
-                failure(error)
-            }
+            failure: failure
+        )
+    }
+    
+    public class func getCollectionDetail(identifier: AnyObject, success: (Collection! -> Void), failure: (NSError! -> Void)) {
+        
+        var uniqueID = identifier
+        
+        if let collection = identifier as? Collection {
+            uniqueID = collection.id
+        }
+        
+        WhiteLabel.getDetail(
+            .Collection,
+            identifier: String(uniqueID),
+            success: { object in
+                if let collection = object as? Collection {
+                    success(collection)
+                } else {
+                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
+                        NSLocalizedDescriptionKey: "Unable to cast returned obect as Collection."
+                        ])
+                    failure(error)
+                }
+            },
+            failure: failure
         )
     }
     
@@ -252,21 +301,46 @@ public class WhiteLabel {
     }
     
     public class func getMixtapes(parameters parameters: [NSObject: AnyObject]?, page: UInt, success: ([Mixtape]! -> Void), failure: (NSError! -> Void)) {
-        WhiteLabel.get(
-            .Mixtapes,
+        WhiteLabel.getList(
+            .Mixtape,
             forPage: page,
             withParameters: parameters,
             success: { objects in
                 if let mixtapes = objects as? [Mixtape] {
                     success(mixtapes)
                 } else {
-                    let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, userInfo: nil)
+                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
+                        NSLocalizedDescriptionKey: "Unable to cast returned obects as Array<Mixtape>."
+                        ])
                     failure(error)
                 }
             },
-            failure: { error in
-                failure(error)
-            }
+            failure: failure
+        )
+    }
+    
+    public class func getMixtapeDetail(identifier: AnyObject, success: (Mixtape! -> Void), failure: (NSError! -> Void)) {
+        
+        var uniqueID = identifier
+        
+        if let mixtape = identifier as? Mixtape {
+            uniqueID = mixtape.id
+        }
+        
+        WhiteLabel.getDetail(
+            .Mixtape,
+            identifier: String(uniqueID),
+            success: { object in
+                if let mixtape = object as? Mixtape {
+                    success(mixtape)
+                } else {
+                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
+                        NSLocalizedDescriptionKey: "Unable to cast returned obect as Mixtape."
+                        ])
+                    failure(error)
+                }
+            },
+            failure: failure
         )
     }
     
@@ -279,39 +353,78 @@ public class WhiteLabel {
     }
     
     public class func getTracks(parameters parameters: [NSObject: AnyObject]?, page: UInt, success: ([Track]! -> Void), failure: (NSError! -> Void)) {
-        WhiteLabel.get(
-            .Tracks,
+        WhiteLabel.getList(
+            .Track,
             forPage: page,
             withParameters: parameters,
             success: { objects in
                 if let tracks = objects as? [Track] {
                     success(tracks)
                 } else {
-                    let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorCannotOpenFile, userInfo: nil)
+                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
+                        NSLocalizedDescriptionKey: "Unable to cast returned obects as Array<Track>."
+                        ])
                     failure(error)
                 }
             },
-            failure: { error in
-                failure(error)
-            }
+            failure: failure
         )
     }
     
-    private class func get(returnType: ReturnType.List, forPage page: UInt, withParameters parameters: [NSObject: AnyObject]?, success: (objects: [AnyObject]) -> Void, failure: (error: NSError) -> Void) -> Void {
+    public class func getTrackDetail(identifier: AnyObject, success: (Track! -> Void), failure: (NSError! -> Void)) {
         
-        let path = returnType.path() + "?page=:currentPage"
+        var uniqueID = identifier
         
-        let paginator = RKObjectManager.sharedManager().paginatorWithPathPattern(path, parameters: parameters)
+        if let track = identifier as? Track {
+            uniqueID = track.id
+        }
+        
+        WhiteLabel.getDetail(
+            .Track,
+            identifier: String(uniqueID),
+            success: { object in
+                if let track = object as? Track {
+                    success(track)
+                } else {
+                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
+                        NSLocalizedDescriptionKey: "Unable to cast returned obect as Track."
+                        ]) 
+                    failure(error)
+                }
+            },
+            failure: failure
+        )
+    }
+    
+    private class func getList(path: Path, forPage page: UInt, withParameters parameters: [NSObject: AnyObject]?, success: (objects: [AnyObject]) -> Void, failure: (error: NSError) -> Void) -> Void {
+        
+        let fullPath = path.List() + "?page=:currentPage"
+        
+        let paginator = RKObjectManager.sharedManager().paginatorWithPathPattern(fullPath, parameters: parameters)
         paginator.perPage = 20
         
-        paginator.setCompletionBlockWithSuccess({ paginator, objects, page in
-            success(objects: objects)
+        paginator.setCompletionBlockWithSuccess(
+            { paginator, objects, page in
+                success(objects: objects)
             },
-                                                failure: { paginator, error in
-                                                    failure(error: error)
+            failure: { paginator, error in
+                failure(error: error)
             }
         )
         
         paginator.loadPage(page)
+    }
+    
+    private class func getDetail(path: Path, identifier: String?, success: (object: AnyObject) -> Void, failure: (error: NSError) -> Void) -> Void {
+        RKObjectManager.sharedManager().getObjectsAtPath(
+            path.detailWith(identifier),
+            parameters: nil,
+            success: { operation, result in
+                success(object: result.firstObject)
+            },
+            failure: { operation, error in
+                failure(error: error)
+            }
+        )
     }
 }
