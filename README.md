@@ -22,7 +22,7 @@ pod "WhiteLabel"
 
 ## Author
 
-Alexander Givens, mail@alexgivens.com
+Alex Givens, alex@noonpacific.com
 
 ## License
 
