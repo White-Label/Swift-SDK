@@ -39,6 +39,7 @@ public class PagingGenerator<T>: AsyncGeneratorType {
     public var next:Fetch!
     private(set) var page: UInt
     public var startPage: UInt
+    public var didReachEnd: Bool = false
     
     public init(startPage: UInt = 1) {
         self.startPage = startPage
@@ -46,13 +47,19 @@ public class PagingGenerator<T>: AsyncGeneratorType {
     }
     
     public func getNext(onFinish onFinish: ((Element) -> Void)? = nil) {
+        if didReachEnd { return }
         next(page: page) { [unowned self] (objects) in
             onFinish?(objects)
             self.page += 1
         }
     }
     
+    public func reachedEnd() {
+        didReachEnd = true
+    }
+    
     public func reset() {
+        didReachEnd = false
         self.page = self.startPage
     }
 }

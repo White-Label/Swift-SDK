@@ -54,6 +54,12 @@ class TrackTableViewController: UITableViewController {
                 success: { tracks in
                     completion(objects: tracks)
                 }, failure: { error in
+                    
+                    // If we get a 404 server error
+                    if error.code == -1011 {
+                        self.paging.reachedEnd()
+                    }
+                    
                     print("Error getting tracks for page \(page): \(error)")
                 }
             )

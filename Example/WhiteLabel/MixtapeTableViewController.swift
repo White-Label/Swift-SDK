@@ -54,6 +54,12 @@ class MixtapeTableViewController: UITableViewController {
                 success: { mixtapes in
                     completion(objects: mixtapes)
                 }, failure: { error in
+                    
+                    // If we get a 404 server error
+                    if error.code == -1011 {
+                        self.paging.reachedEnd()
+                    }
+                    
                     print("Error getting mixtapes for page \(page): \(error)")
                 }
             )

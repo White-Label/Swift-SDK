@@ -71,6 +71,12 @@ class CollectionTableViewController: UITableViewController {
                 self.title = label.name
             },
             failure: { error in
+                
+                // If we get a 404 server error
+                if error.code == -1011 {
+                    self.paging.reachedEnd()
+                }
+                
                 print("Error retrieving label: \(error)")
             }
         )
