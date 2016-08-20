@@ -100,6 +100,8 @@ class CollectionTableViewController: UITableViewController {
         return cell;
     }
     
+    //Mark: Delegate
+    
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         
         // Quick and easy infinite scroll trigger

@@ -91,6 +91,8 @@ class MixtapeTableViewController: UITableViewController {
         
         return cell;
     }
+    
+    //MARK: Delegate
 
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         

@@ -92,6 +92,8 @@ class TrackTableViewController: UITableViewController {
         return cell;
     }
     
+    //MARK: Delegate
+    
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         
         // Quick and easy infinite scroll trigger
