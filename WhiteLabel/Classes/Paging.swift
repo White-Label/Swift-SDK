@@ -29,16 +29,16 @@ import Foundation
 public protocol AsyncGeneratorType {
     associatedtype Element
     associatedtype Fetch
-    mutating func getNext(onFinish onFinish: ((Element) -> Void)?)
+    mutating func getNext(complete: (() -> Void)?)
 }
 
 public class PagingGenerator<T>: AsyncGeneratorType {
     public typealias Element = Array<T>
-    public typealias Fetch = (page: UInt, completion: (objects: Element) -> Void) -> Void
+    public typealias Fetch = (page: UInt) -> Void
     
     public var next:Fetch!
     private(set) var page: UInt
-    public var startPage: UInt
+    private(set) var startPage: UInt
     public var didReachEnd: Bool = false
     
     public init(startPage: UInt = 1) {
@@ -46,12 +46,13 @@ public class PagingGenerator<T>: AsyncGeneratorType {
         self.page = startPage
     }
     
-    public func getNext(onFinish onFinish: ((Element) -> Void)? = nil) {
+    public func getNext(complete: (() -> Void)? = nil) {
         if didReachEnd { return }
-        next(page: page) { [unowned self] (objects) in
-            onFinish?(objects)
-            self.page += 1
+        next(page: page)
+        if complete != nil {
+            complete!()
         }
+        self.page += 1
     }
     
     public func reachedEnd() {
@@ -60,6 +61,6 @@ public class PagingGenerator<T>: AsyncGeneratorType {
     
     public func reset() {
         didReachEnd = false
-        self.page = self.startPage
+        page = startPage
     }
 }

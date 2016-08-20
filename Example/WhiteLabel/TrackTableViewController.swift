@@ -29,55 +29,51 @@ import WhiteLabel
 
 class TrackTableViewController: UITableViewController {
 
-    private let cellIdentifier = "TrackCell"
-    internal var mixtape : Mixtape!
-    private var tracks = [Track]()  {
+    var mixtape : Mixtape!
+    var tracks = [Track]()  {
         didSet {
             tableView.reloadData()
-            self.refreshControl?.endRefreshing()
         }
     }
-    private var paging = PagingGenerator<Track>(startPage: 1)
+    var paging = PagingGenerator<Track>(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = self.mixtape?.title
+        self.title = self.mixtape.title
         self.refreshControl?.addTarget(self, action: #selector(TrackTableViewController.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
         
-        // Setup your paging generator with the White Label downloader
-        paging.next = { page, completion in
+        // Setup the paging generator with White Label
+        paging.next = { page in
             
             WhiteLabel.getTracksForMixtape(
                 self.mixtape,
                 page: page,
                 success: { tracks in
-                    completion(objects: tracks)
-                }, failure: { error in
+                    self.tracks += tracks
+                },
+                failure: { error in
                     
-                    // If we get a 404 server error
                     if error.code == -1011 {
+                        // If we get a 404 error, stop paging
                         self.paging.reachedEnd()
                     }
                     
-                    print("Error getting tracks for page \(page): \(error)")
+                    print("Error: \(error)")
                 }
             )
             
         }
         
-        // Initial load
-        paging.getNext(onFinish: updateDataSource)
-    }
-    
-    private func updateDataSource(tracks: [Track]) {
-        self.tracks += tracks
+        paging.getNext() // Initial load
     }
     
     func handleRefresh(refreshControl: UIRefreshControl) {
         paging.reset()
         tracks = []
-        paging.getNext(onFinish: updateDataSource) // Initial load
+        paging.getNext() {
+            refreshControl.endRefreshing()
+        }
     }
 
     //MARK: Data Source
@@ -87,8 +83,7 @@ class TrackTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath)
-        
+        let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier.Track, forIndexPath: indexPath)
         let track = tracks[indexPath.row]
         
         cell.textLabel!.text = track.title;
@@ -100,8 +95,8 @@ class TrackTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         
         // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && tracks.count >= WhiteLabel.pageSize {
-            paging.getNext(onFinish: updateDataSource)
+        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && tracks.count >= Int(WhiteLabel.pageSize) {
+            paging.getNext()
         }
     }
     

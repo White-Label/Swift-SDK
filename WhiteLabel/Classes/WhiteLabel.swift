@@ -31,7 +31,7 @@ public class WhiteLabel {
     
     public static var baseURL: String = "https://beta.whitelabel.cool"
     public static var apiVersion: String = "1.0"
-    public static var pageSize: Int = 20
+    public static var pageSize: UInt = 20
     public static var clientID: String? {
         didSet {
             WhiteLabel.initializeRestKit()
@@ -65,7 +65,8 @@ public class WhiteLabel {
         let baseURL = NSURL(string: WhiteLabel.baseURL)
         let client = AFRKHTTPClient(baseURL: baseURL)
         
-        client.setDefaultHeader("Client", value: WhiteLabel.clientID)
+        validateClientID()
+        client.setDefaultHeader("Client", value: clientID)
         client.setDefaultHeader("Accept", value: "application/json; version=" + apiVersion)
         
         // initialize RestKit
@@ -232,7 +233,7 @@ public class WhiteLabel {
         RKlcl_configure_by_name("*", RKlcl_vOff.rawValue);
     }
     
-    public class func getLabelDetail(success success: (Label! -> Void), failure: (NSError! -> Void)) {
+    public class func getLabel(success success: (Label! -> Void), failure: (NSError! -> Void)) {
         
         WhiteLabel.getDetail(
             .Label,
@@ -399,12 +400,13 @@ public class WhiteLabel {
         )
     }
     
-    private class func getList(path: Path, forPage page: UInt, withParameters parameters: [NSObject: AnyObject]?, success: (objects: [AnyObject]) -> Void, failure: (error: NSError) -> Void) -> Void {
+    public class func getList(path: Path, forPage page: UInt, withParameters parameters: [NSObject: AnyObject]?, success: (objects: [AnyObject]) -> Void, failure: (error: NSError) -> Void) -> Void {
+        validateClientID()
         
         let fullPath = path.List() + "?page=:currentPage"
         
         let paginator = RKObjectManager.sharedManager().paginatorWithPathPattern(fullPath, parameters: parameters)
-        paginator.perPage = 20
+        paginator.perPage = WhiteLabel.pageSize
         
         paginator.setCompletionBlockWithSuccess(
             { paginator, objects, page in
@@ -418,7 +420,9 @@ public class WhiteLabel {
         paginator.loadPage(page)
     }
     
-    private class func getDetail(path: Path, identifier: String?, success: (object: AnyObject) -> Void, failure: (error: NSError) -> Void) -> Void {
+    public class func getDetail(path: Path, identifier: String?, success: (object: AnyObject) -> Void, failure: (error: NSError) -> Void) -> Void {
+        validateClientID()
+        
         RKObjectManager.sharedManager().getObjectsAtPath(
             path.detailWith(identifier),
             parameters: nil,
@@ -429,5 +433,10 @@ public class WhiteLabel {
                 failure(error: error)
             }
         )
+    }
+
+    private class func validateClientID() {
+        assert(WhiteLabel.clientID != nil, "No Client ID found. Please ensure you provide a White Label API Client ID as per the README.\n")
+        assert(WhiteLabel.clientID!.characters.count == 40, "Client ID is invalid. Must be 40 characters.\n")
     }
 }

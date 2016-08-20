@@ -1,7 +1,7 @@
 //
-//  WhiteLabel-Bridging-Header.h
+//  Constants.swift
 //
-//  Created by Alex Givens http://alexgivens.com on 1/13/16
+//  Created by Alex Givens http://alexgivens.com on 8/20/16
 //  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,4 +23,16 @@
 //  THE SOFTWARE.
 //
 
-#import <RestKit/RestKit.h>
+
+import Foundation
+
+struct CellIdentifier {
+    static let Collection = "CollectionCell"
+    static let Mixtape = "MixtapeCell"
+    static let Track = "TrackCell"
+}
+
+struct SegueIdentifier {
+    static let CollectionsToMixtapes = "CollectionsToMixtapes"
+    static let MixtapesToTracks = "MixtapesToTracks"
+}

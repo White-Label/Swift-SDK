@@ -1,28 +1,25 @@
 {
   "name": "WhiteLabel",
-  "version": "0.1.6",
-  "summary": "WhiteLabel is a Swift interface for the White Label API.",
-  "description": "TODO: Add long description of the pod here.",
-  "homepage": "https://github.com/NoonPacific/White-Label-Swift",
+  "version": "0.1.8",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
   },
+  "summary": "Swift SDK for the White Label API.",
+  "homepage": "https://github.com/NoonPacific/White-Label-Swift-SDK",
+  "social_media_url": "https://twitter.com/NoonPacific",
   "authors": {
-    "Alex Givens": "mail@alexgivens.com"
+    "Alex Givens": "alex@noonpacific.com"
   },
   "source": {
-    "git": "https://github.com/NoonPacific/White-Label-Swift",
-    "tag": "0.1.6"
+    "git": "https://github.com/NoonPacific/White-Label-Swift-SDK.git",
+    "tag": "0.1.8"
   },
   "platforms": {
     "ios": "8.0"
   },
   "source_files": "WhiteLabel/Classes/**/*",
-  "frameworks": [
-    "UIKit",
-    "CoreData"
-  ],
+  "frameworks": "UIKit",
   "dependencies": {
     "RestKit": [
       "~> 0.27.0"

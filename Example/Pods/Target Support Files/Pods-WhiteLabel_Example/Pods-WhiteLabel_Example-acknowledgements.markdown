@@ -1011,7 +1011,8 @@ third-party archives.
 
 ## WhiteLabel
 
-Copyright (c) 2016 Alexander Givens <mail@alexgivens.com>
+Created by Alex Givens http://alexgivens.com
+Copyright © 2016 Noon Pacific LLC http://noonpacific.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
