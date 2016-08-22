@@ -24,7 +24,10 @@
 //
 
 
-public class Mixtape : NSObject {
+import Alamofire
+import SwiftyJSON
+
+public final class Mixtape: ResponseObjectSerializable, ResponseListSerializable, URLStringConvertible {
     
     public var id : NSNumber!
     public var title : String!
@@ -41,4 +44,13 @@ public class Mixtape : NSObject {
     public var trackCount : NSNumber!
     public var collectionID : NSNumber!
     
+    public init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        id = representation.valueForKeyPath("id") as! NSNumber
+        title = representation.valueForKeyPath("title") as! String
+        slug = representation.valueForKeyPath("slug") as! String
+    }
+    
+    public var URLString: String {
+        return Constant.baseURLString + "/mixtapes/\(id)/"
+    }
 }

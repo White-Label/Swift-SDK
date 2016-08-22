@@ -24,12 +24,20 @@
 //
 
 
-public class Label : NSObject {
+import Alamofire
+
+public class Label {
     
     public var id : NSNumber!
     public var name : String!
     public var slug : String!
     public var iconURL : String?
     public var service : Service!
+}
+
+extension Label: ObjectURLStringConvertible {
     
+    public static var ObjectURLString: String {
+        return Constant.baseURLString + "/label/"
+    }
 }

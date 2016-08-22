@@ -24,7 +24,9 @@
 //
 
 
-public class Collection : NSObject {
+import Alamofire
+
+public class Collection {
     
     public var id : NSNumber!
     public var title : String!
@@ -36,4 +38,18 @@ public class Collection : NSObject {
     public var createdDate : String?
     public var mixtapeCount : NSNumber!
 
+}
+
+extension Collection: WhiteLabelType {
+    
+    public static var ListURLString: String {
+        return Constant.baseURLString + "/collections/"
+    }
+}
+
+extension Collection: URLStringConvertible {
+    
+    public var URLString: String {
+        return Constant.baseURLString + "/collections/\(id)/"
+    }
 }

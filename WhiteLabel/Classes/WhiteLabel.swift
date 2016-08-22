@@ -25,25 +25,277 @@
 
 
 import Foundation
-import RestKit
+import Alamofire
+import SwiftyJSON
+
+public protocol ObjectURLStringConvertible {
+    static var ObjectURLString: String { get }
+}
+
+public protocol ListURLStringConvertible {
+    static var ListURLString: String { get }
+}
+
+//public protocol AllowedMethods {
+//    var allowedMethods: [Alamofire.Method] { get set }
+//}
+
+
+
+//WhiteLabel.list(array, filters) {
+//    
+//}
+//
+//WhiteLabel.create(object) { result in
+//    switch result {
+//        .Success(let object):
+//            //confirm created object
+//        .Failure(let error):
+//            //show error
+//    }
+//}
+//
+//WhiteLabel.get(object) {
+//    
+//}
+//
+//WhiteLabel.update(object) {
+//    
+//}
+//
+//WhiteLabel.delete(object) {
+//    
+//}
+
+
+
+public enum Result<Value, Error: NSError> {
+    case Success(Value)
+    case Failure(Error)
+    
+    /// Returns `true` if the result is a success, `false` otherwise.
+    public var isSuccess: Bool {
+        switch self {
+        case .Success:
+            return true
+        case .Failure:
+            return false
+        }
+    }
+    
+    /// Returns `true` if the result is a failure, `false` otherwise.
+    public var isFailure: Bool {
+        return !isSuccess
+    }
+    
+    /// Returns the associated value if the result is a success, `nil` otherwise.
+    public var value: Value? {
+        switch self {
+        case .Success(let value):
+            return value
+        case .Failure:
+            return nil
+        }
+    }
+    
+    /// Returns the associated error value if the result is a failure, `nil` otherwise.
+    public var error: Error? {
+        switch self {
+        case .Success:
+            return nil
+        case .Failure(let error):
+            return error
+        }
+    }
+}
+
+public protocol WhiteLabelReturnType {
+    static var ListURLString: String { get }
+    
+    init(fromJson json: JSON!)
+}
+
+/***************/
+
+public enum BackendError: ErrorType {
+    case Network(error: NSError)
+    case DataSerialization(reason: String)
+    case JSONSerialization(error: NSError)
+    case ObjectSerialization(reason: String)
+    case XMLSerialization(error: NSError)
+}
+
+public protocol ResponseObjectSerializable {
+    init?(response: NSHTTPURLResponse, representation: AnyObject)
+}
+
+extension Request {
+    public func responseObject<T: ResponseObjectSerializable>(completionHandler: Response<T, BackendError> -> Void) -> Self {
+        let responseSerializer = ResponseSerializer<T, BackendError> { request, response, data, error in
+            guard error == nil else { return .Failure(.Network(error: error!)) }
+            
+            let JSONResponseSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
+            let result = JSONResponseSerializer.serializeResponse(request, response, data, error)
+            
+            switch result {
+            case .Success(let value):
+                if let
+                    response = response,
+                    responseObject = T(response: response, representation: value)
+                {
+                    return .Success(responseObject)
+                } else {
+                    return .Failure(.ObjectSerialization(reason: "JSON could not be serialized into response object: \(value)"))
+                }
+            case .Failure(let error):
+                return .Failure(.JSONSerialization(error: error))
+            }
+        }
+        
+        return response(responseSerializer: responseSerializer, completionHandler: completionHandler)
+    }
+}
+
+
+public protocol ResponseListSerializable {
+    static func list(response response: NSHTTPURLResponse, representation: AnyObject) -> [Self]
+}
+
+extension ResponseListSerializable where Self: ResponseObjectSerializable {
+    public static func list(response response: NSHTTPURLResponse, representation: AnyObject) -> [Self] {
+        var list = [Self]()
+        
+        if let representation = representation as? [[String: AnyObject]] {
+            for itemRepresentation in representation {
+                if let item = Self(response: response, representation: itemRepresentation) {
+                    list.append(item)
+                }
+            }
+        }
+        
+        return list
+    }
+}
+
+extension Alamofire.Request {
+    public func responseList<T: ResponseListSerializable>(completionHandler: Response<[T], BackendError> -> Void) -> Self {
+        let responseSerializer = ResponseSerializer<[T], BackendError> { request, response, data, error in
+            guard error == nil else { return .Failure(.Network(error: error!)) }
+            
+            let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
+            let result = JSONSerializer.serializeResponse(request, response, data, error)
+            
+            switch result {
+            case .Success(let value):
+                if let response = response {
+                    return .Success(T.list(response: response, representation: value))
+                } else {
+                    return .Failure(. ObjectSerialization(reason: "Response list could not be serialized due to nil response"))
+                }
+            case .Failure(let error):
+                return .Failure(.JSONSerialization(error: error))
+            }
+        }
+        
+        return response(responseSerializer: responseSerializer, completionHandler: completionHandler)
+    }
+}
+
+/***************/
+
+
+
+public class Testing123 {
+    
+    public enum ListType {
+        case Collections
+        case Mixtapes
+        case Tracks
+    }
+    
+    public class func coolio () {
+        
+        Alamofire.request(.GET, "url").responseList { (response: Response<[Mixtape], BackendError>) in
+            switch response.result {
+            case .Success(let mixtapes):
+                print("Mixtapes: \(mixtapes)")
+            case .Failure(let error):
+                print("Error: \(error)")
+            }
+        }
+        
+        WhiteLabel.list<Mixtape>(1, filters: nil, Mixtape.self) { collections<Collection> in
+            
+        }
+        
+    }
+    
+}
+
 
 public class WhiteLabel {
     
-    public static var baseURL: String = "https://beta.whitelabel.cool"
+    public class func list<T: WhiteLabelReturnType>(page: UInt = 1, filters: [String: String]? = nil, returningType: T.Type,  completion: [T] -> Void) {
+        
+        let parameters = [
+            "page": String(page)
+        ]
+        
+        Alamofire.request(.GET, T.ListURLString, parameters: parameters).responseJSON { response in
+            switch response.result {
+            case .Success(let data):
+                if let jsonArray = JSON(data).array {
+                    var objects: [T]
+                    for jsonObject in jsonArray {
+                        let convertedObject = T.init(fromJson: jsonObject)
+                        objects.append(convertedObject)
+                    }
+                    if objects.count > 0 {
+                        completion(objects)
+                    } else {
+                        // Failure
+                    }
+                } else {
+                    // Failure
+                }
+                
+            case .Failure(_):
+                print("error")
+            }
+        }
+        return true
+    }
+    
+    
+    
+    
     public static var apiVersion: String = "1.0"
     public static var pageSize: UInt = 20
     public static var clientID: String? {
         didSet {
-            WhiteLabel.initializeRestKit()
+            WhiteLabel.initialize()
         }
     }
-    public static let errorDomain: String = "cool.whitelabel.swift"
     
-    public enum Path: String {
-        case Label = "/api/label/"
-        case Collection = "/api/collections/"
-        case Mixtape = "/api/mixtapes/"
-        case Track = "/api/tracks/"
+    public enum Type {
+        case Collection
+        case Mixtape
+        case Track
+        
+        var ListPath: NSURL? {
+            var urlString: String
+            switch self {
+            case Collection:
+                urlString = "/collections/"
+            case Mixtape:
+                urlString = "/mixtapes/"
+            case Track:
+                urlString = "/tracks/"
+            }
+            return NSURL(string: urlString)
+        }
+        
+        
         func List() -> String {
             return self.rawValue
         }
@@ -61,7 +313,29 @@ public class WhiteLabel {
         }
     }
     
-    private class func initializeRestKit() {
+    private class func initialize() {
+        
+        validateClientID()
+        
+        let thing = Constant.baseURLString
+        
+        WhiteLabel.headers = [
+            "Client": WhiteLabel.clientID!,
+            "Accept": "application/json; version=" + apiVersion
+        ]
+        
+        
+        let URL = NSURL(string: WhiteLabel.baseURL)
+        let URLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
+        // set header fields
+        URLRequest.setValue("a", forHTTPHeaderField: "Authorization")
+        
+        let encoding = Alamofire.ParameterEncoding.URL
+        return encoding.encode(URLRequest, parameters: parameters).0
+        
+        
+        
+        
         let baseURL = NSURL(string: WhiteLabel.baseURL)
         let client = AFRKHTTPClient(baseURL: baseURL)
         
@@ -71,166 +345,7 @@ public class WhiteLabel {
         
         // initialize RestKit
         let objectManager = RKObjectManager(HTTPClient: client)
-        
-        // Setup Label Mapping
-        let labelMapping = RKObjectMapping(forClass: Label.self)
-        labelMapping.addAttributeMappingsFromDictionary([
-            "id":       "id",
-            "name":     "name",
-            "slug":     "slug",
-            "icon":     "iconURL",
-            ]
-        )
-        
-        let serviceMapping = RKObjectMapping(forClass: Service.self)
-        serviceMapping.addAttributeMappingsFromDictionary([
-            "id":               "id",
-            "name":             "name",
-            "slug":             "slug",
-            "external_url":     "externalURL",
-            ]
-        )
-        
-        labelMapping.addPropertyMapping(RKRelationshipMapping(fromKeyPath: "service", toKeyPath: "service", withMapping: serviceMapping))
-        
-        let labelResponseDescriptor = RKResponseDescriptor(
-            mapping: labelMapping,
-            method: .GET,
-            pathPattern: Path.Label.rawValue,
-            keyPath: nil,
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(labelResponseDescriptor)
-        
-        // Setup Pagination Mapping
-        let paginationMapping = RKObjectMapping(forClass: RKPaginator.self)
-        
-        let pagingAttributeMap = [
-            "count":    "objectCount",
-        ]
-        
-        paginationMapping.addAttributeMappingsFromDictionary(pagingAttributeMap)
-        
-        objectManager.paginationMapping = paginationMapping
-        
-        // Setup Collection Mapping
-        let collectionMapping = RKObjectMapping(forClass: Collection.self)
-        collectionMapping.addAttributeMappingsFromDictionary([
-            "id":                   "id",
-            "title":                "title",
-            "slug":                 "slug",
-            "description":          "_description",
-            "artwork_url":          "artworkURL",
-            "artwork_credit":       "artworkCredit",
-            "artwork_credit_url":   "artworkCreditURL",
-            "created":              "createdDate",
-            "mixtape_count":        "mixtapeCount",
-            ]
-        )
-        
-        let collectionList = RKResponseDescriptor(
-            mapping: collectionMapping,
-            method: .GET,
-            pathPattern: Path.Collection.List(),
-            keyPath: "results",
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(collectionList)
-        
-        let collectionDetail = RKResponseDescriptor(
-            mapping: collectionMapping,
-            method: .GET,
-            pathPattern: Path.Collection.Detail(),
-            keyPath: nil,
-            statusCodes: NSIndexSet(index: 200)
-        )
 
-        objectManager.addResponseDescriptor(collectionDetail)
-        
-        // Setup Mixtape Mapping
-        let mixtapeMapping = RKObjectMapping(forClass: Mixtape.self)
-        mixtapeMapping.addAttributeMappingsFromDictionary([
-            "id":                   "id",
-            "title":                "title",
-            "slug":                 "slug",
-            "description":          "_description",
-            "artwork_url":          "artworkURL",
-            "artwork_credit":       "artworkCredit",
-            "artwork_credit_url":   "artworkCreditURL",
-            "sponsor":              "sponsor",
-            "sponsor_url":          "sponsorURL",
-            "product":              "product",
-            "product_url":          "productURL",
-            "release":              "releaseDate",
-            "track_count":          "trackCount",
-            "collection":           "collectionID",
-            ]
-        )
-        
-        let mixtapeList = RKResponseDescriptor(
-            mapping: mixtapeMapping,
-            method: .GET,
-            pathPattern: Path.Mixtape.List(),
-            keyPath: "results",
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(mixtapeList)
-        
-        let mixtapeDetail = RKResponseDescriptor(
-            mapping: mixtapeMapping,
-            method: .GET,
-            pathPattern: Path.Mixtape.Detail(),
-            keyPath: nil,
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(mixtapeDetail)
-        
-        // Setup Track Mapping
-        let trackMapping = RKObjectMapping(forClass: Track.self)
-        trackMapping.addAttributeMappingsFromDictionary([
-            "id":             "id",
-            "title":            "title",
-            "artist":           "artist",
-            "slug":             "slug",
-            "streamable":       "streamable",
-            "duration":         "duration",
-            "external_id":      "externalID",
-            "stream_url":       "streamURL",
-            "permalink_url":    "permalinkURL",
-            "artwork_url":      "artworkURL",
-            "purchase_url":     "purchaseURL",
-            "download_url":     "downloadURL",
-            "ticket_url":       "ticketURL",
-            "play_count":       "playCount",
-            "order":            "order",
-            ]
-        )
-        
-        let trackList = RKResponseDescriptor(
-            mapping: trackMapping,
-            method: .GET,
-            pathPattern: Path.Track.List(),
-            keyPath: "results",
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(trackList)
-        
-        let trackDetail = RKResponseDescriptor(
-            mapping: trackMapping,
-            method: .GET,
-            pathPattern: Path.Track.Detail(),
-            keyPath: nil,
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(trackDetail)
-        
-        RKlcl_configure_by_name("*", RKlcl_vOff.rawValue);
     }
     
     public class func getLabel(success success: (Label! -> Void), failure: (NSError! -> Void)) {
@@ -242,9 +357,13 @@ public class WhiteLabel {
                 if let label = object as? Label {
                     success(label)
                 } else {
-                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
-                        NSLocalizedDescriptionKey: "Unable to cast returned obect as Label."
-                        ])
+                    let error = NSError(
+                        domain: Constant.errorDomain,
+                        code: NSURLErrorCannotParseResponse,
+                        userInfo: [
+                            NSLocalizedDescriptionKey: "Unable to cast returned obect as Label."
+                        ]
+                    )
                     failure(error)
                 }
             },
@@ -402,6 +521,20 @@ public class WhiteLabel {
     
     public class func getList(path: Path, forPage page: UInt, withParameters parameters: [NSObject: AnyObject]?, success: (objects: [AnyObject]) -> Void, failure: (error: NSError) -> Void) -> Void {
         validateClientID()
+        
+        Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
+            .responseJSON { response in
+                print(response.request)  // original URL request
+                print(response.response) // URL response
+                print(response.data)     // server data
+                print(response.result)   // result of response serialization
+                
+                if let JSON = response.result.value {
+                    print("JSON: \(JSON)")
+                }
+        }
+        
+        
         
         let fullPath = path.List() + "?page=:currentPage"
         
