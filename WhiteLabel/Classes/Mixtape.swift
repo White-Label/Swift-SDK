@@ -24,21 +24,41 @@
 //
 
 
-public class Mixtape : NSObject {
+import Alamofire
+
+public final class Mixtape: ResponseObjectSerializable, ResponseCollectionSerializable {
     
     public var id : NSNumber!
     public var title : String!
     public var slug : String!
-    public var _description : String!
-    public var artworkURL : String!
-    public var artworkCredit : String!
-    public var artworkCreditURL : String!
-    public var sponsor : String!
-    public var sponsorURL : String!
-    public var product : String!
-    public var productURL : String!
-    public var releaseDate : String!
+    public var descriptionText : String?
+    public var artworkURL : String?
+    public var artworkCredit : String?
+    public var artworkCreditURL : String?
+    public var sponsor : String?
+    public var sponsorURL : String?
+    public var product : String?
+    public var productURL : String?
+    public var releaseDate : String?
     public var trackCount : NSNumber!
     public var collectionID : NSNumber!
     
+    public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        
+        id = representation.valueForKeyPath("id") as! NSNumber
+        title = representation.valueForKeyPath("title") as! String
+        slug = representation.valueForKeyPath("slug") as! String
+        descriptionText = representation.valueForKeyPath("description") as? String
+        artworkURL = representation.valueForKeyPath("artwork_url") as? String
+        artworkCredit = representation.valueForKeyPath("artwork_credit") as? String
+        artworkCreditURL = representation.valueForKeyPath("artwork_credit_url") as? String
+        sponsor = representation.valueForKeyPath("sponsor") as? String
+        sponsorURL = representation.valueForKeyPath("sponsor_url") as? String
+        product = representation.valueForKeyPath("product") as? String
+        productURL = representation.valueForKeyPath("product_url") as? String
+        releaseDate = representation.valueForKeyPath("realease") as? String
+        trackCount = representation.valueForKeyPath("track_count") as! NSNumber
+        collectionID = representation.valueForKeyPath("collection") as! NSNumber
+        
+    }
 }

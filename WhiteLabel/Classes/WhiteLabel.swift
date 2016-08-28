@@ -25,418 +25,147 @@
 
 
 import Foundation
-import RestKit
+import Alamofire
 
 public class WhiteLabel {
     
-    public static var baseURL: String = "https://beta.whitelabel.cool"
-    public static var apiVersion: String = "1.0"
-    public static var pageSize: UInt = 20
-    public static var clientID: String? {
-        didSet {
-            WhiteLabel.initializeRestKit()
-        }
-    }
-    public static let errorDomain: String = "cool.whitelabel.swift"
+    public static let BaseURLString: String = "https://beta.whitelabel.cool/api"
+    public static var Version: String = "1.0"
+    public static let ErrorDomain: String = "cool.whitelabel.swift"
+    public static var PageSize: UInt = 20
+    public static var ClientID: String?
     
-    public enum Path: String {
-        case Label = "/api/label/"
-        case Collection = "/api/collections/"
-        case Mixtape = "/api/mixtapes/"
-        case Track = "/api/tracks/"
-        func List() -> String {
-            return self.rawValue
-        }
-        func Detail() -> String {
-            if self == Label {
-                return self.rawValue
-            }
-            return self.rawValue + ":id/"
-        }
-        func detailWith(identifier: String?) -> String {
-            if identifier == nil || self == Label {
-                return self.rawValue
-            }
-            return self.rawValue + identifier! + "/"
-        }
-    }
-    
-    private class func initializeRestKit() {
-        let baseURL = NSURL(string: WhiteLabel.baseURL)
-        let client = AFRKHTTPClient(baseURL: baseURL)
+    public class func GetLabel(success success: (Label! -> Void), failure: (BackendError! -> Void)) {
         
-        validateClientID()
-        client.setDefaultHeader("Client", value: clientID)
-        client.setDefaultHeader("Accept", value: "application/json; version=" + apiVersion)
-        
-        // initialize RestKit
-        let objectManager = RKObjectManager(HTTPClient: client)
-        
-        // Setup Label Mapping
-        let labelMapping = RKObjectMapping(forClass: Label.self)
-        labelMapping.addAttributeMappingsFromDictionary([
-            "id":       "id",
-            "name":     "name",
-            "slug":     "slug",
-            "icon":     "iconURL",
-            ]
-        )
-        
-        let serviceMapping = RKObjectMapping(forClass: Service.self)
-        serviceMapping.addAttributeMappingsFromDictionary([
-            "id":               "id",
-            "name":             "name",
-            "slug":             "slug",
-            "external_url":     "externalURL",
-            ]
-        )
-        
-        labelMapping.addPropertyMapping(RKRelationshipMapping(fromKeyPath: "service", toKeyPath: "service", withMapping: serviceMapping))
-        
-        let labelResponseDescriptor = RKResponseDescriptor(
-            mapping: labelMapping,
-            method: .GET,
-            pathPattern: Path.Label.rawValue,
-            keyPath: nil,
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(labelResponseDescriptor)
-        
-        // Setup Pagination Mapping
-        let paginationMapping = RKObjectMapping(forClass: RKPaginator.self)
-        
-        let pagingAttributeMap = [
-            "count":    "objectCount",
-        ]
-        
-        paginationMapping.addAttributeMappingsFromDictionary(pagingAttributeMap)
-        
-        objectManager.paginationMapping = paginationMapping
-        
-        // Setup Collection Mapping
-        let collectionMapping = RKObjectMapping(forClass: Collection.self)
-        collectionMapping.addAttributeMappingsFromDictionary([
-            "id":                   "id",
-            "title":                "title",
-            "slug":                 "slug",
-            "description":          "_description",
-            "artwork_url":          "artworkURL",
-            "artwork_credit":       "artworkCredit",
-            "artwork_credit_url":   "artworkCreditURL",
-            "created":              "createdDate",
-            "mixtape_count":        "mixtapeCount",
-            ]
-        )
-        
-        let collectionList = RKResponseDescriptor(
-            mapping: collectionMapping,
-            method: .GET,
-            pathPattern: Path.Collection.List(),
-            keyPath: "results",
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(collectionList)
-        
-        let collectionDetail = RKResponseDescriptor(
-            mapping: collectionMapping,
-            method: .GET,
-            pathPattern: Path.Collection.Detail(),
-            keyPath: nil,
-            statusCodes: NSIndexSet(index: 200)
-        )
-
-        objectManager.addResponseDescriptor(collectionDetail)
-        
-        // Setup Mixtape Mapping
-        let mixtapeMapping = RKObjectMapping(forClass: Mixtape.self)
-        mixtapeMapping.addAttributeMappingsFromDictionary([
-            "id":                   "id",
-            "title":                "title",
-            "slug":                 "slug",
-            "description":          "_description",
-            "artwork_url":          "artworkURL",
-            "artwork_credit":       "artworkCredit",
-            "artwork_credit_url":   "artworkCreditURL",
-            "sponsor":              "sponsor",
-            "sponsor_url":          "sponsorURL",
-            "product":              "product",
-            "product_url":          "productURL",
-            "release":              "releaseDate",
-            "track_count":          "trackCount",
-            "collection":           "collectionID",
-            ]
-        )
-        
-        let mixtapeList = RKResponseDescriptor(
-            mapping: mixtapeMapping,
-            method: .GET,
-            pathPattern: Path.Mixtape.List(),
-            keyPath: "results",
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(mixtapeList)
-        
-        let mixtapeDetail = RKResponseDescriptor(
-            mapping: mixtapeMapping,
-            method: .GET,
-            pathPattern: Path.Mixtape.Detail(),
-            keyPath: nil,
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(mixtapeDetail)
-        
-        // Setup Track Mapping
-        let trackMapping = RKObjectMapping(forClass: Track.self)
-        trackMapping.addAttributeMappingsFromDictionary([
-            "id":             "id",
-            "title":            "title",
-            "artist":           "artist",
-            "slug":             "slug",
-            "streamable":       "streamable",
-            "duration":         "duration",
-            "external_id":      "externalID",
-            "stream_url":       "streamURL",
-            "permalink_url":    "permalinkURL",
-            "artwork_url":      "artworkURL",
-            "purchase_url":     "purchaseURL",
-            "download_url":     "downloadURL",
-            "ticket_url":       "ticketURL",
-            "play_count":       "playCount",
-            "order":            "order",
-            ]
-        )
-        
-        let trackList = RKResponseDescriptor(
-            mapping: trackMapping,
-            method: .GET,
-            pathPattern: Path.Track.List(),
-            keyPath: "results",
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(trackList)
-        
-        let trackDetail = RKResponseDescriptor(
-            mapping: trackMapping,
-            method: .GET,
-            pathPattern: Path.Track.Detail(),
-            keyPath: nil,
-            statusCodes: NSIndexSet(index: 200)
-        )
-        
-        objectManager.addResponseDescriptor(trackDetail)
-        
-        RKlcl_configure_by_name("*", RKlcl_vOff.rawValue);
-    }
-    
-    public class func getLabel(success success: (Label! -> Void), failure: (NSError! -> Void)) {
-        
-        WhiteLabel.getDetail(
-            .Label,
-            identifier: nil, // Identity is inferred
-            success: { object in
-                if let label = object as? Label {
+        Alamofire.request(Router.GetLabel).validate()
+            .responseObject { (response: Response<Label, BackendError>) in
+                switch response.result {
+                case .Success(let label):
                     success(label)
-                } else {
-                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
-                        NSLocalizedDescriptionKey: "Unable to cast returned obect as Label."
-                        ])
+                case .Failure(let error):
                     failure(error)
                 }
-            },
-            failure: failure
-        )
+        }
     }
     
-    public class func getCollections(parameters parameters: [NSObject: AnyObject]?, page: UInt, success: ([Collection]! -> Void), failure: (NSError! -> Void)) {
-        WhiteLabel.getList(
-            .Collection,
-            forPage: page,
-            withParameters: parameters,
-            success: { objects in
-                if let collections = objects as? [Collection] {
+    public class func ListCollections(parameters parameters: [String: AnyObject]?, page: UInt, success: ([Collection]! -> Void), failure: (BackendError! -> Void)) {
+        
+        var params = parameters != nil ? parameters! : [String: AnyObject]()
+        params["page"] = String(page)
+        
+        Alamofire.request(Router.ListCollections(parameters: params)).validate()
+            .responseCollection { (response: Response<[Collection], BackendError>) in
+                switch response.result {
+                case .Success(let collections):
                     success(collections)
-                } else {
-                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
-                        NSLocalizedDescriptionKey: "Unable to cast returned obects as Array<Collection>."
-                        ])
+                case .Failure(let error):
                     failure(error)
                 }
-            },
-            failure: failure
-        )
+        }
     }
     
-    public class func getCollectionDetail(identifier: AnyObject, success: (Collection! -> Void), failure: (NSError! -> Void)) {
+    public class func GetCollection(id: AnyObject, success: (Collection! -> Void), failure: (BackendError! -> Void)) {
         
-        var uniqueID = identifier
+        var identifier = id
         
-        if let collection = identifier as? Collection {
-            uniqueID = collection.id
+        if let collection = id as? Collection {
+            identifier = collection.id
         }
         
-        WhiteLabel.getDetail(
-            .Collection,
-            identifier: String(uniqueID),
-            success: { object in
-                if let collection = object as? Collection {
+        Alamofire.request(Router.GetCollection(id: identifier)).validate()
+            .responseObject { (response: Response<Collection, BackendError>) in
+                switch response.result {
+                case .Success(let collection):
                     success(collection)
-                } else {
-                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
-                        NSLocalizedDescriptionKey: "Unable to cast returned obect as Collection."
-                        ])
+                case .Failure(let error):
                     failure(error)
                 }
-            },
-            failure: failure
-        )
+        }
     }
     
-    public class func getMixtapesForCollection(collection: Collection, page: UInt, success: ([Mixtape]! -> Void), failure: (NSError! -> Void)) {
+    public class func ListMixtapesForCollection(collection: Collection, page: UInt, success: ([Mixtape]! -> Void), failure: (BackendError! -> Void)) {
         
-        var parameters = [NSObject: AnyObject]()
+        var parameters = [String: AnyObject]()
         parameters["collection"] = String(collection.id)
         
-        WhiteLabel.getMixtapes(parameters: parameters, page: page, success: success, failure: failure)
+        WhiteLabel.ListMixtapes(parameters: parameters, page: page, success: success, failure: failure)
     }
     
-    public class func getMixtapes(parameters parameters: [NSObject: AnyObject]?, page: UInt, success: ([Mixtape]! -> Void), failure: (NSError! -> Void)) {
-        WhiteLabel.getList(
-            .Mixtape,
-            forPage: page,
-            withParameters: parameters,
-            success: { objects in
-                if let mixtapes = objects as? [Mixtape] {
+    public class func ListMixtapes(parameters parameters: [String: AnyObject]?, page: UInt, success: ([Mixtape]! -> Void), failure: (BackendError! -> Void)) {
+        
+        var params = parameters != nil ? parameters! : [String: AnyObject]()
+        params["page"] = String(page)
+        
+        Alamofire.request(Router.ListMixtapes(parameters: params)).validate()
+            .responseCollection { (response: Response<[Mixtape], BackendError>) in
+                switch response.result {
+                case .Success(let mixtapes):
                     success(mixtapes)
-                } else {
-                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
-                        NSLocalizedDescriptionKey: "Unable to cast returned obects as Array<Mixtape>."
-                        ])
+                case .Failure(let error):
                     failure(error)
                 }
-            },
-            failure: failure
-        )
+        }
     }
     
-    public class func getMixtapeDetail(identifier: AnyObject, success: (Mixtape! -> Void), failure: (NSError! -> Void)) {
+    public class func GetMixtape(id: AnyObject, success: (Mixtape! -> Void), failure: (BackendError! -> Void)) {
         
-        var uniqueID = identifier
+        var identifier = id
         
-        if let mixtape = identifier as? Mixtape {
-            uniqueID = mixtape.id
+        if let mixtape = id as? Mixtape {
+            identifier = mixtape.id
         }
         
-        WhiteLabel.getDetail(
-            .Mixtape,
-            identifier: String(uniqueID),
-            success: { object in
-                if let mixtape = object as? Mixtape {
+        Alamofire.request(Router.GetMixtape(id: identifier)).validate()
+            .responseObject { (response: Response<Mixtape, BackendError>) in
+                switch response.result {
+                case .Success(let mixtape):
                     success(mixtape)
-                } else {
-                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
-                        NSLocalizedDescriptionKey: "Unable to cast returned obect as Mixtape."
-                        ])
+                case .Failure(let error):
                     failure(error)
                 }
-            },
-            failure: failure
-        )
+        }
     }
     
-    public class func getTracksForMixtape(mixtape: Mixtape, page: UInt, success: ([Track]! -> Void), failure: (NSError! -> Void)) {
+    public class func ListTracksForMixtape(mixtape: Mixtape, page: UInt, success: ([Track]! -> Void), failure: (BackendError! -> Void)) {
         
-        var parameters = [NSObject: AnyObject]()
+        var parameters = [String: AnyObject]()
         parameters["mixtape"] = String(mixtape.id)
         
-        WhiteLabel.getTracks(parameters: parameters, page: page, success: success, failure: failure)
+        WhiteLabel.ListTracks(parameters: parameters, page: page, success: success, failure: failure)
     }
     
-    public class func getTracks(parameters parameters: [NSObject: AnyObject]?, page: UInt, success: ([Track]! -> Void), failure: (NSError! -> Void)) {
-        WhiteLabel.getList(
-            .Track,
-            forPage: page,
-            withParameters: parameters,
-            success: { objects in
-                if let tracks = objects as? [Track] {
+    public class func ListTracks(parameters parameters: [String: AnyObject]?, page: UInt, success: ([Track]! -> Void), failure: (BackendError! -> Void)) {
+        
+        var params = parameters != nil ? parameters! : [String: AnyObject]()
+        params["page"] = String(page)
+        
+        Alamofire.request(Router.ListTracks(parameters: params)).validate()
+            .responseCollection { (response: Response<[Track], BackendError>) in
+                switch response.result {
+                case .Success(let tracks):
                     success(tracks)
-                } else {
-                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
-                        NSLocalizedDescriptionKey: "Unable to cast returned obects as Array<Track>."
-                        ])
+                case .Failure(let error):
                     failure(error)
                 }
-            },
-            failure: failure
-        )
+        }
     }
     
-    public class func getTrackDetail(identifier: AnyObject, success: (Track! -> Void), failure: (NSError! -> Void)) {
+    public class func GetTrack(id: AnyObject, success: (Track! -> Void), failure: (BackendError! -> Void)) {
         
-        var uniqueID = identifier
+        var identifier = id
         
-        if let track = identifier as? Track {
-            uniqueID = track.id
+        if let track = id as? Track {
+            identifier = track.id
         }
         
-        WhiteLabel.getDetail(
-            .Track,
-            identifier: String(uniqueID),
-            success: { object in
-                if let track = object as? Track {
+        Alamofire.request(Router.GetTrack(id: identifier)).validate()
+            .responseObject { (response: Response<Track, BackendError>) in
+                switch response.result {
+                case .Success(let track):
                     success(track)
-                } else {
-                    let error = NSError(domain: WhiteLabel.errorDomain, code: NSURLErrorCannotParseResponse, userInfo: [
-                        NSLocalizedDescriptionKey: "Unable to cast returned obect as Track."
-                        ]) 
+                case .Failure(let error):
                     failure(error)
                 }
-            },
-            failure: failure
-        )
-    }
-    
-    public class func getList(path: Path, forPage page: UInt, withParameters parameters: [NSObject: AnyObject]?, success: (objects: [AnyObject]) -> Void, failure: (error: NSError) -> Void) -> Void {
-        validateClientID()
-        
-        let fullPath = path.List() + "?page=:currentPage"
-        
-        let paginator = RKObjectManager.sharedManager().paginatorWithPathPattern(fullPath, parameters: parameters)
-        paginator.perPage = WhiteLabel.pageSize
-        
-        paginator.setCompletionBlockWithSuccess(
-            { paginator, objects, page in
-                success(objects: objects)
-            },
-            failure: { paginator, error in
-                failure(error: error)
-            }
-        )
-        
-        paginator.loadPage(page)
-    }
-    
-    public class func getDetail(path: Path, identifier: String?, success: (object: AnyObject) -> Void, failure: (error: NSError) -> Void) -> Void {
-        validateClientID()
-        
-        RKObjectManager.sharedManager().getObjectsAtPath(
-            path.detailWith(identifier),
-            parameters: nil,
-            success: { operation, result in
-                success(object: result.firstObject)
-            },
-            failure: { operation, error in
-                failure(error: error)
-            }
-        )
-    }
-
-    private class func validateClientID() {
-        assert(WhiteLabel.clientID != nil, "No Client ID found. Please ensure you provide a White Label API Client ID as per the README.\n")
-        assert(WhiteLabel.clientID!.characters.count == 40, "Client ID is invalid. Must be 40 characters.\n")
+        }
     }
 }

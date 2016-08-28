@@ -24,16 +24,31 @@
 //
 
 
-public class Collection : NSObject {
+import Alamofire
+
+public final class Collection: ResponseObjectSerializable, ResponseCollectionSerializable {
     
     public var id : NSNumber!
     public var title : String!
     public var slug : String!
-    public var _description : String?
+    public var descriptionText : String?
     public var artworkURL : String?
     public var artworkCredit : String?
     public var artworkCreditURL : String?
     public var createdDate : String?
     public var mixtapeCount : NSNumber!
-
+    
+    public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        
+        id = representation.valueForKeyPath("id") as! NSNumber
+        title = representation.valueForKeyPath("title") as! String
+        slug = representation.valueForKeyPath("slug") as! String
+        descriptionText = representation.valueForKeyPath("description") as? String
+        artworkURL = representation.valueForKeyPath("artwork_url") as? String
+        artworkCredit = representation.valueForKeyPath("artwork_credit") as? String
+        artworkCreditURL = representation.valueForKeyPath("artwork_credit_url") as? String
+        createdDate = representation.valueForKeyPath("created") as! String
+        mixtapeCount = representation.valueForKeyPath("mixtape_count") as! NSNumber
+        
+    }
 }

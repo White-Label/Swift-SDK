@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Setup White Label SDK
         if let clientID = getClientID() {
-            WhiteLabel.clientID = clientID
+            WhiteLabel.ClientID = clientID
         } else {
             assertionFailure("Client ID was not loaded from keys.plist. Please ensure you provide a White Label API Client ID as per the README.")
         }

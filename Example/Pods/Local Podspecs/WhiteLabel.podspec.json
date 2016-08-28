@@ -1,6 +1,6 @@
 {
   "name": "WhiteLabel",
-  "version": "0.1.8",
+  "version": "0.2.1",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
@@ -13,16 +13,18 @@
   },
   "source": {
     "git": "https://github.com/NoonPacific/White-Label-Swift-SDK.git",
-    "tag": "0.1.8"
+    "tag": "0.2.1"
   },
   "platforms": {
-    "ios": "8.0"
+    "ios": "8.0",
+    "osx": "10.9",
+    "tvos": "9.0",
+    "watchos": "2.0"
   },
   "source_files": "WhiteLabel/Classes/**/*",
-  "frameworks": "UIKit",
   "dependencies": {
-    "RestKit": [
-      "~> 0.27.0"
+    "Alamofire": [
+      "~> 3.4"
     ]
   }
 }
