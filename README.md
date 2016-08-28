@@ -4,7 +4,7 @@
 [![Version](https://img.shields.io/cocoapods/v/WhiteLabel.svg?style=flat)](http://cocoapods.org/pods/WhiteLabel)
 [![License](https://img.shields.io/cocoapods/l/WhiteLabel.svg?style=flat)](http://cocoapods.org/pods/WhiteLabel)
 [![Platform](https://img.shields.io/cocoapods/p/WhiteLabel.svg?style=flat)](http://cocoapods.org/pods/WhiteLabel)
-[![Twitter](https://img.shields.io/badge/twitter-@WhiteLabelCool-blue.svg?style=flat)](http://twitter.com/WhiteLabelCool)
+[![Twitter](https://img.shields.io/badge/twitter-%40WhiteLabelCool-blue.svg)](http://twitter.com/WhiteLabelCool)
 
 ## Example
 
