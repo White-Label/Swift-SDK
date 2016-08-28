@@ -47,7 +47,7 @@ public final class Collection: ResponseObjectSerializable, ResponseCollectionSer
         artworkURL = representation.valueForKeyPath("artwork_url") as? String
         artworkCredit = representation.valueForKeyPath("artwork_credit") as? String
         artworkCreditURL = representation.valueForKeyPath("artwork_credit_url") as? String
-        createdDate = representation.valueForKeyPath("created") as! String
+        createdDate = representation.valueForKeyPath("created") as? String
         mixtapeCount = representation.valueForKeyPath("mixtape_count") as! NSNumber
         
     }
