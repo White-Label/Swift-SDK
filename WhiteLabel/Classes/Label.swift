@@ -35,8 +35,12 @@ public final class Label: ResponseObjectSerializable {
     public var service : Service!
     
     public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        
         id = representation.valueForKeyPath("id") as! NSNumber
         name = representation.valueForKeyPath("name") as! String
         slug = representation.valueForKeyPath("slug") as! String
+        iconURL = representation.valueForKeyPath("slug") as? String
+        service = Service(response: response, representation: representation.valueForKeyPath("service")!)
+        
     }
 }

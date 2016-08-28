@@ -31,4 +31,12 @@ public class Service {
     public var slug : String!
     public var externalURL : String?
     
+    public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        
+        id = representation.valueForKeyPath("id") as! NSNumber
+        name = representation.valueForKeyPath("name") as! String
+        slug = representation.valueForKeyPath("slug") as! String
+        externalURL = representation.valueForKeyPath("external_url") as? String
+        
+    }
 }

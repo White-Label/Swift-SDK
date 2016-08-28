@@ -32,22 +32,35 @@ public final class Track: ResponseObjectSerializable, ResponseCollectionSerializ
     public var title : String!
     public var artist : String!
     public var slug : String!
-    public var streamable : NSNumber!
-    public var duration : NSNumber!
+    public var streamable : Bool!
+    public var duration : NSNumber?
     public var externalID : NSNumber!
     public var streamURL : String!
-    public var permalinkURL : String!
-    public var artworkURL : String!
-    public var purchaseURL : String!
-    public var downloadURL : String!
-    public var ticketURL : String!
+    public var permalinkURL : String?
+    public var artworkURL : String?
+    public var purchaseURL : String?
+    public var downloadURL : String?
+    public var ticketURL : String?
     public var playCount : NSNumber!
     public var order : NSNumber!
     
     public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        
         id = representation.valueForKeyPath("id") as! NSNumber
         title = representation.valueForKeyPath("title") as! String
         artist = representation.valueForKeyPath("artist") as! String
+        slug = representation.valueForKeyPath("slug") as! String
+        streamable = representation.valueForKeyPath("streamable") as! Bool
+        duration = representation.valueForKeyPath("duration") as? NSNumber
+        externalID = representation.valueForKeyPath("external_id") as! NSNumber
+        streamURL = representation.valueForKeyPath("stream_url") as! String
+        permalinkURL = representation.valueForKeyPath("permalink_url") as? String
+        artworkURL = representation.valueForKeyPath("artwork_url") as? String
+        purchaseURL = representation.valueForKeyPath("purchase_url") as? String
+        downloadURL = representation.valueForKeyPath("download_url") as? String
+        playCount = representation.valueForKeyPath("play_count") as! NSNumber
+        order = representation.valueForKeyPath("order") as! NSNumber
+        
     }
     
 }
