@@ -3,13 +3,13 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WhiteLabel'
-  s.version          = '0.2.1'
+  s.version          = '0.2.2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.summary          = 'Swift SDK for the White Label API.'
-  s.homepage         = 'https://github.com/NoonPacific/White-Label-Swift-SDK'
+  s.homepage         = 'https://github.com/White-Label/Swift-SDK'
   s.social_media_url = 'https://twitter.com/NoonPacific'
   s.author           = { 'Alex Givens' => 'alex@noonpacific.com' }
-  s.source           = { :git => 'https://github.com/NoonPacific/White-Label-Swift-SDK.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/White-Label/Swift-SDK.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.9'
