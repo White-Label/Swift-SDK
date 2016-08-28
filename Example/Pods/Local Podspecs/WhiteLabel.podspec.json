@@ -1,6 +1,6 @@
 {
   "name": "WhiteLabel",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/NoonPacific/White-Label-Swift-SDK.git",
-    "tag": "0.2.0"
+    "tag": "0.2.1"
   },
   "platforms": {
     "ios": "8.0",
@@ -25,9 +25,6 @@
   "dependencies": {
     "Alamofire": [
       "~> 3.4"
-    ],
-    "SwiftyJSON": [
-      "~> 2.3"
     ]
   }
 }

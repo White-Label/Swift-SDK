@@ -26,18 +26,17 @@
 
 import Alamofire
 
-public class Label {
+public final class Label: ResponseObjectSerializable {
     
     public var id : NSNumber!
     public var name : String!
     public var slug : String!
     public var iconURL : String?
     public var service : Service!
-}
-
-extension Label: ObjectURLStringConvertible {
     
-    public static var ObjectURLString: String {
-        return Constant.baseURLString + "/label/"
+    public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        id = representation.valueForKeyPath("id") as! NSNumber
+        name = representation.valueForKeyPath("name") as! String
+        slug = representation.valueForKeyPath("slug") as! String
     }
 }

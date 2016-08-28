@@ -3,7 +3,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WhiteLabel'
-  s.version          = '0.2.0'
+  s.version          = '0.2.1'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.summary          = 'Swift SDK for the White Label API.'
   s.homepage         = 'https://github.com/NoonPacific/White-Label-Swift-SDK'
@@ -18,5 +18,4 @@ Pod::Spec.new do |s|
 
   s.source_files = 'WhiteLabel/Classes/**/*'
   s.dependency 'Alamofire', '~> 3.4'
-  s.dependency 'SwiftyJSON', '~> 2.3'
 end

@@ -24,7 +24,7 @@
 //
 
 
-public class Service : NSObject {
+public class Service {
     
     public var id : NSNumber!
     public var name : String!

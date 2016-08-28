@@ -26,7 +26,7 @@
 
 import Alamofire
 
-public class Track {
+public final class Track: ResponseObjectSerializable, ResponseCollectionSerializable {
     
     public var id : NSNumber!
     public var title : String!
@@ -44,24 +44,10 @@ public class Track {
     public var playCount : NSNumber!
     public var order : NSNumber!
     
-    init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
         id = representation.valueForKeyPath("id") as! NSNumber
         title = representation.valueForKeyPath("title") as! String
         artist = representation.valueForKeyPath("artist") as! String
     }
     
-}
-
-extension Track: WhiteLabelType {
-    
-    public static var ListURLString: String {
-        return Constant.baseURLString + "/tracks/"
-    }
-}
-
-extension Track: URLStringConvertible {
-    
-    public var URLString: String {
-        return Constant.baseURLString + "/tracks/\(id)/"
-    }
 }

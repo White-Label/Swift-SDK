@@ -26,30 +26,22 @@
 
 import Alamofire
 
-public class Collection {
+public final class Collection: ResponseObjectSerializable, ResponseCollectionSerializable {
     
     public var id : NSNumber!
     public var title : String!
     public var slug : String!
-    public var _description : String?
+    public var descriptionText : String?
     public var artworkURL : String?
     public var artworkCredit : String?
     public var artworkCreditURL : String?
     public var createdDate : String?
     public var mixtapeCount : NSNumber!
-
-}
-
-extension Collection: WhiteLabelType {
     
-    public static var ListURLString: String {
-        return Constant.baseURLString + "/collections/"
-    }
-}
-
-extension Collection: URLStringConvertible {
-    
-    public var URLString: String {
-        return Constant.baseURLString + "/collections/\(id)/"
+    public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        id = representation.valueForKeyPath("id") as! NSNumber
+        title = representation.valueForKeyPath("title") as! String
+        slug = representation.valueForKeyPath("slug") as! String
+        mixtapeCount = representation.valueForKeyPath("mixtape_count") as! NSNumber
     }
 }
