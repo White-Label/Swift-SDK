@@ -35,7 +35,7 @@ public final class Collection: ResponseObjectSerializable, ResponseCollectionSer
     public var artworkURL : String?
     public var artworkCredit : String?
     public var artworkCreditURL : String?
-    public var createdDate : String?
+    public var createdDate : String!
     public var mixtapeCount : NSNumber!
     
     public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
@@ -47,7 +47,7 @@ public final class Collection: ResponseObjectSerializable, ResponseCollectionSer
         artworkURL = representation.valueForKeyPath("artwork_url") as? String
         artworkCredit = representation.valueForKeyPath("artwork_credit") as? String
         artworkCreditURL = representation.valueForKeyPath("artwork_credit_url") as? String
-        createdDate = representation.valueForKeyPath("created") as? String
+        createdDate = representation.valueForKeyPath("created") as! String
         mixtapeCount = representation.valueForKeyPath("mixtape_count") as! NSNumber
         
     }
