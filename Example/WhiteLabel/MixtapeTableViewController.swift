@@ -35,7 +35,7 @@ class MixtapeTableViewController: UITableViewController {
             tableView.reloadData()
         }
     }
-    var paging = PagingGenerator<Mixtape>(startPage: 1)
+    var paging = PagingGenerator(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,20 +46,24 @@ class MixtapeTableViewController: UITableViewController {
         // Setup the paging generator with White Label
         paging.next = { page in
             
-            WhiteLabel.getMixtapesForCollection(
+            WhiteLabel.ListMixtapesForCollection(
                 self.collection,
                 page: page,
                 success: { mixtapes in
                     self.mixtapes += mixtapes
                 },
                 failure: { error in
-                    
-                    if error.code == -1011 {
-                        // If we get a 404 error, stop paging
-                        self.paging.reachedEnd()
+                    switch error! {
+                    case .Network(let statusCode, let error):
+                        if statusCode == 404 {
+                            self.paging.reachedEnd()
+                        }
+                        debugPrint("Network Error: \(error)")
+                    case .JSONSerialization(let error):
+                        print("JSONSerialization Error: \(error)")
+                    case .ObjectSerialization(let reason):
+                        print("ObjectSerialization Error Reason: \(reason)")
                     }
-                    
-                    print("Error: \(error)")
                 }
             )
             
@@ -97,7 +101,7 @@ class MixtapeTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         
         // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && mixtapes.count >= Int(WhiteLabel.pageSize) {
+        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && mixtapes.count >= Int(WhiteLabel.PageSize) {
             paging.getNext()
         }
     }

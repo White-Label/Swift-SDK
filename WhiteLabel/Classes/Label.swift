@@ -24,7 +24,9 @@
 //
 
 
-public class Label : NSObject {
+import Alamofire
+
+public final class Label: ResponseObjectSerializable {
     
     public var id : NSNumber!
     public var name : String!
@@ -32,4 +34,13 @@ public class Label : NSObject {
     public var iconURL : String?
     public var service : Service!
     
+    public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        
+        id = representation.valueForKeyPath("id") as! NSNumber
+        name = representation.valueForKeyPath("name") as! String
+        slug = representation.valueForKeyPath("slug") as! String
+        iconURL = representation.valueForKeyPath("slug") as? String
+        service = Service(response: response, representation: representation.valueForKeyPath("service")!)
+        
+    }
 }

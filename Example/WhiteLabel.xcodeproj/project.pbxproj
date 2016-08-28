@@ -33,7 +33,7 @@
 
 /* Begin PBXFileReference section */
 		0AA1F1E3C36A595240BCC578 /* Pods-WhiteLabel_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhiteLabel_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-WhiteLabel_Example/Pods-WhiteLabel_Example.release.xcconfig"; sourceTree = "<group>"; };
-		36708299077615B58AC09E11 /* WhiteLabel.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = WhiteLabel.podspec; path = ../WhiteLabel.podspec; sourceTree = "<group>"; };
+		36708299077615B58AC09E11 /* WhiteLabel.podspec */ = {isa = PBXFileReference; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = WhiteLabel.podspec; path = ../WhiteLabel.podspec; sourceTree = "<group>"; tabWidth = 2; };
 		44F8E31B6E42156794AA58BB /* Pods_WhiteLabel_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WhiteLabel_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* WhiteLabel_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhiteLabel_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };

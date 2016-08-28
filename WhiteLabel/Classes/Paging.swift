@@ -27,13 +27,11 @@
 import Foundation
 
 public protocol AsyncGeneratorType {
-    associatedtype Element
     associatedtype Fetch
     mutating func getNext(complete: (() -> Void)?)
 }
 
-public class PagingGenerator<T>: AsyncGeneratorType {
-    public typealias Element = Array<T>
+public class PagingGenerator: AsyncGeneratorType {
     public typealias Fetch = (page: UInt) -> Void
     
     public var next:Fetch!

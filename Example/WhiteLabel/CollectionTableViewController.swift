@@ -34,7 +34,7 @@ class CollectionTableViewController: UITableViewController {
             tableView.reloadData()
         }
     }
-    var paging = PagingGenerator<Collection>(startPage: 1)
+    var paging = PagingGenerator(startPage: 1)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,32 +42,36 @@ class CollectionTableViewController: UITableViewController {
         self.refreshControl?.addTarget(self, action: #selector(CollectionTableViewController.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
         
         // Get your label
-        WhiteLabel.getLabel(
+        WhiteLabel.GetLabel(
             success: { label in
                 self.title = label.name
             },
             failure: { error in
-                print("Error: \(error)")
+                debugPrint(error)
             }
         )
         
         // Setup the paging generator with White Label
         paging.next = { page in
             
-            WhiteLabel.getCollections(
+            WhiteLabel.ListCollections(
                 parameters: nil,
                 page: page,
                 success: { collections in
                     self.collections += collections
                 },
                 failure: { error in
-                    
-                    if error.code == -1011 {
-                        // If we get a 404 error, stop paging
-                        self.paging.reachedEnd()
+                    switch error! {
+                    case .Network(let statusCode, let error):
+                        if statusCode == 404 {
+                            self.paging.reachedEnd()
+                        }
+                        debugPrint("Network Error: \(error)")
+                    case .JSONSerialization(let error):
+                        print("JSONSerialization Error: \(error)")
+                    case .ObjectSerialization(let reason):
+                        print("ObjectSerialization Error Reason: \(reason)")
                     }
-                    
-                    print("Error: \(error)")
                 }
             )
             
@@ -105,7 +109,7 @@ class CollectionTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         
         // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && collections.count >= Int(WhiteLabel.pageSize) {
+        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && collections.count >= Int(WhiteLabel.PageSize) {
             paging.getNext()
         }
     }
