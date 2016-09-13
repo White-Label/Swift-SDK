@@ -27,7 +27,7 @@
 import Foundation
 import Alamofire
 
-enum Router: URLRequestConvertible {
+public enum Router: URLRequestConvertible {
     
     // Label
     case GetLabel
@@ -53,7 +53,7 @@ enum Router: URLRequestConvertible {
     case UpdateTrack(id: AnyObject, parameters: [String: AnyObject]?)
     case DeleteTrack(id: AnyObject)
     
-    var method: Alamofire.Method {
+    public var method: Alamofire.Method {
         switch self {
             
         // Label
@@ -99,7 +99,7 @@ enum Router: URLRequestConvertible {
         }
     }
     
-    var path: String {
+    public var path: String {
         switch self {
             
         // Label
@@ -145,7 +145,7 @@ enum Router: URLRequestConvertible {
         }
     }
     
-    var URLRequest: NSMutableURLRequest {
+    public var URLRequest: NSMutableURLRequest {
         let URL = NSURL(string: WhiteLabel.BaseURLString)!
         let mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
         mutableURLRequest.HTTPMethod = method.rawValue
