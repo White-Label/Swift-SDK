@@ -21,7 +21,7 @@
     "tvos": "9.0",
     "watchos": "2.0"
   },
-  "source_files": "WhiteLabel/Classes/**/*",
+  "source_files": "WhiteLabel/**/*",
   "dependencies": {
     "Alamofire": [
       "~> 4.0"
