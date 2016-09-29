@@ -46,26 +46,32 @@ class TrackTableViewController: UITableViewController {
         // Setup the paging generator with White Label
         paging.next = { page in
             
-            WhiteLabel.ListTracksForMixtape(
-                self.mixtape,
-                page: page,
-                success: { tracks in
-                    self.tracks += tracks
-                },
-                failure: { error in
-                    switch error! {
-                    case .Network(let statusCode, let error):
-                        if statusCode == 404 {
-                            self.paging.reachedEnd()
-                        }
-                        debugPrint("Network Error: \(error)")
-                    case .JSONSerialization(let error):
-                        print("JSONSerialization Error: \(error)")
-                    case .ObjectSerialization(let reason):
-                        print("ObjectSerialization Error Reason: \(reason)")
-                    }
+            WhiteLabel.ListTracksInMixtape(self.mixtape, page: page, complete: { newTracks in
+                if let newTracks = newTracks {
+                    self.tracks += newTracks
                 }
-            )
+            })
+            
+//            WhiteLabel.ListTracksForMixtape(
+//                self.mixtape,
+//                page: page,
+//                success: { tracks in
+//                    self.tracks += tracks
+//                },
+//                failure: { error in
+//                    switch error! {
+//                    case .Network(let statusCode, let error):
+//                        if statusCode == 404 {
+//                            self.paging.reachedEnd()
+//                        }
+//                        debugPrint("Network Error: \(error)")
+//                    case .JSONSerialization(let error):
+//                        print("JSONSerialization Error: \(error)")
+//                    case .ObjectSerialization(let reason):
+//                        print("ObjectSerialization Error Reason: \(reason)")
+//                    }
+//                }
+//            )
             
         }
         

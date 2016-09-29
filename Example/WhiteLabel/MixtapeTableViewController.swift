@@ -46,26 +46,30 @@ class MixtapeTableViewController: UITableViewController {
         // Setup the paging generator with White Label
         paging.next = { page in
             
-            WhiteLabel.ListMixtapesForCollection(
-                self.collection,
-                page: page,
-                success: { mixtapes in
-                    self.mixtapes += mixtapes
-                },
-                failure: { error in
-                    switch error! {
-                    case .Network(let statusCode, let error):
-                        if statusCode == 404 {
-                            self.paging.reachedEnd()
-                        }
-                        debugPrint("Network Error: \(error)")
-                    case .JSONSerialization(let error):
-                        print("JSONSerialization Error: \(error)")
-                    case .ObjectSerialization(let reason):
-                        print("ObjectSerialization Error Reason: \(reason)")
-                    }
-                }
-            )
+            WhiteLabel.ListMixtapesInCollection(collection, page: page, complete: { mixtapes in
+                self.mixtapes += mixtapes
+            })
+            
+//            WhiteLabel.ListMixtapesForCollection(
+//                self.collection,
+//                page: page,
+//                success: { mixtapes in
+//                    self.mixtapes += mixtapes
+//                },
+//                failure: { error in
+//                    switch error! {
+//                    case .Network(let statusCode, let error):
+//                        if statusCode == 404 {
+//                            self.paging.reachedEnd()
+//                        }
+//                        debugPrint("Network Error: \(error)")
+//                    case .JSONSerialization(let error):
+//                        print("JSONSerialization Error: \(error)")
+//                    case .ObjectSerialization(let reason):
+//                        print("ObjectSerialization Error Reason: \(reason)")
+//                    }
+//                }
+//            )
             
         }
         
@@ -90,8 +94,8 @@ class MixtapeTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Mixtape, for: indexPath)
         let mixtape = mixtapes[indexPath.row]
         
-        cell.textLabel!.text = mixtape.title;
-        cell.detailTextLabel!.text = String(mixtape.trackCount);
+        cell.textLabel!.text = mixtape.title
+        cell.detailTextLabel!.text = String(describing: mixtape.trackCount)
         
         return cell;
     }

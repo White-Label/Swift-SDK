@@ -29,7 +29,7 @@ import WhiteLabel
 
 class CollectionTableViewController: UITableViewController {
     
-    var collections : [Collection] = [] {
+    var collections: [Collection]? {
         didSet {
             tableView.reloadData()
         }
@@ -42,38 +42,37 @@ class CollectionTableViewController: UITableViewController {
         self.refreshControl?.addTarget(self, action: #selector(CollectionTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
         
         // Get your label
-        WhiteLabel.GetLabel(
-            success: { label in
-                self.title = label.name
-            },
-            failure: { error in
-                debugPrint(error)
-            }
-        )
+        WhiteLabel.GetLabel { label in
+            self.title = label?.name
+        }
         
         // Setup the paging generator with White Label
         paging.next = { page in
             
-            WhiteLabel.ListCollections(
-                parameters: nil,
-                page: page,
-                success: { collections in
-                    self.collections += collections
-                },
-                failure: { error in
-                    switch error! {
-                    case .Network(let statusCode, let error):
-                        if statusCode == 404 {
-                            self.paging.reachedEnd()
-                        }
-                        debugPrint("Network Error: \(error)")
-                    case .JSONSerialization(let error):
-                        print("JSONSerialization Error: \(error)")
-                    case .ObjectSerialization(let reason):
-                        print("ObjectSerialization Error Reason: \(reason)")
-                    }
-                }
-            )
+            WhiteLabel.ListCollections(page: page, parameters: nil, complete: { collections in
+                self.collections += collections
+            })
+            
+//            WhiteLabel.ListCollections(
+//                parameters: nil,
+//                page: page,
+//                success: { collections in
+//                    self.collections += collections
+//                },
+//                failure: { error in
+//                    switch error! {
+//                    case .Network(let statusCode, let error):
+//                        if statusCode == 404 {
+//                            self.paging.reachedEnd()
+//                        }
+//                        debugPrint("Network Error: \(error)")
+//                    case .JSONSerialization(let error):
+//                        print("JSONSerialization Error: \(error)")
+//                    case .ObjectSerialization(let reason):
+//                        print("ObjectSerialization Error Reason: \(reason)")
+//                    }
+//                }
+//            )
             
         }
         
