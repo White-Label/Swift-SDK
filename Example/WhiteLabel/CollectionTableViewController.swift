@@ -39,7 +39,7 @@ class CollectionTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.refreshControl?.addTarget(self, action: #selector(CollectionTableViewController.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        self.refreshControl?.addTarget(self, action: #selector(CollectionTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
         
         // Get your label
         WhiteLabel.GetLabel(
@@ -80,7 +80,7 @@ class CollectionTableViewController: UITableViewController {
         paging.getNext() // Initial load
     }
     
-    func handleRefresh(refreshControl: UIRefreshControl) {
+    func handleRefresh(_ refreshControl: UIRefreshControl) {
         paging.reset()
         collections = []
         paging.getNext() {
@@ -90,12 +90,12 @@ class CollectionTableViewController: UITableViewController {
     
     //MARK: Data Source
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return collections.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier.Collection, forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Collection, for: indexPath)
         let collection = collections[indexPath.row]
         
         cell.textLabel!.text = collection.title;
@@ -106,7 +106,7 @@ class CollectionTableViewController: UITableViewController {
     
     //Mark: Delegate
     
-    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         // Quick and easy infinite scroll trigger
         if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && collections.count >= Int(WhiteLabel.PageSize) {
@@ -116,9 +116,9 @@ class CollectionTableViewController: UITableViewController {
     
     //MARK: Navigation
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == SegueIdentifier.CollectionsToMixtapes {
-            if let mixtapeTableViewController = segue.destinationViewController as? MixtapeTableViewController {
+            if let mixtapeTableViewController = segue.destination as? MixtapeTableViewController {
                 if let selectedIndexPath = self.tableView.indexPathsForSelectedRows?[0] {
                     mixtapeTableViewController.collection = collections[selectedIndexPath.row]
                 }

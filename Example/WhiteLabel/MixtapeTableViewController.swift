@@ -41,7 +41,7 @@ class MixtapeTableViewController: UITableViewController {
         super.viewDidLoad()
         
         title = self.collection?.title
-        self.refreshControl?.addTarget(self, action: #selector(MixtapeTableViewController.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        self.refreshControl?.addTarget(self, action: #selector(MixtapeTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
         
         // Setup the paging generator with White Label
         paging.next = { page in
@@ -72,7 +72,7 @@ class MixtapeTableViewController: UITableViewController {
         paging.getNext() // Initial load
     }
     
-    func handleRefresh(refreshControl: UIRefreshControl) {
+    func handleRefresh(_ refreshControl: UIRefreshControl) {
         paging.reset()
         mixtapes = []
         paging.getNext() {
@@ -82,12 +82,12 @@ class MixtapeTableViewController: UITableViewController {
     
     //MARK: Data Source
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return mixtapes.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier.Mixtape, forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Mixtape, for: indexPath)
         let mixtape = mixtapes[indexPath.row]
         
         cell.textLabel!.text = mixtape.title;
@@ -98,7 +98,7 @@ class MixtapeTableViewController: UITableViewController {
     
     //MARK: Delegate
 
-    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         // Quick and easy infinite scroll trigger
         if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && mixtapes.count >= Int(WhiteLabel.PageSize) {
@@ -108,9 +108,9 @@ class MixtapeTableViewController: UITableViewController {
     
     //MARK: Navigation
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == SegueIdentifier.MixtapesToTracks {
-            if let trackTableViewController = segue.destinationViewController as? TrackTableViewController,
+            if let trackTableViewController = segue.destination as? TrackTableViewController,
                 let selectedIndexPath = self.tableView.indexPathsForSelectedRows?[0] {
                 trackTableViewController.mixtape = mixtapes[selectedIndexPath.row]
             }
