@@ -11,11 +11,11 @@ Pod::Spec.new do |s|
   s.author           = { 'Alex Givens' => 'alex@noonpacific.com' }
   s.source           = { :git => 'https://github.com/White-Label/Swift-SDK.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '8.0'
-  s.osx.deployment_target = '10.9'
+  s.ios.deployment_target = '9.0'
+  s.osx.deployment_target = '10.11'
   s.tvos.deployment_target = '9.0'
   s.watchos.deployment_target = '2.0'
 
-  s.source_files = 'WhiteLabel/Classes/**/*'
-  s.dependency 'Alamofire', '~> 3.4'
+  s.source_files = 'WhiteLabel/**/*'
+  s.dependency 'Alamofire', '~> 4.0'
 end
