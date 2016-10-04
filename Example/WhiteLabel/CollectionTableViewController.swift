@@ -29,7 +29,7 @@ import WhiteLabel
 
 class CollectionTableViewController: UITableViewController {
     
-    var collections: [Collection]? {
+    var collections = [WhiteLabel.Collection]() {
         didSet {
             tableView.reloadData()
         }
@@ -50,7 +50,9 @@ class CollectionTableViewController: UITableViewController {
         paging.next = { page in
             
             WhiteLabel.ListCollections(page: page, parameters: nil, complete: { collections in
-                self.collections += collections
+                if collections != nil {
+                    self.collections += collections!
+                }
             })
             
 //            WhiteLabel.ListCollections(
@@ -95,7 +97,7 @@ class CollectionTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Collection, for: indexPath)
-        let collection = collections[indexPath.row]
+        let collection = collections[indexPath.row] as! WhiteLabel.Collection
         
         cell.textLabel!.text = collection.title;
         cell.detailTextLabel!.text = String(collection.mixtapeCount);
@@ -108,7 +110,7 @@ class CollectionTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && collections.count >= Int(WhiteLabel.PageSize) {
+        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && collections.count >= Int(WhiteLabel.Constants.PageSize) {
             paging.getNext()
         }
     }

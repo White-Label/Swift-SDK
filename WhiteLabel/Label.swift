@@ -24,9 +24,7 @@
 //
 
 
-import Alamofire
-
-public final class Label: ResponseObjectSerializable {
+public struct Label: ResponseObjectSerializable {
     
     public var id : NSNumber!
     public var name : String!
@@ -34,13 +32,17 @@ public final class Label: ResponseObjectSerializable {
     public var iconURL : String?
     public var service : Service!
     
-    public required init?(response: HTTPURLResponse, representation: AnyObject) {
+    public init?(response: HTTPURLResponse, representation: Any) {
         
-        id = representation.value(forKeyPath: "id") as! NSNumber
-        name = representation.value(forKeyPath: "name") as! String
-        slug = representation.value(forKeyPath: "slug") as! String
-        iconURL = representation.value(forKeyPath: "slug") as? String
-        service = Service(response: response, representation: representation.value(forKeyPath: "service")!)
+        guard let representation = representation as? [String: Any] else {
+            return nil
+        }
+        
+        id = representation["id"] as! NSNumber
+        name = representation["name"] as! String
+        slug = representation["slug"] as! String
+        iconURL = representation["slug"] as? String
+        service = Service(response: response, representation: representation["service"]!)
         
     }
 }

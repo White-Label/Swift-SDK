@@ -24,9 +24,7 @@
 //
 
 
-import Alamofire
-
-public final class Track: ResponseObjectSerializable, ResponseCollectionSerializable {
+public struct Track: ResponseObjectSerializable, ResponseCollectionSerializable {
     
     public var id : NSNumber!
     public var title : String!
@@ -44,22 +42,26 @@ public final class Track: ResponseObjectSerializable, ResponseCollectionSerializ
     public var playCount : NSNumber!
     public var order : NSNumber!
     
-    public required init?(response: HTTPURLResponse, representation: AnyObject) {
+    public init?(response: HTTPURLResponse, representation: Any) {
         
-        id = representation.value(forKeyPath: "id") as! NSNumber
-        title = representation.value(forKeyPath: "title") as! String
-        artist = representation.value(forKeyPath: "artist") as! String
-        slug = representation.value(forKeyPath: "slug") as! String
-        streamable = representation.value(forKeyPath: "streamable") as! Bool
-        duration = representation.value(forKeyPath: "duration") as? NSNumber
-        externalID = representation.value(forKeyPath: "external_id") as! NSNumber
-        streamURL = representation.value(forKeyPath: "stream_url") as! String
-        permalinkURL = representation.value(forKeyPath: "permalink_url") as? String
-        artworkURL = representation.value(forKeyPath: "artwork_url") as? String
-        purchaseURL = representation.value(forKeyPath: "purchase_url") as? String
-        downloadURL = representation.value(forKeyPath: "download_url") as? String
-        playCount = representation.value(forKeyPath: "play_count") as! NSNumber
-        order = representation.value(forKeyPath: "order") as! NSNumber
+        guard let representation = representation as? [String: Any] else {
+            return nil
+        }
+        
+        id = representation["id"] as! NSNumber
+        title = representation["title"] as! String
+        artist = representation["artist"] as! String
+        slug = representation["slug"] as! String
+        streamable = representation["streamable"] as! Bool
+        duration = representation["duration"] as? NSNumber
+        externalID = representation["external_id"] as! NSNumber
+        streamURL = representation["stream_url"] as! String
+        permalinkURL = representation["permalink_url"] as? String
+        artworkURL = representation["artwork_url"] as? String
+        purchaseURL = representation["purchase_url"] as? String
+        downloadURL = representation["download_url"] as? String
+        playCount = representation["play_count"] as! NSNumber
+        order = representation["order"] as! NSNumber
         
     }
     

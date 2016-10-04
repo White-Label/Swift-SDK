@@ -24,19 +24,23 @@
 //
 
 
-open class Service {
+public struct Service {
     
-    open var id : NSNumber!
-    open var name : String!
-    open var slug : String!
-    open var externalURL : String?
+    public var id : NSNumber!
+    public var name : String!
+    public var slug : String!
+    public var externalURL : String?
     
-    public required init?(response: HTTPURLResponse, representation: AnyObject) {
+    public init?(response: HTTPURLResponse, representation: Any) {
         
-        id = representation.value(forKeyPath: "id") as! NSNumber
-        name = representation.value(forKeyPath: "name") as! String
-        slug = representation.value(forKeyPath: "slug") as! String
-        externalURL = representation.value(forKeyPath: "external_url") as? String
+        guard let representation = representation as? [String: Any] else {
+            return nil
+        }
+        
+        id = representation["id"] as! NSNumber
+        name = representation["name"] as! String
+        slug = representation["slug"] as! String
+        externalURL = representation["external_url"] as? String
         
     }
 }

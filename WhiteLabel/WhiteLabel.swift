@@ -27,145 +27,93 @@
 import Foundation
 import Alamofire
 
-open class WhiteLabel {
+
+public func GetLabel(complete: @escaping (Label?) -> Void) {
+    Alamofire.request(Router.getLabel).validate().responseObject { (response: DataResponse<Label>) in
+        complete(response.result.value)
+    }
+}
+
+public func ListCollections(page: UInt = 1, parameters: Parameters?, complete: @escaping ([WhiteLabel.Collection]?) -> Void) {
     
-    open static let BaseURLString: String = "https://beta.whitelabel.cool/api"
-    open static var Version: String = "1.0"
-    open static let ErrorDomain: String = "cool.whitelabel.swift"
-    open static var PageSize: UInt = 20
-    open static var ClientID: String?
+    var params = parameters ?? Parameters()
+    params["page"] = page
     
-    open class func GetLabel(success: @escaping ((Label!) -> Void), failure: @escaping ((BackendError!) -> Void)) {
-        
-        Alamofire.request(Router.GetLabel).validate()
-            .responseObject { (response: Response<Label, BackendError>) in
-                switch response.result {
-                case .Success(let label):
-                    success(label)
-                case .Failure(let error):
-                    failure(error)
-                }
-        }
+    Alamofire.request(Router.listCollections(parameters: params)).validate().responseCollection { (response: DataResponse<[WhiteLabel.Collection]>) in
+        complete(response.result.value)
+    }
+}
+
+public func GetCollection(_ id: AnyObject, complete: @escaping (WhiteLabel.Collection?) -> Void) {
+    
+    var identifier = id
+    if let collection = id as? WhiteLabel.Collection {
+        identifier = collection.id
     }
     
-    open class func ListCollections(parameters: [String: AnyObject]?, page: UInt, success: @escaping (([Collection]!) -> Void), failure: @escaping ((BackendError!) -> Void)) {
-        
-        var params = parameters != nil ? parameters! : [String: AnyObject]()
-        params["page"] = String(page) as AnyObject?
-        
-        Alamofire.request(Router.ListCollections(parameters: params)).validate()
-            .responseCollection { (response: Response<[Collection], BackendError>) in
-                switch response.result {
-                case .Success(let collections):
-                    success(collections)
-                case .Failure(let error):
-                    failure(error)
-                }
-        }
+    Alamofire.request(Router.getCollection(id: identifier)).validate().responseObject { (response: DataResponse<WhiteLabel.Collection>) in
+        complete(response.result.value)
+    }
+}
+
+public func ListMixtapesInCollection(_ collection: WhiteLabel.Collection, page: UInt = 1, complete: @escaping ([Mixtape]?) -> Void) {
+    
+    let parameters: Parameters = [
+        "collection": collection.id
+    ]
+    
+    WhiteLabel.ListMixtapes(page: page, parameters: parameters, complete: complete)
+}
+
+public func ListMixtapes(page: UInt = 1, parameters: Parameters?, complete: @escaping ([Mixtape]?) -> Void) {
+    
+    var params = parameters ?? Parameters()
+    params["page"] = page
+    
+    Alamofire.request(Router.listMixtapes(parameters: params)).validate().responseCollection { (response: DataResponse<[Mixtape]>) in
+        complete(response.result.value)
+    }
+}
+
+public func GetMixtape(_ id: AnyObject, complete: @escaping (Mixtape?) -> Void) {
+    
+    var identifier = id
+    if let mixtape = id as? Mixtape {
+        identifier = mixtape.id
     }
     
-    open class func GetCollection(_ id: AnyObject, success: @escaping ((Collection!) -> Void), failure: @escaping ((BackendError!) -> Void)) {
-        
-        var identifier = id
-        
-        if let collection = id as? Collection {
-            identifier = collection.id
-        }
-        
-        Alamofire.request(Router.GetCollection(id: identifier)).validate()
-            .responseObject { (response: Response<Collection, BackendError>) in
-                switch response.result {
-                case .Success(let collection):
-                    success(collection)
-                case .Failure(let error):
-                    failure(error)
-                }
-        }
+    Alamofire.request(Router.getMixtape(id: identifier)).validate().responseObject { (response: DataResponse<Mixtape>) in
+        complete(response.result.value)
+    }
+}
+
+public func ListTracksInMixtape(_ mixtape: Mixtape, page: UInt = 1, complete: @escaping ([Track]?) -> Void) {
+    
+    let parameters: Parameters = [
+        "mixtape": mixtape.id
+    ]
+    
+    WhiteLabel.ListTracks(page: page, parameters: parameters, complete: complete)
+}
+
+public func ListTracks(page: UInt, parameters: Parameters?, complete: @escaping ([Track]?) -> Void) {
+    
+    var params = parameters ?? Parameters()
+    params["page"] = page
+    
+    Alamofire.request(Router.listTracks(parameters: params)).validate().responseCollection { (response: DataResponse<[Track]>) in
+        complete(response.result.value)
+    }
+}
+
+public func GetTrack(_ id: AnyObject, complete: @escaping (Track?) -> Void) {
+    
+    var identifier = id
+    if let track = id as? Track {
+        identifier = track.id
     }
     
-    open class func ListMixtapesForCollection(_ collection: Collection, page: UInt, success: @escaping (([Mixtape]!) -> Void), failure: @escaping ((BackendError!) -> Void)) {
-        
-        var parameters = [String: AnyObject]()
-        parameters["collection"] = String(collection.id)
-        
-        WhiteLabel.ListMixtapes(parameters: parameters, page: page, success: success, failure: failure)
-    }
-    
-    open class func ListMixtapes(parameters: [String: AnyObject]?, page: UInt, success: @escaping (([Mixtape]!) -> Void), failure: @escaping ((BackendError!) -> Void)) {
-        
-        var params = parameters != nil ? parameters! : [String: AnyObject]()
-        params["page"] = String(page) as AnyObject?
-        
-        Alamofire.request(Router.ListMixtapes(parameters: params)).validate()
-            .responseCollection { (response: Response<[Mixtape], BackendError>) in
-                switch response.result {
-                case .Success(let mixtapes):
-                    success(mixtapes)
-                case .Failure(let error):
-                    failure(error)
-                }
-        }
-    }
-    
-    open class func GetMixtape(_ id: AnyObject, success: @escaping ((Mixtape!) -> Void), failure: @escaping ((BackendError!) -> Void)) {
-        
-        var identifier = id
-        
-        if let mixtape = id as? Mixtape {
-            identifier = mixtape.id
-        }
-        
-        Alamofire.request(Router.GetMixtape(id: identifier)).validate()
-            .responseObject { (response: Response<Mixtape, BackendError>) in
-                switch response.result {
-                case .Success(let mixtape):
-                    success(mixtape)
-                case .Failure(let error):
-                    failure(error)
-                }
-        }
-    }
-    
-    open class func ListTracksForMixtape(_ mixtape: Mixtape, page: UInt, success: @escaping (([Track]!) -> Void), failure: @escaping ((BackendError!) -> Void)) {
-        
-        var parameters = [String: AnyObject]()
-        parameters["mixtape"] = String(mixtape.id)
-        
-        WhiteLabel.ListTracks(parameters: parameters, page: page, success: success, failure: failure)
-    }
-    
-    open class func ListTracks(parameters: [String: AnyObject]?, page: UInt, success: @escaping (([Track]!) -> Void), failure: @escaping ((BackendError!) -> Void)) {
-        
-        var params = parameters != nil ? parameters! : [String: AnyObject]()
-        params["page"] = String(page) as AnyObject?
-        
-        Alamofire.request(Router.ListTracks(parameters: params)).validate()
-            .responseCollection { (response: Response<[Track], BackendError>) in
-                switch response.result {
-                case .Success(let tracks):
-                    success(tracks)
-                case .Failure(let error):
-                    failure(error)
-                }
-        }
-    }
-    
-    open class func GetTrack(_ id: AnyObject, success: @escaping ((Track!) -> Void), failure: @escaping ((BackendError!) -> Void)) {
-        
-        var identifier = id
-        
-        if let track = id as? Track {
-            identifier = track.id
-        }
-        
-        Alamofire.request(Router.GetTrack(id: identifier)).validate()
-            .responseObject { (response: Response<Track, BackendError>) in
-                switch response.result {
-                case .Success(let track):
-                    success(track)
-                case .Failure(let error):
-                    failure(error)
-                }
-        }
+    Alamofire.request(Router.getTrack(id: identifier)).validate().responseObject { (response: DataResponse<Track>) in
+        complete(response.result.value)
     }
 }

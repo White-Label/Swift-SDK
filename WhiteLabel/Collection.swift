@@ -24,9 +24,7 @@
 //
 
 
-import Alamofire
-
-public final class Collection: ResponseObjectSerializable, ResponseCollectionSerializable {
+public struct Collection: ResponseObjectSerializable, ResponseCollectionSerializable {
     
     public var id : NSNumber!
     public var title : String!
@@ -38,17 +36,22 @@ public final class Collection: ResponseObjectSerializable, ResponseCollectionSer
     public var createdDate : String!
     public var mixtapeCount : NSNumber!
     
-    public required init?(response: HTTPURLResponse, representation: AnyObject) {
+    public init?(response: HTTPURLResponse, representation: Any) {
         
-        id = representation.value(forKeyPath: "id") as! NSNumber
-        title = representation.value(forKeyPath: "title") as! String
-        slug = representation.value(forKeyPath: "slug") as! String
-        descriptionText = representation.value(forKeyPath: "description") as? String
-        artworkURL = representation.value(forKeyPath: "artwork_url") as? String
-        artworkCredit = representation.value(forKeyPath: "artwork_credit") as? String
-        artworkCreditURL = representation.value(forKeyPath: "artwork_credit_url") as? String
-        createdDate = representation.value(forKeyPath: "created") as! String
-        mixtapeCount = representation.value(forKeyPath: "mixtape_count") as! NSNumber
+        guard let representation = representation as? [String: Any] else {
+            return nil
+        }
+        
+        id = representation["id"] as! NSNumber
+        title = representation["title"] as! String
+        slug = representation["slug"] as! String
+        descriptionText = representation["description"] as? String
+        artworkURL = representation["artwork_url"] as? String
+        artworkCredit = representation["artwork_credit"] as? String
+        artworkCreditURL = representation["artwork_credit_url"] as? String
+        createdDate = representation["created"] as! String
+        mixtapeCount = representation["mixtape_count"] as! NSNumber
         
     }
+    
 }

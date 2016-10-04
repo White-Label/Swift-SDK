@@ -33,68 +33,68 @@ public enum Router: URLRequestConvertible {
     case getLabel
     
     // Collection
-    case listCollections(parameters: [String: AnyObject]?)
-    case createCollection(parameters: [String: AnyObject]?)
+    case listCollections(parameters: Parameters?)
+    case createCollection(parameters: Parameters?)
     case getCollection(id: AnyObject)
-    case updateCollection(id: AnyObject, parameters: [String: AnyObject])
+    case updateCollection(id: AnyObject, parameters: Parameters?)
     case deleteCollection(id: AnyObject)
     
     // Mixtape
-    case listMixtapes(parameters: [String: AnyObject]?)
-    case createMixtape(parameters: [String: AnyObject]?)
+    case listMixtapes(parameters: Parameters?)
+    case createMixtape(parameters: Parameters?)
     case getMixtape(id: AnyObject)
-    case updateMixtape(id: AnyObject, parameters: [String: AnyObject]?)
+    case updateMixtape(id: AnyObject, parameters: Parameters?)
     case deleteMixtape(id: AnyObject)
     
     // Track
-    case listTracks(parameters: [String: AnyObject]?)
-    case createTrack(parameters: [String: AnyObject]?)
+    case listTracks(parameters: Parameters?)
+    case createTrack(parameters: Parameters?)
     case getTrack(id: AnyObject)
-    case updateTrack(id: AnyObject, parameters: [String: AnyObject]?)
+    case updateTrack(id: AnyObject, parameters: Parameters?)
     case deleteTrack(id: AnyObject)
     
-    public var method: Alamofire.Method {
+    public var method: HTTPMethod {
         switch self {
             
         // Label
         case .getLabel:
-            return .GET
+            return .get
             
         // Collection
         case .listCollections:
-            return .GET
+            return .get
         case .createCollection:
-            return .POST
+            return .post
         case .getCollection:
-            return .GET
+            return .get
         case .updateCollection:
-            return .PUT
+            return .put
         case .deleteCollection:
-            return .DELETE
+            return .delete
             
         // Mixtape
         case .listMixtapes:
-            return .GET
+            return .get
         case .createMixtape:
-            return .POST
+            return .post
         case .getMixtape:
-            return .GET
+            return .get
         case .updateMixtape:
-            return .PUT
+            return .put
         case .deleteMixtape:
-            return .DELETE
+            return .delete
             
         // Track
         case .listTracks:
-            return .GET
+            return .get
         case .createTrack:
-            return .POST
+            return .post
         case .getTrack:
-            return .GET
+            return .get
         case .updateTrack:
-            return .PUT
+            return .put
         case .deleteTrack:
-            return .DELETE
+            return .delete
             
         }
     }
@@ -145,147 +145,61 @@ public enum Router: URLRequestConvertible {
         }
     }
     
-    public var URLRequest: NSMutableURLRequest {
-        let URL = Foundation.URL(string: WhiteLabel.BaseURLString)!
-        let mutableURLRequest = NSMutableURLRequest(url: URL.appendingPathComponent(path))
-        mutableURLRequest.HTTPMethod = method.rawValue
+    public func asURLRequest() throws -> URLRequest {
+        let url = try Constants.BaseURLString.asURL()
         
-        assert(WhiteLabel.ClientID != nil, "No Client ID provided.")
+        var urlRequest = URLRequest(url: url.appendingPathComponent(path))
+        urlRequest.httpMethod = method.rawValue
         
-        mutableURLRequest.setValue(WhiteLabel.ClientID!, forHTTPHeaderField: "Client")
-        mutableURLRequest.setValue("application/json; version=" + WhiteLabel.Version, forHTTPHeaderField: "Accept")
+        assert(Constants.ClientID.isEmpty == false, "No Client ID provided.")
+        
+        urlRequest.setValue(Constants.ClientID, forHTTPHeaderField: "Client")
+        urlRequest.setValue("application/json; version=" + Constants.Version, forHTTPHeaderField: "Accept")
         
         switch self {
             
         // Label
         case .getLabel:
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: nil).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: nil)
             
         // Collection
         case .listCollections(let parameters):
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
         case .createCollection(let parameters):
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
         case .getCollection:
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: nil).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: nil)
         case .updateCollection(_, let parameters):
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
         case .deleteCollection:
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: nil).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: nil)
             
         // Mixtape
         case .listMixtapes(let parameters):
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
         case .createMixtape(let parameters):
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
         case .getMixtape:
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: nil).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: nil)
         case .updateMixtape(_, let parameters):
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
         case .deleteMixtape:
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: nil).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: nil)
             
         // Track
         case .listTracks(let parameters):
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
         case .createTrack(let parameters):
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
         case .getTrack:
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: nil).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: nil)
         case .updateTrack(_, let parameters):
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
         case .deleteTrack:
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: nil).0
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: nil)
 
         }
-    }
-}
-
-public enum BackendError: Error {
-    case network(statusCode: Int, error: NSError)
-    case jsonSerialization(error: NSError)
-    case objectSerialization(reason: String)
-}
-
-public protocol ResponseObjectSerializable {
-    init?(response: HTTPURLResponse, representation: AnyObject)
-}
-
-extension Request {
-    public func responseObject<T: ResponseObjectSerializable>(_ completionHandler: (Response<T, BackendError>) -> Void) -> Self {
-        let responseSerializer = ResponseSerializer<T, BackendError> { request, response, data, error in
-            guard error == nil else {
-                return .Failure(.Network(statusCode: response != nil ? response!.statusCode : 0, error: error!))
-            }
-            
-            let JSONResponseSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
-            let result = JSONResponseSerializer.serializeResponse(request, response, data, error)
-            
-            switch result {
-            case .Success(let value):
-                if let
-                    response = response,
-                    let responseObject = T(response: response, representation: value)
-                {
-                    return .Success(responseObject)
-                } else {
-                    return .Failure(.ObjectSerialization(reason: "JSON could not be serialized into response object: \(value)"))
-                }
-            case .Failure(let error):
-                return .Failure(.JSONSerialization(error: error))
-            }
-        }
         
-        return response(responseSerializer: responseSerializer, completionHandler: completionHandler)
-    }
-}
-
-public protocol ResponseCollectionSerializable {
-    static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Self]
-}
-
-extension ResponseCollectionSerializable where Self: ResponseObjectSerializable {
-    public static func collection(response: HTTPURLResponse, representation: AnyObject) -> [Self] {
-        
-        var collection = [Self]()
-        
-        if let representation = representation as? [String: AnyObject] {
-            let results = representation["results"]
-            if let results = results as? [[String: AnyObject]] {
-                for resultItem in results {
-                    if let item = Self(response: response, representation: resultItem as AnyObject) {
-                        collection.append(item)
-                    }
-                }
-            }
-        }
-        
-        return collection
-    }
-}
-
-extension Request {
-    public func responseCollection<T: ResponseCollectionSerializable>(_ completionHandler: (Response<[T], BackendError>) -> Void) -> Self {
-        let responseSerializer = ResponseSerializer<[T], BackendError> { request, response, data, error in
-            guard error == nil else {
-                return .Failure(.Network(statusCode: response != nil ? response!.statusCode : 0, error: error!))
-            }
-            
-            let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
-            let result = JSONSerializer.serializeResponse(request, response, data, error)
-            
-            switch result {
-            case .Success(let value):
-                if let response = response {
-                    return .Success(T.collection(response: response, representation: value))
-                } else {
-                    return .Failure(. ObjectSerialization(reason: "Response collection could not be serialized due to nil response"))
-                }
-            case .Failure(let error):
-                return .Failure(.JSONSerialization(error: error))
-            }
-        }
-        
-        return response(responseSerializer: responseSerializer, completionHandler: completionHandler)
+        return urlRequest
     }
 }

@@ -26,15 +26,8 @@
 
 import Foundation
 
-public protocol AsyncGeneratorType {
-    associatedtype Fetch
-    mutating func getNext(_ complete: (() -> Void)?)
-}
-
-open class PagingGenerator: AsyncGeneratorType {
-    public typealias Fetch = (_ page: UInt) -> Void
-    
-    open var next:Fetch!
+open class PagingGenerator {
+    open var next: ((_ page: UInt) -> Void)!
     fileprivate(set) var page: UInt
     fileprivate(set) var startPage: UInt
     open var didReachEnd: Bool = false
@@ -46,7 +39,7 @@ open class PagingGenerator: AsyncGeneratorType {
     
     open func getNext(_ complete: (() -> Void)? = nil) {
         if didReachEnd { return }
-        next(page: page)
+        next(page)
         if complete != nil {
             complete!()
         }

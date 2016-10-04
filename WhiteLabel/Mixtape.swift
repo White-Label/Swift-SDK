@@ -24,9 +24,7 @@
 //
 
 
-import Alamofire
-
-public final class Mixtape: ResponseObjectSerializable, ResponseCollectionSerializable {
+public struct Mixtape: ResponseObjectSerializable, ResponseCollectionSerializable {
     
     public var id : NSNumber!
     public var title : String!
@@ -43,22 +41,26 @@ public final class Mixtape: ResponseObjectSerializable, ResponseCollectionSerial
     public var trackCount : NSNumber!
     public var collectionID : NSNumber!
     
-    public required init?(response: HTTPURLResponse, representation: AnyObject) {
+    public init?(response: HTTPURLResponse, representation: Any) {
         
-        id = representation.value(forKeyPath: "id") as! NSNumber
-        title = representation.value(forKeyPath: "title") as! String
-        slug = representation.value(forKeyPath: "slug") as! String
-        descriptionText = representation.value(forKeyPath: "description") as? String
-        artworkURL = representation.value(forKeyPath: "artwork_url") as? String
-        artworkCredit = representation.value(forKeyPath: "artwork_credit") as? String
-        artworkCreditURL = representation.value(forKeyPath: "artwork_credit_url") as? String
-        sponsor = representation.value(forKeyPath: "sponsor") as? String
-        sponsorURL = representation.value(forKeyPath: "sponsor_url") as? String
-        product = representation.value(forKeyPath: "product") as? String
-        productURL = representation.value(forKeyPath: "product_url") as? String
-        releaseDate = representation.value(forKeyPath: "realease") as? String
-        trackCount = representation.value(forKeyPath: "track_count") as! NSNumber
-        collectionID = representation.value(forKeyPath: "collection") as! NSNumber
+        guard let representation = representation as? [String: Any] else {
+            return nil
+        }
+        
+        id = representation["id"] as! NSNumber
+        title = representation["title"] as! String
+        slug = representation["slug"] as! String
+        descriptionText = representation["description"] as? String
+        artworkURL = representation["artwork_url"] as? String
+        artworkCredit = representation["artwork_credit"] as? String
+        artworkCreditURL = representation["artwork_credit_url"] as? String
+        sponsor = representation["sponsor"] as? String
+        sponsorURL = representation["sponsor_url"] as? String
+        product = representation["product"] as? String
+        productURL = representation["product_url"] as? String
+        releaseDate = representation["realease"] as? String
+        trackCount = representation["track_count"] as! NSNumber
+        collectionID = representation["collection"] as! NSNumber
         
     }
 }

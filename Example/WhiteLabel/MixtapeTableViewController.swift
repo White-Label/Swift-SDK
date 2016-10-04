@@ -29,7 +29,7 @@ import WhiteLabel
 
 class MixtapeTableViewController: UITableViewController {
 
-    var collection: Collection!
+    var collection: WhiteLabel.Collection!
     var mixtapes = [Mixtape]() {
         didSet {
             tableView.reloadData()
@@ -46,8 +46,10 @@ class MixtapeTableViewController: UITableViewController {
         // Setup the paging generator with White Label
         paging.next = { page in
             
-            WhiteLabel.ListMixtapesInCollection(collection, page: page, complete: { mixtapes in
-                self.mixtapes += mixtapes
+            WhiteLabel.ListMixtapesInCollection(self.collection, page: page, complete: { mixtapes in
+//                if let newMixtapes = mixtapes {
+//                    self.mixtapes += newMixtapes
+//                }
             })
             
 //            WhiteLabel.ListMixtapesForCollection(
@@ -105,7 +107,7 @@ class MixtapeTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && mixtapes.count >= Int(WhiteLabel.PageSize) {
+        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && mixtapes.count >= Int(WhiteLabel.Constants.PageSize) {
             paging.getNext()
         }
     }

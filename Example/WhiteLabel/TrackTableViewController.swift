@@ -107,7 +107,7 @@ class TrackTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && tracks.count >= Int(WhiteLabel.PageSize) {
+        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && tracks.count >= Int(WhiteLabel.Constants.PageSize) {
             paging.getNext()
         }
     }
