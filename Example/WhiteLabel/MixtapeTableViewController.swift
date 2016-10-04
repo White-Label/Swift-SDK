@@ -101,7 +101,7 @@ class MixtapeTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         
         // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && mixtapes.count >= Int(WhiteLabel.PageSize) {
+        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && mixtapes.count >= Int(WhiteLabel.Constants.PageSize) {
             paging.getNext()
         }
     }
