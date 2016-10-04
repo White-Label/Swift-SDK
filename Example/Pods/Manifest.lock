@@ -1,6 +1,6 @@
 PODS:
   - Alamofire (4.0.1)
-  - WhiteLabel (1.0.1):
+  - WhiteLabel (2.0.0):
     - Alamofire (~> 4.0)
 
 DEPENDENCIES:
@@ -12,7 +12,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 7682d43245de14874acd142ec137b144aa1dd335
-  WhiteLabel: 71c8c3d1a73094e89d7b22517ef7017dfb46c0a3
+  WhiteLabel: 4fcd229f8d8d749d8b12a285f96fe7346ca0a5e4
 
 PODFILE CHECKSUM: 1ae4587df03c9d04c9555f245eb5c08d7425dc4f
 
