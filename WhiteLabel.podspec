@@ -17,5 +17,5 @@ Pod::Spec.new do |s|
   s.watchos.deployment_target = '2.0'
 
   s.source_files = 'WhiteLabel/Classes/**/*'
-  s.dependency 'Alamofire', '~> 4.0'
+  s.dependency 'Alamofire', '~> 3.5'
 end
