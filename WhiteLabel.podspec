@@ -3,7 +3,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WhiteLabel'
-  s.version          = '1.0.2'
+  s.version          = '2.0'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.summary          = 'Swift SDK for the White Label API.'
   s.homepage         = 'https://github.com/White-Label/Swift-SDK'
@@ -16,6 +16,6 @@ Pod::Spec.new do |s|
   s.tvos.deployment_target = '9.0'
   s.watchos.deployment_target = '2.0'
 
-  s.source_files = 'WhiteLabel/Classes/**/*'
+  s.source_files = 'WhiteLabel/**/*'
   s.dependency 'Alamofire', '~> 3.5'
 end
