@@ -1,7 +1,7 @@
 PODS:
-  - Alamofire (4.0.1)
+  - Alamofire (3.5.1)
   - WhiteLabel (1.0.2):
-    - Alamofire (~> 4.0)
+    - Alamofire (~> 3.5)
 
 DEPENDENCIES:
   - WhiteLabel (from `../`)
@@ -11,9 +11,9 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  Alamofire: 7682d43245de14874acd142ec137b144aa1dd335
-  WhiteLabel: 876752800908fa0d92d7448e236658ff2b1686af
+  Alamofire: 0dfba1184a543e2aa160f4e39cac4e8aba48d223
+  WhiteLabel: 7f6f0b0e47fdf274ad507a59f40c0e7657faf1de
 
-PODFILE CHECKSUM: 1ae4587df03c9d04c9555f245eb5c08d7425dc4f
+PODFILE CHECKSUM: 456c56a79477d6cca5784bd04f90a73000fa661b
 
 COCOAPODS: 1.1.0.rc.2

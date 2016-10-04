@@ -24,7 +24,7 @@
   "source_files": "WhiteLabel/Classes/**/*",
   "dependencies": {
     "Alamofire": [
-      "~> 4.0"
+      "~> 3.5"
     ]
   }
 }
