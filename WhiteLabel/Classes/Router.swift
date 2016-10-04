@@ -147,7 +147,7 @@ public enum Router: URLRequestConvertible {
     
     public var URLRequest: NSMutableURLRequest {
         let URL = NSURL(string: WhiteLabel.BaseURLString)!
-        let mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
+        let mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path)!)
         mutableURLRequest.HTTPMethod = method.rawValue
         
         assert(WhiteLabel.ClientID != nil, "No Client ID provided.")
