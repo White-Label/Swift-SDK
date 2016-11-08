@@ -29,50 +29,27 @@ import WhiteLabel
 
 class TrackTableViewController: UITableViewController {
 
-    var mixtape : Mixtape!
-    var tracks = [Track]()  {
+    var parentMixtape : WLMixtape!
+    var tracks = [WLTrack]()  {
         didSet {
             tableView.reloadData()
         }
     }
-    var paging = PagingGenerator(startPage: 1)
+    var paging = WLPagingGenerator(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = self.mixtape.title
-        self.refreshControl?.addTarget(self, action: #selector(TrackTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        title = parentMixtape.title
+        refreshControl?.addTarget(self, action: #selector(TrackTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
         
         // Setup the paging generator with White Label
         paging.next = { page in
-            
-            WhiteLabel.ListTracksInMixtape(self.mixtape, page: page, complete: { newTracks in
-                if let newTracks = newTracks {
-                    self.tracks += newTracks
+            WhiteLabel.ListTracksInMixtape(self.parentMixtape, page: page, complete: { tracks in
+                if tracks != nil {
+                    self.tracks += tracks!
                 }
             })
-            
-//            WhiteLabel.ListTracksForMixtape(
-//                self.mixtape,
-//                page: page,
-//                success: { tracks in
-//                    self.tracks += tracks
-//                },
-//                failure: { error in
-//                    switch error! {
-//                    case .Network(let statusCode, let error):
-//                        if statusCode == 404 {
-//                            self.paging.reachedEnd()
-//                        }
-//                        debugPrint("Network Error: \(error)")
-//                    case .JSONSerialization(let error):
-//                        print("JSONSerialization Error: \(error)")
-//                    case .ObjectSerialization(let reason):
-//                        print("ObjectSerialization Error Reason: \(reason)")
-//                    }
-//                }
-//            )
-            
         }
         
         paging.getNext() // Initial load
@@ -96,8 +73,8 @@ class TrackTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Track, for: indexPath)
         let track = tracks[indexPath.row]
         
-        cell.textLabel!.text = track.title;
-        cell.detailTextLabel!.text = track.artist;
+        cell.textLabel!.text = track.title
+        cell.detailTextLabel!.text = track.artist
         
         return cell;
     }
@@ -122,7 +99,7 @@ class TrackTableViewController: UITableViewController {
             UIApplication.shared.openURL(URL(string: "https://github.com/NoonPacific/NPAudioStream")!)
         }));
         
-        self.present(alertController, animated: true, completion: nil)
+        present(alertController, animated: true, completion: nil)
     }
 }
 

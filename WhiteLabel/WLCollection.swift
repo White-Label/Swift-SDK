@@ -1,5 +1,5 @@
 //
-//  Track.swift
+//  Collection.swift
 //
 //  Created by Alex Givens http://alexgivens.com on 1/13/16
 //  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
@@ -24,23 +24,17 @@
 //
 
 
-public struct Track: ResponseObjectSerializable, ResponseCollectionSerializable {
+public struct WLCollection: ResponseObjectSerializable, ResponseCollectionSerializable {
     
     public var id : NSNumber!
     public var title : String!
-    public var artist : String!
     public var slug : String!
-    public var streamable : Bool!
-    public var duration : NSNumber?
-    public var externalID : NSNumber!
-    public var streamURL : String!
-    public var permalinkURL : String?
+    public var descriptionText : String?
     public var artworkURL : String?
-    public var purchaseURL : String?
-    public var downloadURL : String?
-    public var ticketURL : String?
-    public var playCount : NSNumber!
-    public var order : NSNumber!
+    public var artworkCredit : String?
+    public var artworkCreditURL : String?
+    public var createdDate : String!
+    public var mixtapeCount : NSNumber!
     
     public init?(response: HTTPURLResponse, representation: Any) {
         
@@ -50,18 +44,13 @@ public struct Track: ResponseObjectSerializable, ResponseCollectionSerializable 
         
         id = representation["id"] as! NSNumber
         title = representation["title"] as! String
-        artist = representation["artist"] as! String
         slug = representation["slug"] as! String
-        streamable = representation["streamable"] as! Bool
-        duration = representation["duration"] as? NSNumber
-        externalID = representation["external_id"] as! NSNumber
-        streamURL = representation["stream_url"] as! String
-        permalinkURL = representation["permalink_url"] as? String
+        descriptionText = representation["description"] as? String
         artworkURL = representation["artwork_url"] as? String
-        purchaseURL = representation["purchase_url"] as? String
-        downloadURL = representation["download_url"] as? String
-        playCount = representation["play_count"] as! NSNumber
-        order = representation["order"] as! NSNumber
+        artworkCredit = representation["artwork_credit"] as? String
+        artworkCreditURL = representation["artwork_credit_url"] as? String
+        createdDate = representation["created"] as! String
+        mixtapeCount = representation["mixtape_count"] as! NSNumber
         
     }
     

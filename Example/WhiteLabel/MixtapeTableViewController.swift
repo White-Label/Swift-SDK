@@ -29,50 +29,27 @@ import WhiteLabel
 
 class MixtapeTableViewController: UITableViewController {
 
-    var collection: WhiteLabel.Collection!
-    var mixtapes = [Mixtape]() {
+    var parentCollection: WLCollection!
+    var mixtapes = [WLMixtape]() {
         didSet {
             tableView.reloadData()
         }
     }
-    var paging = PagingGenerator(startPage: 1)
+    var paging = WLPagingGenerator(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = self.collection?.title
-        self.refreshControl?.addTarget(self, action: #selector(MixtapeTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        title = parentCollection.title
+        refreshControl?.addTarget(self, action: #selector(MixtapeTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
         
         // Setup the paging generator with White Label
         paging.next = { page in
-            
-            WhiteLabel.ListMixtapesInCollection(self.collection, page: page, complete: { mixtapes in
-//                if let newMixtapes = mixtapes {
-//                    self.mixtapes += newMixtapes
-//                }
+            WhiteLabel.ListMixtapesInCollection(self.parentCollection, page: page, complete: { mixtapes in
+                if mixtapes != nil {
+                    self.mixtapes += mixtapes!
+                }
             })
-            
-//            WhiteLabel.ListMixtapesForCollection(
-//                self.collection,
-//                page: page,
-//                success: { mixtapes in
-//                    self.mixtapes += mixtapes
-//                },
-//                failure: { error in
-//                    switch error! {
-//                    case .Network(let statusCode, let error):
-//                        if statusCode == 404 {
-//                            self.paging.reachedEnd()
-//                        }
-//                        debugPrint("Network Error: \(error)")
-//                    case .JSONSerialization(let error):
-//                        print("JSONSerialization Error: \(error)")
-//                    case .ObjectSerialization(let reason):
-//                        print("ObjectSerialization Error Reason: \(reason)")
-//                    }
-//                }
-//            )
-            
         }
         
         paging.getNext() // Initial load
@@ -97,7 +74,7 @@ class MixtapeTableViewController: UITableViewController {
         let mixtape = mixtapes[indexPath.row]
         
         cell.textLabel!.text = mixtape.title
-        cell.detailTextLabel!.text = String(describing: mixtape.trackCount)
+        cell.detailTextLabel!.text = mixtape.trackCount.stringValue
         
         return cell;
     }
@@ -115,11 +92,11 @@ class MixtapeTableViewController: UITableViewController {
     //MARK: Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == SegueIdentifier.MixtapesToTracks {
-            if let trackTableViewController = segue.destination as? TrackTableViewController,
-                let selectedIndexPath = self.tableView.indexPathsForSelectedRows?[0] {
-                trackTableViewController.mixtape = mixtapes[selectedIndexPath.row]
-            }
+        if segue.identifier == SegueIdentifier.MixtapesToTracks,
+            let trackTableViewController = segue.destination as? TrackTableViewController,
+            let selectedIndexPath = tableView.indexPathsForSelectedRows?[0]
+        {
+                trackTableViewController.parentMixtape = mixtapes[selectedIndexPath.row]
         }
     }
 }

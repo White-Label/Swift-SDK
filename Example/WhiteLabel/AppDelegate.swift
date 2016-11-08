@@ -35,11 +35,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Setup White Label SDK
-        if let clientID = getClientID() {
-            WhiteLabel.Constants.ClientID = clientID
-        } else {
-            assertionFailure("Client ID was not loaded from keys.plist. Please ensure you provide a White Label API Client ID as per the README.")
+        guard let clientID = getClientID() else {
+            print("Client ID was not loaded from keys.plist. Please ensure you provide a White Label API Client ID as per the README.")
+            return false
         }
+        
+        WhiteLabel.Constants.ClientID = clientID
 
         return true
     }

@@ -1,8 +1,8 @@
 //
-//  Label.swift
+//  Paging.swift
 //
-//  Created by Alex Givens http://alexgivens.com on 7/1/16
-//  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
+//  Based on code by by Marcin Krzyzanowski on 22/06/15.
+//  Copyright (c) 2015 Marcin Krzyżanowski. All rights reserved.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +24,34 @@
 //
 
 
-public struct Label: ResponseObjectSerializable {
+import Foundation
+
+open class WLPagingGenerator {
+    open var next: ((_ page: UInt) -> Void)!
+    fileprivate(set) var page: UInt
+    fileprivate(set) var startPage: UInt
+    open var didReachEnd: Bool = false
     
-    public var id : NSNumber!
-    public var name : String!
-    public var slug : String!
-    public var iconURL : String?
-    public var service : Service!
+    public init(startPage: UInt = 1) {
+        self.startPage = startPage
+        self.page = startPage
+    }
     
-    public init?(response: HTTPURLResponse, representation: Any) {
-        
-        guard let representation = representation as? [String: Any] else {
-            return nil
+    open func getNext(_ complete: (() -> Void)? = nil) {
+        if didReachEnd { return }
+        next(page)
+        if complete != nil {
+            complete!()
         }
-        
-        id = representation["id"] as! NSNumber
-        name = representation["name"] as! String
-        slug = representation["slug"] as! String
-        iconURL = representation["slug"] as? String
-        service = Service(response: response, representation: representation["service"]!)
-        
+        self.page += 1
+    }
+    
+    open func reachedEnd() {
+        didReachEnd = true
+    }
+    
+    open func reset() {
+        didReachEnd = false
+        page = startPage
     }
 }

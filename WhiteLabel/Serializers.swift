@@ -50,24 +50,16 @@ extension ResponseCollectionSerializable where Self: ResponseObjectSerializable 
         
         debugPrint(representation)
         
-        if let representation = representation as? [[String: Any]] {
-            for itemRepresentation in representation {
-                if let item = Self(response: response, representation: itemRepresentation) {
-                    collection.append(item)
+        if let representation = representation as? [String: Any] {
+            let results = representation["results"]
+            if let results = results as? [[String: Any]] {
+                for itemRepresentation in results {
+                    if let item = Self(response: response, representation: itemRepresentation) {
+                        collection.append(item)
+                    }
                 }
             }
         }
-        
-//        if let representation = representation as? [[String: Any]] {
-//            let results = representation["results"]
-//            if let results = results as? [[String: Any]] {
-//                for itemRepresentation in results {
-//                    if let item = Self(response: response, representation: itemRepresentation) {
-//                        collection.append(item)
-//                    }
-//                }
-//            }
-//        }
         
         return collection
     }

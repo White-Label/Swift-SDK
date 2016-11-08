@@ -27,7 +27,7 @@
 import Foundation
 import Alamofire
 
-public enum Router: URLRequestConvertible {
+public enum WLRouter: URLRequestConvertible {
     
     // Label
     case getLabel

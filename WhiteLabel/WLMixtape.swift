@@ -1,5 +1,5 @@
 //
-//  Collection.swift
+//  Mixtape.swift
 //
 //  Created by Alex Givens http://alexgivens.com on 1/13/16
 //  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
@@ -24,7 +24,7 @@
 //
 
 
-public struct Collection: ResponseObjectSerializable, ResponseCollectionSerializable {
+public struct WLMixtape: ResponseObjectSerializable, ResponseCollectionSerializable {
     
     public var id : NSNumber!
     public var title : String!
@@ -33,8 +33,13 @@ public struct Collection: ResponseObjectSerializable, ResponseCollectionSerializ
     public var artworkURL : String?
     public var artworkCredit : String?
     public var artworkCreditURL : String?
-    public var createdDate : String!
-    public var mixtapeCount : NSNumber!
+    public var sponsor : String?
+    public var sponsorURL : String?
+    public var product : String?
+    public var productURL : String?
+    public var releaseDate : String?
+    public var trackCount : NSNumber!
+    public var collectionID : NSNumber!
     
     public init?(response: HTTPURLResponse, representation: Any) {
         
@@ -49,9 +54,13 @@ public struct Collection: ResponseObjectSerializable, ResponseCollectionSerializ
         artworkURL = representation["artwork_url"] as? String
         artworkCredit = representation["artwork_credit"] as? String
         artworkCreditURL = representation["artwork_credit_url"] as? String
-        createdDate = representation["created"] as! String
-        mixtapeCount = representation["mixtape_count"] as! NSNumber
+        sponsor = representation["sponsor"] as? String
+        sponsorURL = representation["sponsor_url"] as? String
+        product = representation["product"] as? String
+        productURL = representation["product_url"] as? String
+        releaseDate = representation["realease"] as? String
+        trackCount = representation["track_count"] as! NSNumber
+        collectionID = representation["collection"] as! NSNumber
         
     }
-    
 }

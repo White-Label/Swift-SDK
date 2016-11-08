@@ -29,17 +29,17 @@ import WhiteLabel
 
 class CollectionTableViewController: UITableViewController {
     
-    var collections = [WhiteLabel.Collection]() {
+    var collections = [WLCollection]() {
         didSet {
             tableView.reloadData()
         }
     }
-    var paging = PagingGenerator(startPage: 1)
+    var paging = WLPagingGenerator(startPage: 1)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.refreshControl?.addTarget(self, action: #selector(CollectionTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        refreshControl?.addTarget(self, action: #selector(CollectionTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
         
         // Get your label
         WhiteLabel.GetLabel { label in
@@ -48,34 +48,11 @@ class CollectionTableViewController: UITableViewController {
         
         // Setup the paging generator with White Label
         paging.next = { page in
-            
-            WhiteLabel.ListCollections(page: page, parameters: nil, complete: { collections in
+            WhiteLabel.ListCollections(page: page, complete: { collections in
                 if collections != nil {
                     self.collections += collections!
                 }
             })
-            
-//            WhiteLabel.ListCollections(
-//                parameters: nil,
-//                page: page,
-//                success: { collections in
-//                    self.collections += collections
-//                },
-//                failure: { error in
-//                    switch error! {
-//                    case .Network(let statusCode, let error):
-//                        if statusCode == 404 {
-//                            self.paging.reachedEnd()
-//                        }
-//                        debugPrint("Network Error: \(error)")
-//                    case .JSONSerialization(let error):
-//                        print("JSONSerialization Error: \(error)")
-//                    case .ObjectSerialization(let reason):
-//                        print("ObjectSerialization Error Reason: \(reason)")
-//                    }
-//                }
-//            )
-            
         }
         
         paging.getNext() // Initial load
@@ -97,10 +74,10 @@ class CollectionTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Collection, for: indexPath)
-        let collection = collections[indexPath.row] as! WhiteLabel.Collection
+        let collection = collections[indexPath.row]
         
-        cell.textLabel!.text = collection.title;
-        cell.detailTextLabel!.text = String(collection.mixtapeCount);
+        cell.textLabel!.text = collection.title
+        cell.detailTextLabel!.text = collection.mixtapeCount.stringValue
         
         return cell;
     }
@@ -118,12 +95,11 @@ class CollectionTableViewController: UITableViewController {
     //MARK: Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == SegueIdentifier.CollectionsToMixtapes {
-            if let mixtapeTableViewController = segue.destination as? MixtapeTableViewController {
-                if let selectedIndexPath = self.tableView.indexPathsForSelectedRows?[0] {
-                    mixtapeTableViewController.collection = collections[selectedIndexPath.row]
-                }
-            }
+        if segue.identifier == SegueIdentifier.CollectionsToMixtapes,
+            let mixtapeTableViewController = segue.destination as? MixtapeTableViewController,
+            let selectedIndexPath = tableView.indexPathsForSelectedRows?[0]
+        {
+            mixtapeTableViewController.parentCollection = collections[selectedIndexPath.row]
         }
     }
 }
