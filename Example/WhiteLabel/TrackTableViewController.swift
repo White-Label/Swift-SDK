@@ -29,50 +29,33 @@ import WhiteLabel
 
 class TrackTableViewController: UITableViewController {
 
-    var mixtape : Mixtape!
-    var tracks = [Track]()  {
+    var parentMixtape : WLMixtape!
+    var tracks = [WLTrack]()  {
         didSet {
             tableView.reloadData()
         }
     }
-    var paging = PagingGenerator(startPage: 1)
+    var paging = WLPagingGenerator(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = self.mixtape.title
-        self.refreshControl?.addTarget(self, action: #selector(TrackTableViewController.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        title = parentMixtape.title
+        refreshControl?.addTarget(self, action: #selector(TrackTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
         
         // Setup the paging generator with White Label
         paging.next = { page in
-            
-            WhiteLabel.ListTracksForMixtape(
-                self.mixtape,
-                page: page,
-                success: { tracks in
-                    self.tracks += tracks
-                },
-                failure: { error in
-                    switch error! {
-                    case .Network(let statusCode, let error):
-                        if statusCode == 404 {
-                            self.paging.reachedEnd()
-                        }
-                        debugPrint("Network Error: \(error)")
-                    case .JSONSerialization(let error):
-                        print("JSONSerialization Error: \(error)")
-                    case .ObjectSerialization(let reason):
-                        print("ObjectSerialization Error Reason: \(reason)")
-                    }
+            WhiteLabel.ListTracksInMixtape(self.parentMixtape, page: page, complete: { tracks in
+                if tracks != nil {
+                    self.tracks += tracks!
                 }
-            )
-            
+            })
         }
         
         paging.getNext() // Initial load
     }
     
-    func handleRefresh(refreshControl: UIRefreshControl) {
+    func handleRefresh(_ refreshControl: UIRefreshControl) {
         paging.reset()
         tracks = []
         paging.getNext() {
@@ -82,23 +65,23 @@ class TrackTableViewController: UITableViewController {
 
     //MARK: Data Source
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tracks.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier.Track, forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Track, for: indexPath)
         let track = tracks[indexPath.row]
         
-        cell.textLabel!.text = track.title;
-        cell.detailTextLabel!.text = track.artist;
+        cell.textLabel!.text = track.title
+        cell.detailTextLabel!.text = track.artist
         
         return cell;
     }
     
     //MARK: Delegate
     
-    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         // Quick and easy infinite scroll trigger
         if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && tracks.count >= Int(WhiteLabel.Constants.PageSize) {
@@ -106,17 +89,17 @@ class TrackTableViewController: UITableViewController {
         }
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let title = "Just Add Music 🔊"
         let message = "Now that your networking code is done, check out our NPAudioStream library to start streaming your White Label tracks!"
         
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.Cancel, handler: nil));
-        alertController.addAction(UIAlertAction(title: "View", style: UIAlertActionStyle.Default, handler: {(action:UIAlertAction) in
-            UIApplication.sharedApplication().openURL(NSURL(string: "https://github.com/NoonPacific/NPAudioStream")!)
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.cancel, handler: nil));
+        alertController.addAction(UIAlertAction(title: "View", style: UIAlertActionStyle.default, handler: {(action:UIAlertAction) in
+            UIApplication.shared.openURL(URL(string: "https://github.com/NoonPacific/NPAudioStream")!)
         }));
         
-        self.presentViewController(alertController, animated: true, completion: nil)
+        present(alertController, animated: true, completion: nil)
     }
 }
 

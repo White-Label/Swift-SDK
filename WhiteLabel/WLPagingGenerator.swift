@@ -26,38 +26,31 @@
 
 import Foundation
 
-public protocol AsyncGeneratorType {
-    associatedtype Fetch
-    mutating func getNext(complete: (() -> Void)?)
-}
-
-public class PagingGenerator: AsyncGeneratorType {
-    public typealias Fetch = (page: UInt) -> Void
-    
-    public var next:Fetch!
-    private(set) var page: UInt
-    private(set) var startPage: UInt
-    public var didReachEnd: Bool = false
+open class WLPagingGenerator {
+    open var next: ((_ page: UInt) -> Void)!
+    fileprivate(set) var page: UInt
+    fileprivate(set) var startPage: UInt
+    open var didReachEnd: Bool = false
     
     public init(startPage: UInt = 1) {
         self.startPage = startPage
         self.page = startPage
     }
     
-    public func getNext(complete: (() -> Void)? = nil) {
+    open func getNext(_ complete: (() -> Void)? = nil) {
         if didReachEnd { return }
-        next(page: page)
+        next(page)
         if complete != nil {
             complete!()
         }
         self.page += 1
     }
     
-    public func reachedEnd() {
+    open func reachedEnd() {
         didReachEnd = true
     }
     
-    public func reset() {
+    open func reset() {
         didReachEnd = false
         page = startPage
     }

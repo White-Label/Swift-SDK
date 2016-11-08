@@ -1,8 +1,7 @@
 //
-//  Label.swift
+//  DispatchQueue+Alamofire.swift
 //
-//  Created by Alex Givens http://alexgivens.com on 7/1/16
-//  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
+//  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -23,24 +22,22 @@
 //  THE SOFTWARE.
 //
 
+import Dispatch
+import Foundation
 
-import Alamofire
+extension DispatchQueue {
+    static var userInteractive: DispatchQueue { return DispatchQueue.global(qos: .userInteractive) }
+    static var userInitiated: DispatchQueue { return DispatchQueue.global(qos: .userInitiated) }
+    static var utility: DispatchQueue { return DispatchQueue.global(qos: .utility) }
+    static var background: DispatchQueue { return DispatchQueue.global(qos: .background) }
 
-public final class Label: ResponseObjectSerializable {
-    
-    public var id : NSNumber!
-    public var name : String!
-    public var slug : String!
-    public var iconURL : String?
-    public var service : Service!
-    
-    public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
-        
-        id = representation.valueForKeyPath("id") as! NSNumber
-        name = representation.valueForKeyPath("name") as! String
-        slug = representation.valueForKeyPath("slug") as! String
-        iconURL = representation.valueForKeyPath("slug") as? String
-        service = Service(response: response, representation: representation.valueForKeyPath("service")!)
-        
+    func after(_ delay: TimeInterval, execute closure: @escaping () -> Void) {
+        asyncAfter(deadline: .now() + delay, execute: closure)
+    }
+
+    func syncResult<T>(_ closure: () -> T) -> T {
+        var result: T!
+        sync { result = closure() }
+        return result
     }
 }

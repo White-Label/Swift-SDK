@@ -1,7 +1,7 @@
 //
-//  Collection.swift
+//  Service.swift
 //
-//  Created by Alex Givens http://alexgivens.com on 1/13/16
+//  Created by Alex Givens http://alexgivens.com on 7/1/16
 //  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,31 +24,23 @@
 //
 
 
-import Alamofire
-
-public final class Collection: ResponseObjectSerializable, ResponseCollectionSerializable {
+public struct WLService {
     
     public var id : NSNumber!
-    public var title : String!
+    public var name : String!
     public var slug : String!
-    public var descriptionText : String?
-    public var artworkURL : String?
-    public var artworkCredit : String?
-    public var artworkCreditURL : String?
-    public var createdDate : String!
-    public var mixtapeCount : NSNumber!
+    public var externalURL : String?
     
-    public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    public init?(response: HTTPURLResponse, representation: Any) {
         
-        id = representation.valueForKeyPath("id") as! NSNumber
-        title = representation.valueForKeyPath("title") as! String
-        slug = representation.valueForKeyPath("slug") as! String
-        descriptionText = representation.valueForKeyPath("description") as? String
-        artworkURL = representation.valueForKeyPath("artwork_url") as? String
-        artworkCredit = representation.valueForKeyPath("artwork_credit") as? String
-        artworkCreditURL = representation.valueForKeyPath("artwork_credit_url") as? String
-        createdDate = representation.valueForKeyPath("created") as! String
-        mixtapeCount = representation.valueForKeyPath("mixtape_count") as! NSNumber
+        guard let representation = representation as? [String: Any] else {
+            return nil
+        }
+        
+        id = representation["id"] as! NSNumber
+        name = representation["name"] as! String
+        slug = representation["slug"] as! String
+        externalURL = representation["external_url"] as? String
         
     }
 }

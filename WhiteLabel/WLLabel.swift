@@ -1,5 +1,5 @@
 //
-//  Service.swift
+//  Label.swift
 //
 //  Created by Alex Givens http://alexgivens.com on 7/1/16
 //  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
@@ -24,19 +24,25 @@
 //
 
 
-public class Service {
+public struct WLLabel: ResponseObjectSerializable {
     
     public var id : NSNumber!
     public var name : String!
     public var slug : String!
-    public var externalURL : String?
+    public var iconURL : String?
+    public var service : WLService!
     
-    public required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    public init?(response: HTTPURLResponse, representation: Any) {
         
-        id = representation.valueForKeyPath("id") as! NSNumber
-        name = representation.valueForKeyPath("name") as! String
-        slug = representation.valueForKeyPath("slug") as! String
-        externalURL = representation.valueForKeyPath("external_url") as? String
+        guard let representation = representation as? [String: Any] else {
+            return nil
+        }
+        
+        id = representation["id"] as! NSNumber
+        name = representation["name"] as! String
+        slug = representation["slug"] as! String
+        iconURL = representation["slug"] as? String
+        service = WLService(response: response, representation: representation["service"]!)
         
     }
 }

@@ -29,58 +29,36 @@ import WhiteLabel
 
 class CollectionTableViewController: UITableViewController {
     
-    var collections : [Collection] = [] {
+    var collections = [WLCollection]() {
         didSet {
             tableView.reloadData()
         }
     }
-    var paging = PagingGenerator(startPage: 1)
+    var paging = WLPagingGenerator(startPage: 1)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.refreshControl?.addTarget(self, action: #selector(CollectionTableViewController.handleRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        refreshControl?.addTarget(self, action: #selector(CollectionTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
         
         // Get your label
-        WhiteLabel.GetLabel(
-            success: { label in
-                self.title = label.name
-            },
-            failure: { error in
-                debugPrint(error)
-            }
-        )
+        WhiteLabel.GetLabel { label in
+            self.title = label?.name
+        }
         
         // Setup the paging generator with White Label
         paging.next = { page in
-            
-            WhiteLabel.ListCollections(
-                parameters: nil,
-                page: page,
-                success: { collections in
-                    self.collections += collections
-                },
-                failure: { error in
-                    switch error! {
-                    case .Network(let statusCode, let error):
-                        if statusCode == 404 {
-                            self.paging.reachedEnd()
-                        }
-                        debugPrint("Network Error: \(error)")
-                    case .JSONSerialization(let error):
-                        print("JSONSerialization Error: \(error)")
-                    case .ObjectSerialization(let reason):
-                        print("ObjectSerialization Error Reason: \(reason)")
-                    }
+            WhiteLabel.ListCollections(page: page, complete: { collections in
+                if collections != nil {
+                    self.collections += collections!
                 }
-            )
-            
+            })
         }
         
         paging.getNext() // Initial load
     }
     
-    func handleRefresh(refreshControl: UIRefreshControl) {
+    func handleRefresh(_ refreshControl: UIRefreshControl) {
         paging.reset()
         collections = []
         paging.getNext() {
@@ -90,23 +68,23 @@ class CollectionTableViewController: UITableViewController {
     
     //MARK: Data Source
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return collections.count
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier.Collection, forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Collection, for: indexPath)
         let collection = collections[indexPath.row]
         
-        cell.textLabel!.text = collection.title;
-        cell.detailTextLabel!.text = String(collection.mixtapeCount);
+        cell.textLabel!.text = collection.title
+        cell.detailTextLabel!.text = collection.mixtapeCount.stringValue
         
         return cell;
     }
     
     //Mark: Delegate
     
-    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         // Quick and easy infinite scroll trigger
         if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && collections.count >= Int(WhiteLabel.Constants.PageSize) {
@@ -116,13 +94,12 @@ class CollectionTableViewController: UITableViewController {
     
     //MARK: Navigation
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == SegueIdentifier.CollectionsToMixtapes {
-            if let mixtapeTableViewController = segue.destinationViewController as? MixtapeTableViewController {
-                if let selectedIndexPath = self.tableView.indexPathsForSelectedRows?[0] {
-                    mixtapeTableViewController.collection = collections[selectedIndexPath.row]
-                }
-            }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == SegueIdentifier.CollectionsToMixtapes,
+            let mixtapeTableViewController = segue.destination as? MixtapeTableViewController,
+            let selectedIndexPath = tableView.indexPathsForSelectedRows?[0]
+        {
+            mixtapeTableViewController.parentCollection = collections[selectedIndexPath.row]
         }
     }
 }
