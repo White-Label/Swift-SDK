@@ -24,7 +24,7 @@
 //
 
 
-public struct WLService {
+public struct WLService: Equatable {
     
     public var id : Int!
     public var name : String!
@@ -45,4 +45,8 @@ public struct WLService {
         }
     }
     
+}
+
+public func ==(lhs: WLService, rhs: WLService) -> Bool {
+    return lhs.id == rhs.id
 }

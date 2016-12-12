@@ -24,7 +24,7 @@
 //
 
 
-public struct WLMixtape: ResponseObjectSerializable, ResponseCollectionSerializable {
+public struct WLMixtape: ResponseObjectSerializable, ResponseCollectionSerializable, Equatable {
     
     public var id : Int!
     public var title : String!
@@ -76,4 +76,8 @@ public struct WLMixtape: ResponseObjectSerializable, ResponseCollectionSerializa
         collectionID = representation["collection"] as! Int
     }
     
+}
+
+public func ==(lhs: WLMixtape, rhs: WLMixtape) -> Bool {
+    return lhs.id == rhs.id
 }
