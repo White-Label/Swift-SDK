@@ -34,7 +34,7 @@ class CollectionTableViewController: UITableViewController {
             tableView.reloadData()
         }
     }
-    var paging = WLPagingGenerator(startPage: 1)
+    var paging = PagingGenerator(startPage: 1)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,7 +77,7 @@ class CollectionTableViewController: UITableViewController {
         let collection = collections[indexPath.row]
         
         cell.textLabel!.text = collection.title
-        cell.detailTextLabel!.text = collection.mixtapeCount.stringValue
+        cell.detailTextLabel!.text = String(collection.mixtapeCount)
         
         return cell;
     }

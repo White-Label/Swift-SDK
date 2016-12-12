@@ -35,7 +35,7 @@ class TrackTableViewController: UITableViewController {
             tableView.reloadData()
         }
     }
-    var paging = WLPagingGenerator(startPage: 1)
+    var paging = PagingGenerator(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()

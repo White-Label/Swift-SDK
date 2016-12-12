@@ -1,5 +1,5 @@
 //
-//  Paging.swift
+//  PagingGenerator.swift
 //
 //  Based on code by by Marcin Krzyzanowski on 22/06/15.
 //  Copyright (c) 2015 Marcin Krzyżanowski. All rights reserved.
@@ -26,7 +26,7 @@
 
 import Foundation
 
-open class WLPagingGenerator {
+open class PagingGenerator {
     open var next: ((_ page: UInt) -> Void)!
     fileprivate(set) var page: UInt
     fileprivate(set) var startPage: UInt
