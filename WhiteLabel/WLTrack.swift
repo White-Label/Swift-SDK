@@ -77,6 +77,6 @@ public struct WLTrack: ResponseObjectSerializable, ResponseCollectionSerializabl
     
 }
 
-func ==(lhs: WLTrack, rhs: WLTrack) -> Bool {
+public func ==(lhs: WLTrack, rhs: WLTrack) -> Bool {
     return lhs.id == rhs.id
 }

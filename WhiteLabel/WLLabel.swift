@@ -49,6 +49,6 @@ public struct WLLabel: ResponseObjectSerializable, Equatable {
     
 }
 
-func ==(lhs: WLLabel, rhs: WLLabel) -> Bool {
+public func ==(lhs: WLLabel, rhs: WLLabel) -> Bool {
     return lhs.id == rhs.id
 }

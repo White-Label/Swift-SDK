@@ -78,6 +78,6 @@ public struct WLMixtape: ResponseObjectSerializable, ResponseCollectionSerializa
     
 }
 
-func ==(lhs: WLMixtape, rhs: WLMixtape) -> Bool {
+public func ==(lhs: WLMixtape, rhs: WLMixtape) -> Bool {
     return lhs.id == rhs.id
 }

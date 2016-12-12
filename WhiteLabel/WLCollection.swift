@@ -60,6 +60,6 @@ public struct WLCollection: ResponseObjectSerializable, ResponseCollectionSerial
     
 }
 
-func ==(lhs: WLCollection, rhs: WLCollection) -> Bool {
+public func ==(lhs: WLCollection, rhs: WLCollection) -> Bool {
     return lhs.id == rhs.id
 }

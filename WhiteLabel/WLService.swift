@@ -47,6 +47,6 @@ public struct WLService: Equatable {
     
 }
 
-func ==(lhs: WLService, rhs: WLService) -> Bool {
+public func ==(lhs: WLService, rhs: WLService) -> Bool {
     return lhs.id == rhs.id
 }
