@@ -1,5 +1,5 @@
 //
-//  Mixtape.swift
+//  WLMixtape.swift
 //
 //  Created by Alex Givens http://alexgivens.com on 1/13/16
 //  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
@@ -26,20 +26,21 @@
 
 public struct WLMixtape: ResponseObjectSerializable, ResponseCollectionSerializable {
     
-    public var id : NSNumber!
+    public var id : Int!
     public var title : String!
     public var slug : String!
-    public var descriptionText : String?
-    public var artworkURL : String?
+    public var description : String?
+    public var artworkURL : URL?
     public var artworkCredit : String?
-    public var artworkCreditURL : String?
+    public var artworkCreditURL : URL?
     public var sponsor : String?
-    public var sponsorURL : String?
+    public var sponsorURL : URL?
     public var product : String?
-    public var productURL : String?
-    public var releaseDate : String?
-    public var trackCount : NSNumber!
-    public var collectionID : NSNumber!
+    public var productURL : URL?
+    public var createdDate : Date!
+    public var releaseDate : Date?
+    public var trackCount : Int!
+    public var collectionID : Int!
     
     public init?(response: HTTPURLResponse, representation: Any) {
         
@@ -47,20 +48,32 @@ public struct WLMixtape: ResponseObjectSerializable, ResponseCollectionSerializa
             return nil
         }
         
-        id = representation["id"] as! NSNumber
+        id = representation["id"] as! Int
         title = representation["title"] as! String
         slug = representation["slug"] as! String
-        descriptionText = representation["description"] as? String
-        artworkURL = representation["artwork_url"] as? String
+        description = representation["description"] as? String
+        if let artworkURLString = representation["artwork_url"] as? String {
+            artworkURL = URL(string: artworkURLString)
+        }
         artworkCredit = representation["artwork_credit"] as? String
-        artworkCreditURL = representation["artwork_credit_url"] as? String
+        if let artworkCreditURLString = representation["artwork_credit_url"] as? String {
+            artworkCreditURL = URL(string: artworkCreditURLString)
+        }
         sponsor = representation["sponsor"] as? String
-        sponsorURL = representation["sponsor_url"] as? String
+        if let sponsorURLString = representation["sponsor_url"] as? String {
+            sponsorURL = URL(string: sponsorURLString)
+        }
         product = representation["product"] as? String
-        productURL = representation["product_url"] as? String
-        releaseDate = representation["realease"] as? String
-        trackCount = representation["track_count"] as! NSNumber
-        collectionID = representation["collection"] as! NSNumber
-        
+        if let productURLString = representation["product_url"] as? String {
+            productURL = URL(string: productURLString)
+        }
+        let createdDateString = representation["created"] as! String
+        createdDate = Date(string: createdDateString)
+        if let releaseDateString = representation["realease"] as? String {
+            releaseDate = Date(string: releaseDateString)
+        }
+        trackCount = representation["track_count"] as! Int
+        collectionID = representation["collection"] as! Int
     }
+    
 }

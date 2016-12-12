@@ -35,7 +35,7 @@ class MixtapeTableViewController: UITableViewController {
             tableView.reloadData()
         }
     }
-    var paging = WLPagingGenerator(startPage: 1)
+    var paging = PagingGenerator(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,7 +74,7 @@ class MixtapeTableViewController: UITableViewController {
         let mixtape = mixtapes[indexPath.row]
         
         cell.textLabel!.text = mixtape.title
-        cell.detailTextLabel!.text = mixtape.trackCount.stringValue
+        cell.detailTextLabel!.text = String(mixtape.trackCount)
         
         return cell;
     }

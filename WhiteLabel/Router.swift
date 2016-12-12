@@ -27,7 +27,7 @@
 import Foundation
 import Alamofire
 
-public enum WLRouter: URLRequestConvertible {
+public enum Router: URLRequestConvertible {
     
     // Label
     case getLabel
@@ -35,23 +35,23 @@ public enum WLRouter: URLRequestConvertible {
     // Collection
     case listCollections(parameters: Parameters?)
     case createCollection(parameters: Parameters?)
-    case getCollection(id: AnyObject)
-    case updateCollection(id: AnyObject, parameters: Parameters?)
-    case deleteCollection(id: AnyObject)
+    case getCollection(id: Any)
+    case updateCollection(id: Any, parameters: Parameters?)
+    case deleteCollection(id: Any)
     
     // Mixtape
     case listMixtapes(parameters: Parameters?)
     case createMixtape(parameters: Parameters?)
-    case getMixtape(id: AnyObject)
-    case updateMixtape(id: AnyObject, parameters: Parameters?)
-    case deleteMixtape(id: AnyObject)
+    case getMixtape(id: Any)
+    case updateMixtape(id: Any, parameters: Parameters?)
+    case deleteMixtape(id: Any)
     
     // Track
     case listTracks(parameters: Parameters?)
     case createTrack(parameters: Parameters?)
-    case getTrack(id: AnyObject)
-    case updateTrack(id: AnyObject, parameters: Parameters?)
-    case deleteTrack(id: AnyObject)
+    case getTrack(id: Any)
+    case updateTrack(id: Any, parameters: Parameters?)
+    case deleteTrack(id: Any)
     
     public var method: HTTPMethod {
         switch self {

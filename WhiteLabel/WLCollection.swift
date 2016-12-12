@@ -1,5 +1,5 @@
 //
-//  Collection.swift
+//  WLCollection.swift
 //
 //  Created by Alex Givens http://alexgivens.com on 1/13/16
 //  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
@@ -26,15 +26,15 @@
 
 public struct WLCollection: ResponseObjectSerializable, ResponseCollectionSerializable {
     
-    public var id : NSNumber!
+    public var id : Int!
     public var title : String!
     public var slug : String!
-    public var descriptionText : String?
-    public var artworkURL : String?
+    public var description : String?
+    public var artworkURL : URL?
     public var artworkCredit : String?
-    public var artworkCreditURL : String?
-    public var createdDate : String!
-    public var mixtapeCount : NSNumber!
+    public var artworkCreditURL : URL?
+    public var createdDate : Date!
+    public var mixtapeCount : Int!
     
     public init?(response: HTTPURLResponse, representation: Any) {
         
@@ -42,16 +42,20 @@ public struct WLCollection: ResponseObjectSerializable, ResponseCollectionSerial
             return nil
         }
         
-        id = representation["id"] as! NSNumber
+        id = representation["id"] as! Int
         title = representation["title"] as! String
         slug = representation["slug"] as! String
-        descriptionText = representation["description"] as? String
-        artworkURL = representation["artwork_url"] as? String
+        description = representation["description"] as? String
+        if let artworkURLString = representation["artwork_url"] as? String {
+            artworkURL = URL(string: artworkURLString)
+        }
         artworkCredit = representation["artwork_credit"] as? String
-        artworkCreditURL = representation["artwork_credit_url"] as? String
-        createdDate = representation["created"] as! String
-        mixtapeCount = representation["mixtape_count"] as! NSNumber
-        
+        if let artworkCreditURLString = representation["artwork_credit_url"] as? String {
+            artworkCreditURL = URL(string: artworkCreditURLString)
+        }
+        let createdDateString = representation["created"] as! String
+        createdDate = Date(string: createdDateString)
+        mixtapeCount = representation["mixtape_count"] as! Int
     }
     
 }

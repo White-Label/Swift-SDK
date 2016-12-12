@@ -1,5 +1,5 @@
 //
-//  Label.swift
+//  WLLabel.swift
 //
 //  Created by Alex Givens http://alexgivens.com on 7/1/16
 //  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
@@ -26,10 +26,10 @@
 
 public struct WLLabel: ResponseObjectSerializable {
     
-    public var id : NSNumber!
+    public var id : Int!
     public var name : String!
     public var slug : String!
-    public var iconURL : String?
+    public var iconURL : URL?
     public var service : WLService!
     
     public init?(response: HTTPURLResponse, representation: Any) {
@@ -38,11 +38,13 @@ public struct WLLabel: ResponseObjectSerializable {
             return nil
         }
         
-        id = representation["id"] as! NSNumber
+        id = representation["id"] as! Int
         name = representation["name"] as! String
         slug = representation["slug"] as! String
-        iconURL = representation["slug"] as? String
+        if let iconURLString = representation["icon"] as? String {
+            iconURL = URL(string: iconURLString)
+        }
         service = WLService(response: response, representation: representation["service"]!)
-        
     }
+    
 }

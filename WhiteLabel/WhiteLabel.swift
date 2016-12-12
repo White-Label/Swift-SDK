@@ -29,7 +29,7 @@ import Alamofire
 
 
 public func GetLabel(complete: @escaping (WLLabel?) -> Void) {
-    Alamofire.request(WLRouter.getLabel).validate().responseObject { (response: DataResponse<WLLabel>) in
+    Alamofire.request(Router.getLabel).validate().responseObject { (response: DataResponse<WLLabel>) in
         complete(response.result.value)
     }
 }
@@ -39,19 +39,19 @@ public func ListCollections(parameters: Parameters? = nil, page: UInt = 1, compl
     var params = parameters ?? Parameters()
     params["page"] = page
     
-    Alamofire.request(WLRouter.listCollections(parameters: params)).validate().responseCollection { (response: DataResponse<[WLCollection]>) in
+    Alamofire.request(Router.listCollections(parameters: params)).validate().responseCollection { (response: DataResponse<[WLCollection]>) in
         complete(response.result.value)
     }
 }
 
-public func GetCollection(_ id: AnyObject, complete: @escaping (WLCollection?) -> Void) {
+public func GetCollection(_ id: Any, complete: @escaping (WLCollection?) -> Void) {
     
     var identifier = id
     if let collection = id as? WLCollection {
         identifier = collection.id
     }
     
-    Alamofire.request(WLRouter.getCollection(id: identifier)).validate().responseObject { (response: DataResponse<WLCollection>) in
+    Alamofire.request(Router.getCollection(id: identifier)).validate().responseObject { (response: DataResponse<WLCollection>) in
         complete(response.result.value)
     }
 }
@@ -69,19 +69,19 @@ public func ListMixtapes(parameters: Parameters? = nil, page: UInt = 1, complete
     var params = parameters ?? Parameters()
     params["page"] = page
     
-    Alamofire.request(WLRouter.listMixtapes(parameters: params)).validate().responseCollection { (response: DataResponse<[WLMixtape]>) in
+    Alamofire.request(Router.listMixtapes(parameters: params)).validate().responseCollection { (response: DataResponse<[WLMixtape]>) in
         complete(response.result.value)
     }
 }
 
-public func GetMixtape(_ id: AnyObject, complete: @escaping (WLMixtape?) -> Void) {
+public func GetMixtape(_ id: Any, complete: @escaping (WLMixtape?) -> Void) {
     
     var identifier = id
     if let mixtape = id as? WLMixtape {
         identifier = mixtape.id
     }
     
-    Alamofire.request(WLRouter.getMixtape(id: identifier)).validate().responseObject { (response: DataResponse<WLMixtape>) in
+    Alamofire.request(Router.getMixtape(id: identifier)).validate().responseObject { (response: DataResponse<WLMixtape>) in
         complete(response.result.value)
     }
 }
@@ -99,19 +99,19 @@ public func ListTracks(parameters: Parameters? = nil, page: UInt = 1, complete: 
     var params = parameters ?? Parameters()
     params["page"] = page
     
-    Alamofire.request(WLRouter.listTracks(parameters: params)).validate().responseCollection { (response: DataResponse<[WLTrack]>) in
+    Alamofire.request(Router.listTracks(parameters: params)).validate().responseCollection { (response: DataResponse<[WLTrack]>) in
         complete(response.result.value)
     }
 }
 
-public func GetTrack(_ id: AnyObject, complete: @escaping (WLTrack?) -> Void) {
+public func GetTrack(_ id: Any, complete: @escaping (WLTrack?) -> Void) {
     
     var identifier = id
     if let track = id as? WLTrack {
         identifier = track.id
     }
     
-    Alamofire.request(WLRouter.getTrack(id: identifier)).validate().responseObject { (response: DataResponse<WLTrack>) in
+    Alamofire.request(Router.getTrack(id: identifier)).validate().responseObject { (response: DataResponse<WLTrack>) in
         complete(response.result.value)
     }
 }
