@@ -24,7 +24,7 @@
 //
 
 
-public struct WLCollection: ResponseObjectSerializable, ResponseCollectionSerializable {
+public struct WLCollection: ResponseObjectSerializable, ResponseCollectionSerializable, Equatable {
     
     public var id : Int!
     public var title : String!
@@ -58,4 +58,8 @@ public struct WLCollection: ResponseObjectSerializable, ResponseCollectionSerial
         mixtapeCount = representation["mixtape_count"] as! Int
     }
     
+}
+
+func ==(lhs: WLCollection, rhs: WLCollection) -> Bool {
+    return lhs.id == rhs.id
 }

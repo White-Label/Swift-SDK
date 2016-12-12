@@ -24,7 +24,7 @@
 //
 
 
-public struct WLTrack: ResponseObjectSerializable, ResponseCollectionSerializable {
+public struct WLTrack: ResponseObjectSerializable, ResponseCollectionSerializable, Equatable {
     
     public var id : Int!
     public var title : String!
@@ -75,4 +75,8 @@ public struct WLTrack: ResponseObjectSerializable, ResponseCollectionSerializabl
         mixtapeID = representation["mixtape"] as! Int
     }
     
+}
+
+func ==(lhs: WLTrack, rhs: WLTrack) -> Bool {
+    return lhs.id == rhs.id
 }

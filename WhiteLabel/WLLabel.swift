@@ -24,7 +24,7 @@
 //
 
 
-public struct WLLabel: ResponseObjectSerializable {
+public struct WLLabel: ResponseObjectSerializable, Equatable {
     
     public var id : Int!
     public var name : String!
@@ -47,4 +47,8 @@ public struct WLLabel: ResponseObjectSerializable {
         service = WLService(response: response, representation: representation["service"]!)
     }
     
+}
+
+func ==(lhs: WLLabel, rhs: WLLabel) -> Bool {
+    return lhs.id == rhs.id
 }
