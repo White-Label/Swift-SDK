@@ -24,6 +24,32 @@
 //
 
 import Foundation
+import Alamofire
+import ObjectiveC
+
+private var totalCountAssociationKey: UInt8 = 0
+private var shuffleSeedAssociationKey: UInt8 = 0
+
+extension Result {
+    
+    var totalCount: NSNumber! {
+        get {
+            return objc_getAssociatedObject(self, &totalCountAssociationKey) as? NSNumber
+        }
+        set(newValue) {
+            objc_setAssociatedObject(self, &totalCountAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+    
+    var shuffleSeed: String? {
+        get {
+            return objc_getAssociatedObject(self, &shuffleSeedAssociationKey) as? String
+        }
+        set(newValue) {
+            objc_setAssociatedObject(self, &shuffleSeedAssociationKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+        }
+    }
+}
 
 extension Date {
     

@@ -92,11 +92,18 @@ extension DataRequest {
             guard error == nil else { return .failure(BackendError.network(error: error!)) }
             
             let jsonSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
-            let result = jsonSerializer.serializeResponse(request, response, data, nil)
+            var result = jsonSerializer.serializeResponse(request, response, data, nil)
             
             guard case let .success(jsonObject) = result else {
                 return .failure(BackendError.jsonSerialization(error: result.error!))
             }
+            
+            guard let representation = jsonObject as? [String: Any], let totalCount = representation["count"] as? NSNumber else {
+                return .failure(BackendError.objectSerialization(reason: "Count not found"))
+            }
+            
+            result.totalCount = totalCount
+            print("\(result.totalCount) *** \(result.shuffleSeed)")
             
             guard let response = response else {
                 let reason = "Response collection could not be serialized due to nil response."

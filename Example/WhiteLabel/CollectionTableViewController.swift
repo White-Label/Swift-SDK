@@ -26,6 +26,7 @@
 
 import UIKit
 import WhiteLabel
+import Alamofire
 
 class CollectionTableViewController: UITableViewController {
     

@@ -56,7 +56,7 @@ public func GetCollection(_ id: Any, complete: @escaping (WLCollection?) -> Void
     }
 }
 
-public func ListMixtapesInCollection(_ collection: WLCollection, parameters: Parameters? = nil, page: UInt = 1, complete: @escaping ([WLMixtape]?) -> Void) {
+public func ListMixtapesInCollection(_ collection: WLCollection, parameters: Parameters? = nil, page: UInt = 1, complete: @escaping (_ total: NSNumber?, _ mixtapes: [WLMixtape]?) -> Void) {
     
     var params = parameters ?? Parameters()
     params["collection"] = collection.id
@@ -64,13 +64,14 @@ public func ListMixtapesInCollection(_ collection: WLCollection, parameters: Par
     WhiteLabel.ListMixtapes(parameters: params, page: page, complete: complete)
 }
 
-public func ListMixtapes(parameters: Parameters? = nil, page: UInt = 1, complete: @escaping ([WLMixtape]?) -> Void) {
+public func ListMixtapes(parameters: Parameters? = nil, page: UInt = 1, complete: @escaping (_ total: NSNumber?, _ mixtapes: [WLMixtape]?) -> Void) {
     
     var params = parameters ?? Parameters()
     params["page"] = page
     
     Alamofire.request(Router.listMixtapes(parameters: params)).validate().responseCollection { (response: DataResponse<[WLMixtape]>) in
-        complete(response.result.value)
+        let totalcount = response.result.totalCount
+        complete(totalcount, response.result.value)
     }
 }
 

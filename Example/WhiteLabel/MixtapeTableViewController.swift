@@ -45,7 +45,8 @@ class MixtapeTableViewController: UITableViewController {
         
         // Setup the paging generator with White Label
         paging.next = { page in
-            WhiteLabel.ListMixtapesInCollection(self.parentCollection, page: page, complete: { mixtapes in
+            WhiteLabel.ListMixtapesInCollection(self.parentCollection, page: page, complete: { totalCount, mixtapes in
+                print("Total number of mixtapes: \(totalCount)")
                 if mixtapes != nil {
                     self.mixtapes += mixtapes!
                 }
