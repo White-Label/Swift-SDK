@@ -35,7 +35,7 @@ class TrackTableViewController: UITableViewController {
             tableView.reloadData()
         }
     }
-    var paging = PagingGenerator(startPage: 1)
+    var paging = PagingGenerator<WLTrack>(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,10 +73,10 @@ class TrackTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Track, for: indexPath)
         let track = tracks[indexPath.row]
         
-        cell.textLabel!.text = track.title
-        cell.detailTextLabel!.text = track.artist
+        cell.textLabel?.text = track.title
+        cell.detailTextLabel?.text = track.artist
         
-        return cell;
+        return cell
     }
     
     //MARK: Delegate
@@ -84,7 +84,7 @@ class TrackTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
         // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && tracks.count >= Int(WhiteLabel.Constants.PageSize) {
+        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && tracks.count >= Int(WhiteLabel.Constants.pageSize) {
             paging.getNext()
         }
     }

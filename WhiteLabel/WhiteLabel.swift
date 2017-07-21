@@ -28,9 +28,9 @@ import Foundation
 import Alamofire
 
 
-public func GetLabel(complete: @escaping (WLLabel?) -> Void) {
+public func GetLabel(complete: @escaping (WLLabel?, Error?) -> Void) {
     Alamofire.request(Router.getLabel).validate().responseObject { (response: DataResponse<WLLabel>) in
-        complete(response.result.value)
+        complete(response.result.value, response.result.error)
     }
 }
 
@@ -40,6 +40,11 @@ public func ListCollections(parameters: Parameters? = nil, page: UInt = 1, compl
     params["page"] = page
     
     Alamofire.request(Router.listCollections(parameters: params)).validate().responseCollection { (response: DataResponse<[WLCollection]>) in
+        
+        if let count = (response.response?.allHeaderFields["Count"] as? NSString)?.integerValue {
+            print("\(count) collections")
+        }
+        
         complete(response.result.value)
     }
 }
@@ -70,8 +75,10 @@ public func ListMixtapes(parameters: Parameters? = nil, page: UInt = 1, complete
     params["page"] = page
     
     Alamofire.request(Router.listMixtapes(parameters: params)).validate().responseCollection { (response: DataResponse<[WLMixtape]>) in
-        let totalcount = response.result.totalCount
-        complete(totalcount, response.result.value)
+        if let count = (response.response?.allHeaderFields["Count"] as? NSString)?.integerValue {
+            print("\(count) mixtapes")
+        }
+        complete(0, response.result.value)
     }
 }
 
@@ -101,6 +108,9 @@ public func ListTracks(parameters: Parameters? = nil, page: UInt = 1, complete: 
     params["page"] = page
     
     Alamofire.request(Router.listTracks(parameters: params)).validate().responseCollection { (response: DataResponse<[WLTrack]>) in
+        if let count = (response.response?.allHeaderFields["Count"] as? NSString)?.integerValue {
+            print("\(count) tracks")
+        }
         complete(response.result.value)
     }
 }

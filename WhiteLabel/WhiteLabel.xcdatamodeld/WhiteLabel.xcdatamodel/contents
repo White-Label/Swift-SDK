@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16F73" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="WLCollection" representedClassName="WLCollection" syncable="YES">
+        <attribute name="artworkCredit" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="artworkCreditURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="artworkURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="created" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="descriptionText" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="id" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="mixtapeCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="modified" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="slug" attributeType="String" syncable="YES"/>
+        <attribute name="title" attributeType="String" syncable="YES"/>
+        <relationship name="label" maxCount="1" deletionRule="Nullify" destinationEntity="WLLabel" inverseName="collections" inverseEntity="WLLabel" syncable="YES"/>
+        <relationship name="mixtapes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WLMixtape" inverseName="collection" inverseEntity="WLMixtape" syncable="YES"/>
+    </entity>
+    <entity name="WLLabel" representedClassName="WLLabel" syncable="YES">
+        <attribute name="iconURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="id" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="slug" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="collections" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WLCollection" inverseName="label" inverseEntity="WLCollection" syncable="YES"/>
+        <relationship name="service" maxCount="1" deletionRule="Nullify" destinationEntity="WLService" inverseName="label" inverseEntity="WLService" syncable="YES"/>
+    </entity>
+    <entity name="WLMixtape" representedClassName="WLMixtape" syncable="YES">
+        <attribute name="artworkCredit" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="artworkCreditURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="artworkURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="created" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="descriptionText" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="id" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="modified" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="product" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="productURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="released" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="slug" attributeType="String" syncable="YES"/>
+        <attribute name="sponsor" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sponsorURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" attributeType="String" syncable="YES"/>
+        <attribute name="trackCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="collection" maxCount="1" deletionRule="Nullify" destinationEntity="WLCollection" inverseName="mixtapes" inverseEntity="WLCollection" syncable="YES"/>
+        <relationship name="tracks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WLTrack" inverseName="mixtape" inverseEntity="WLTrack" syncable="YES"/>
+    </entity>
+    <entity name="WLService" representedClassName="WLService" syncable="YES">
+        <attribute name="externalURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="id" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="slug" attributeType="String" syncable="YES"/>
+        <relationship name="label" maxCount="1" deletionRule="Nullify" destinationEntity="WLLabel" inverseName="service" inverseEntity="WLLabel" syncable="YES"/>
+    </entity>
+    <entity name="WLTrack" representedClassName="WLTrack" syncable="YES">
+        <attribute name="artist" attributeType="String" syncable="YES"/>
+        <attribute name="artworkURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="downloadURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="duration" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="externalID" attributeType="String" syncable="YES"/>
+        <attribute name="id" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="modified" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="order" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="permalinkURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="playCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="purchaseURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="slug" attributeType="String" syncable="YES"/>
+        <attribute name="streamable" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="streamURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ticketURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" attributeType="String" syncable="YES"/>
+        <relationship name="mixtape" maxCount="1" deletionRule="Nullify" destinationEntity="WLMixtape" inverseName="tracks" inverseEntity="WLMixtape" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="WLCollection" positionX="54" positionY="-70" width="128" height="223"/>
+        <element name="WLMixtape" positionX="223" positionY="-36" width="128" height="298"/>
+        <element name="WLTrack" positionX="396" positionY="41" width="128" height="313"/>
+        <element name="WLLabel" positionX="-135" positionY="-97" width="144" height="133"/>
+        <element name="WLService" positionX="-137" positionY="90" width="128" height="118"/>
+    </elements>
+</model>

@@ -1,7 +1,7 @@
 //
-//  WLService.swift
+//  Utility.swift
 //
-//  Created by Alex Givens http://alexgivens.com on 7/1/16
+//  Created by Alex Givens http://alexgivens.com on 12/11/16
 //  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,30 +23,17 @@
 //  THE SOFTWARE.
 //
 
+import Foundation
 
-public struct WLService: Equatable {
+extension NSDate {
     
-    public var id : Int!
-    public var name : String!
-    public var slug : String!
-    public var externalURL : URL?
-    
-    public init?(response: HTTPURLResponse, representation: Any) {
-        
-        guard let representation = representation as? [String: Any] else {
-            return nil
-        }
-        
-        id = representation["id"] as! Int
-        name = representation["name"] as! String
-        slug = representation["slug"] as! String
-        if let externalURLString = representation["external_url"] as? String {
-            externalURL = URL(string: externalURLString)
-        }
+    public static func dateFrom(string: String) -> NSDate? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        guard let date = dateFormatter.date(from: string) else { return nil }
+        return date as NSDate
     }
     
-}
-
-public func ==(lhs: WLService, rhs: WLService) -> Bool {
-    return lhs.id == rhs.id
 }

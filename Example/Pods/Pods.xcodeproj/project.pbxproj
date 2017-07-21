@@ -7,17 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C0BC66E892DA1EB19A8EE7A252F0F3C /* WLCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8EA1DC4B6CF5339568A6F875F7F5454 /* WLCollection.swift */; };
 		0D3EAFBC7CFA792001CD6E4F7A69DAF1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA623FF607AC03C50E27A8E2FF3B5CD /* Constants.swift */; };
 		10EB23E9ECC4B33E16933BB1EA560B6A /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87882A1F5A92C8138D54545E51D51E6F /* Timeline.swift */; };
-		128F1A3F5B55EFBB2FDDB0E6E9F265FB /* WLMixtape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F9FAA3DC39FDF149F3DACCF03F9826 /* WLMixtape.swift */; };
 		186CD9C2C3EA64598558830E4BD56EF2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F9B2E024A80A62FE090406312870D33 /* Foundation.framework */; };
 		1B9EDEDC964E6B08F78920B4F4B9DB84 /* Alamofire-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B44A27EFBB0DA84D738057B77F3413B1 /* Alamofire-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		290A27B290E18B58DDD03C8E1DAE549D /* WhiteLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3853E64411E4B55D8BBD520D3BABCC60 /* WhiteLabel.swift */; };
 		2997C93B78AF8791836DE144DE614491 /* Pods-WhiteLabel_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D42A988A6FE1BA946DBCF84648F542D /* Pods-WhiteLabel_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2A9694DD31F7F81A0D14D6ACAC0AA760 /* WLTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACBFD9DD5FE46E36DA41A11B2DECA75 /* WLTrack.swift */; };
-		2CA346E61F72280B696D4CD8965E850B /* WLService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D62394A1A4505C5BB31BC632EA3707 /* WLService.swift */; };
-		32BD2AC71F31FE37B40AE053B74A64E0 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3723AC0BBC0C327C32074AF5EC2B8504 /* Utility.swift */; };
+		32BD2AC71F31FE37B40AE053B74A64E0 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3723AC0BBC0C327C32074AF5EC2B8504 /* Date+Extensions.swift */; };
 		3626B94094672CB1C9DEA32B9F9502E1 /* TaskDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01C037B4034EDA3D7955BC5E4E9D9D6 /* TaskDelegate.swift */; };
 		45A87022694F4C1B37781AB27D0E1C53 /* Pods-WhiteLabel_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 421E95554F04C932FFA4D45518715722 /* Pods-WhiteLabel_Tests-dummy.m */; };
 		4B48C40B754B6C2C203D806C67715F20 /* Serializers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E261B6FC9048F50E088BB2F438D162C0 /* Serializers.swift */; };
@@ -34,6 +29,18 @@
 		9ED2BB2981896E0A39EFA365503F58CE /* AFError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF006B0AD5765D1BFA8253C2DCBB126 /* AFError.swift */; };
 		A04BFC558D69E7DBB68023C80A9CFE4E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F9B2E024A80A62FE090406312870D33 /* Foundation.framework */; };
 		A2A6F71B727312BD45CC7A4AAD7B0AB7 /* NetworkReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A8AA5F9EDED0A0BDDE7E830BF4AEE0 /* NetworkReachabilityManager.swift */; };
+		A59374451F21C42900424E82 /* WhiteLabel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A59374431F21C42900424E82 /* WhiteLabel.xcdatamodeld */; };
+		A593748C1F21D6B500424E82 /* WLMixtape+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59374821F21D6B500424E82 /* WLMixtape+CoreDataClass.swift */; };
+		A593748D1F21D6B500424E82 /* WLMixtape+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59374831F21D6B500424E82 /* WLMixtape+CoreDataProperties.swift */; };
+		A593748E1F21D6B500424E82 /* WLLabel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59374841F21D6B500424E82 /* WLLabel+CoreDataClass.swift */; };
+		A593748F1F21D6B500424E82 /* WLLabel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59374851F21D6B500424E82 /* WLLabel+CoreDataProperties.swift */; };
+		A59374901F21D6B500424E82 /* WLTrack+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59374861F21D6B500424E82 /* WLTrack+CoreDataClass.swift */; };
+		A59374911F21D6B500424E82 /* WLTrack+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59374871F21D6B500424E82 /* WLTrack+CoreDataProperties.swift */; };
+		A59374921F21D6B500424E82 /* WLService+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59374881F21D6B500424E82 /* WLService+CoreDataClass.swift */; };
+		A59374931F21D6B500424E82 /* WLService+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59374891F21D6B500424E82 /* WLService+CoreDataProperties.swift */; };
+		A59374941F21D6B500424E82 /* WLCollection+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A593748A1F21D6B500424E82 /* WLCollection+CoreDataClass.swift */; };
+		A59374951F21D6B500424E82 /* WLCollection+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A593748B1F21D6B500424E82 /* WLCollection+CoreDataProperties.swift */; };
+		A59374971F21E56B00424E82 /* WhiteLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59374961F21E56B00424E82 /* WhiteLabel.swift */; };
 		A9EEEA7477981DEEBC72432DE9990A4B /* Alamofire-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C1C119BCE81C53F76CAC2BE27C38E0 /* Alamofire-dummy.m */; };
 		AE1EF48399533730D0066E04B22CA2D6 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46CDAC6C1187C5467E576980E1062C8B /* SessionManager.swift */; };
 		B65FCF589DA398C3EFE0128064E510EC /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155538D91ACEEEDF82069ACF6C1A02E7 /* MultipartFormData.swift */; };
@@ -45,7 +52,6 @@
 		D2E71F7FC242A6D9B856BA281B5A6D7D /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 706C7AFFE37BA158C3553250F4B5FAED /* Alamofire.framework */; };
 		EFD264FC408EBF3BA2528E70B08DDD94 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A46F517F0AF7E85A16D723F6406896 /* Notifications.swift */; };
 		F3D681D41517D9C0BBD7BC9127852D9F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F9B2E024A80A62FE090406312870D33 /* Foundation.framework */; };
-		F4874269195683A8C8C6C91DEC51AC8E /* WLLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4878C1D9461B177DBB2071681F9438B2 /* WLLabel.swift */; };
 		F6BECD98B97CBFEBE2C96F0E9E72A6C0 /* ResponseSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F9510473F6FFD7AA66524DB16C2263 /* ResponseSerialization.swift */; };
 		F8B3D3092ED0417E8CDF32033F6122F5 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCB8C44DE758E906C0BCDA455937B85 /* Alamofire.swift */; };
 /* End PBXBuildFile section */
@@ -75,7 +81,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		03542D661015FE0F7749D565AF193FE4 /* Pods_WhiteLabel_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_WhiteLabel_Tests.framework; path = "Pods-WhiteLabel_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		03542D661015FE0F7749D565AF193FE4 /* Pods_WhiteLabel_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WhiteLabel_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		04F47F5C9CDB035C5AFADEBA5BF44F1C /* Response.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Response.swift; path = Source/Response.swift; sourceTree = "<group>"; };
 		084E318A75D50B5B5025B72DBA153214 /* Pods-WhiteLabel_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-WhiteLabel_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		0B0C38C4BDEB9080841B4FFD27413D17 /* Pods-WhiteLabel_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-WhiteLabel_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -88,11 +94,10 @@
 		23E5ECAA9A19CE865C942FD6DAB38FCB /* WhiteLabel-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "WhiteLabel-dummy.m"; sourceTree = "<group>"; };
 		29B35A947B88A183525881244A9CD37E /* Pods-WhiteLabel_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-WhiteLabel_Example-resources.sh"; sourceTree = "<group>"; };
 		2B4090EFA7E8D15B612AE65CAAA93CE2 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2E759BD4AD272010131C025474641AC1 /* Pods-WhiteLabel_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-WhiteLabel_Tests.modulemap"; sourceTree = "<group>"; };
+		2E759BD4AD272010131C025474641AC1 /* Pods-WhiteLabel_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-WhiteLabel_Tests.modulemap"; sourceTree = "<group>"; };
 		32B030D27CAC730C5EB0F22390645310 /* ServerTrustPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ServerTrustPolicy.swift; path = Source/ServerTrustPolicy.swift; sourceTree = "<group>"; };
 		35ADEC50E9AE5915E41AB65610C4B1BF /* WhiteLabel-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "WhiteLabel-umbrella.h"; sourceTree = "<group>"; };
-		3723AC0BBC0C327C32074AF5EC2B8504 /* Utility.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
-		3853E64411E4B55D8BBD520D3BABCC60 /* WhiteLabel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WhiteLabel.swift; sourceTree = "<group>"; };
+		3723AC0BBC0C327C32074AF5EC2B8504 /* Date+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		38C2CB7C316222944C049C6EDA7E953F /* Pods-WhiteLabel_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-WhiteLabel_Example-dummy.m"; sourceTree = "<group>"; };
 		39D156D891B23A5E7C5CCECB444B98DF /* WhiteLabel.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = WhiteLabel.xcconfig; sourceTree = "<group>"; };
 		3D60BC9955B4F7FFA62D7440CB385C11 /* Result.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Result.swift; path = Source/Result.swift; sourceTree = "<group>"; };
@@ -101,44 +106,51 @@
 		425B5C8B4DB33BC996B73D25FE0BE76A /* Pods-WhiteLabel_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-WhiteLabel_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		433F94E3B8D25444A6C1155B18BADD75 /* PagingGenerator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PagingGenerator.swift; sourceTree = "<group>"; };
 		46CDAC6C1187C5467E576980E1062C8B /* SessionManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SessionManager.swift; path = Source/SessionManager.swift; sourceTree = "<group>"; };
-		46D62394A1A4505C5BB31BC632EA3707 /* WLService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WLService.swift; sourceTree = "<group>"; };
-		4878C1D9461B177DBB2071681F9438B2 /* WLLabel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WLLabel.swift; sourceTree = "<group>"; };
 		4AF006B0AD5765D1BFA8253C2DCBB126 /* AFError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AFError.swift; path = Source/AFError.swift; sourceTree = "<group>"; };
 		5D42A988A6FE1BA946DBCF84648F542D /* Pods-WhiteLabel_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-WhiteLabel_Tests-umbrella.h"; sourceTree = "<group>"; };
-		64B66E02F92A7D9E84D562A3B8BF8346 /* WhiteLabel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = WhiteLabel.framework; path = WhiteLabel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		64B66E02F92A7D9E84D562A3B8BF8346 /* WhiteLabel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WhiteLabel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6639346628280A0D0FAD35196BF56108 /* ParameterEncoding.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ParameterEncoding.swift; path = Source/ParameterEncoding.swift; sourceTree = "<group>"; };
 		66A46F517F0AF7E85A16D723F6406896 /* Notifications.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Notifications.swift; path = Source/Notifications.swift; sourceTree = "<group>"; };
 		68D31BF4BC777FEC08A28550D4B607AF /* Pods-WhiteLabel_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-WhiteLabel_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		6ACBFD9DD5FE46E36DA41A11B2DECA75 /* WLTrack.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WLTrack.swift; sourceTree = "<group>"; };
 		706C7AFFE37BA158C3553250F4B5FAED /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7D141D1953E5C6E67E362CE73090E48A /* Alamofire.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = Alamofire.modulemap; sourceTree = "<group>"; };
+		7D141D1953E5C6E67E362CE73090E48A /* Alamofire.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Alamofire.modulemap; sourceTree = "<group>"; };
 		7D16D1B1FEFB8B85E00B9B0A7868E2BB /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		87882A1F5A92C8138D54545E51D51E6F /* Timeline.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Timeline.swift; path = Source/Timeline.swift; sourceTree = "<group>"; };
 		8DD71940AC13C3E24A185FC617D06FC7 /* WhiteLabel-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "WhiteLabel-prefix.pch"; sourceTree = "<group>"; };
-		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		93EB06D09BFA992F9633043656C637E8 /* Pods-WhiteLabel_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-WhiteLabel_Example-frameworks.sh"; sourceTree = "<group>"; };
-		99D82819F190378EC29097B8AE3A700A /* WhiteLabel.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = WhiteLabel.modulemap; sourceTree = "<group>"; };
+		99D82819F190378EC29097B8AE3A700A /* WhiteLabel.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = WhiteLabel.modulemap; sourceTree = "<group>"; };
 		A01C037B4034EDA3D7955BC5E4E9D9D6 /* TaskDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TaskDelegate.swift; path = Source/TaskDelegate.swift; sourceTree = "<group>"; };
+		A59374441F21C42900424E82 /* WhiteLabel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WhiteLabel.xcdatamodel; sourceTree = "<group>"; };
+		A59374821F21D6B500424E82 /* WLMixtape+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WLMixtape+CoreDataClass.swift"; path = "CoreData/WLMixtape+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A59374831F21D6B500424E82 /* WLMixtape+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WLMixtape+CoreDataProperties.swift"; path = "CoreData/WLMixtape+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A59374841F21D6B500424E82 /* WLLabel+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WLLabel+CoreDataClass.swift"; path = "CoreData/WLLabel+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A59374851F21D6B500424E82 /* WLLabel+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WLLabel+CoreDataProperties.swift"; path = "CoreData/WLLabel+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A59374861F21D6B500424E82 /* WLTrack+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WLTrack+CoreDataClass.swift"; path = "CoreData/WLTrack+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A59374871F21D6B500424E82 /* WLTrack+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WLTrack+CoreDataProperties.swift"; path = "CoreData/WLTrack+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A59374881F21D6B500424E82 /* WLService+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WLService+CoreDataClass.swift"; path = "CoreData/WLService+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A59374891F21D6B500424E82 /* WLService+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WLService+CoreDataProperties.swift"; path = "CoreData/WLService+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A593748A1F21D6B500424E82 /* WLCollection+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WLCollection+CoreDataClass.swift"; path = "CoreData/WLCollection+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A593748B1F21D6B500424E82 /* WLCollection+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "WLCollection+CoreDataProperties.swift"; path = "CoreData/WLCollection+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A59374961F21E56B00424E82 /* WhiteLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhiteLabel.swift; sourceTree = "<group>"; };
 		A731723A41E96DC5C9D29CCE6A5596B5 /* Pods-WhiteLabel_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-WhiteLabel_Tests-resources.sh"; sourceTree = "<group>"; };
 		B029DBC43E49A740F12B5E4D2E6DD452 /* Validation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Validation.swift; path = Source/Validation.swift; sourceTree = "<group>"; };
 		B44A27EFBB0DA84D738057B77F3413B1 /* Alamofire-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Alamofire-umbrella.h"; sourceTree = "<group>"; };
 		B779A5FBF478559001F0F4796469DD08 /* Router.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
-		B8A6838FD3A877A5B8A2AFB5051C529F /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Alamofire.framework; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B8EA1DC4B6CF5339568A6F875F7F5454 /* WLCollection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WLCollection.swift; sourceTree = "<group>"; };
+		B8A6838FD3A877A5B8A2AFB5051C529F /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC2135E0C22C405F372EFE125D46FCC6 /* Pods-WhiteLabel_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-WhiteLabel_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		BCCA9CA7D9C1A2047BB93336C5708DFD /* Alamofire-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Alamofire-prefix.pch"; sourceTree = "<group>"; };
 		C4A7702F567ED3831F71D5518AB54A7B /* Pods-WhiteLabel_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-WhiteLabel_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		C52D11CA6BE3ADDAEF5E3A55740EC449 /* Pods-WhiteLabel_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-WhiteLabel_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
 		C84F23EE09E82217D1C482FE6740A34B /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DFCB8C44DE758E906C0BCDA455937B85 /* Alamofire.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Alamofire.swift; path = Source/Alamofire.swift; sourceTree = "<group>"; };
-		E07F6C5D661B5828AF3901CE02D4EE10 /* Pods-WhiteLabel_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-WhiteLabel_Example.modulemap"; sourceTree = "<group>"; };
+		E07F6C5D661B5828AF3901CE02D4EE10 /* Pods-WhiteLabel_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-WhiteLabel_Example.modulemap"; sourceTree = "<group>"; };
 		E261B6FC9048F50E088BB2F438D162C0 /* Serializers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Serializers.swift; sourceTree = "<group>"; };
 		E2F9510473F6FFD7AA66524DB16C2263 /* ResponseSerialization.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ResponseSerialization.swift; path = Source/ResponseSerialization.swift; sourceTree = "<group>"; };
 		E5A8AA5F9EDED0A0BDDE7E830BF4AEE0 /* NetworkReachabilityManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NetworkReachabilityManager.swift; path = Source/NetworkReachabilityManager.swift; sourceTree = "<group>"; };
 		E6F34CCF86067ED508C12C676E298C69 /* Alamofire.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Alamofire.xcconfig; sourceTree = "<group>"; };
 		EBCF053A514E8128E354871F175C5991 /* Pods-WhiteLabel_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-WhiteLabel_Example-acknowledgements.plist"; sourceTree = "<group>"; };
-		F0EDF99EDAD9A56E9B08FAE5DA8F1E0D /* Pods_WhiteLabel_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_WhiteLabel_Example.framework; path = "Pods-WhiteLabel_Example.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F4F9FAA3DC39FDF149F3DACCF03F9826 /* WLMixtape.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WLMixtape.swift; sourceTree = "<group>"; };
+		F0EDF99EDAD9A56E9B08FAE5DA8F1E0D /* Pods_WhiteLabel_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WhiteLabel_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA83333CC1BCD09A80B0233CAD4A3297 /* Pods-WhiteLabel_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-WhiteLabel_Tests-frameworks.sh"; sourceTree = "<group>"; };
 		FBA623FF607AC03C50E27A8E2FF3B5CD /* Constants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		FF4D31D1B4EAF6CF099C7F60BCA109CB /* Pods-WhiteLabel_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-WhiteLabel_Example-umbrella.h"; sourceTree = "<group>"; };
@@ -214,7 +226,6 @@
 				B029DBC43E49A740F12B5E4D2E6DD452 /* Validation.swift */,
 				55F14F994FE7AB51F028BFE66CEF3106 /* Support Files */,
 			);
-			name = Alamofire;
 			path = Alamofire;
 			sourceTree = "<group>";
 		};
@@ -349,19 +360,24 @@
 		BFF93A6A3451EDB6620263C8DF2A5672 /* WhiteLabel */ = {
 			isa = PBXGroup;
 			children = (
+				A59374821F21D6B500424E82 /* WLMixtape+CoreDataClass.swift */,
+				A59374831F21D6B500424E82 /* WLMixtape+CoreDataProperties.swift */,
+				A59374841F21D6B500424E82 /* WLLabel+CoreDataClass.swift */,
+				A59374851F21D6B500424E82 /* WLLabel+CoreDataProperties.swift */,
+				A59374861F21D6B500424E82 /* WLTrack+CoreDataClass.swift */,
+				A59374871F21D6B500424E82 /* WLTrack+CoreDataProperties.swift */,
+				A59374881F21D6B500424E82 /* WLService+CoreDataClass.swift */,
+				A59374891F21D6B500424E82 /* WLService+CoreDataProperties.swift */,
+				A593748A1F21D6B500424E82 /* WLCollection+CoreDataClass.swift */,
+				A593748B1F21D6B500424E82 /* WLCollection+CoreDataProperties.swift */,
+				A59374431F21C42900424E82 /* WhiteLabel.xcdatamodeld */,
 				FBA623FF607AC03C50E27A8E2FF3B5CD /* Constants.swift */,
 				433F94E3B8D25444A6C1155B18BADD75 /* PagingGenerator.swift */,
 				B779A5FBF478559001F0F4796469DD08 /* Router.swift */,
 				E261B6FC9048F50E088BB2F438D162C0 /* Serializers.swift */,
-				3723AC0BBC0C327C32074AF5EC2B8504 /* Utility.swift */,
-				3853E64411E4B55D8BBD520D3BABCC60 /* WhiteLabel.swift */,
-				B8EA1DC4B6CF5339568A6F875F7F5454 /* WLCollection.swift */,
-				4878C1D9461B177DBB2071681F9438B2 /* WLLabel.swift */,
-				F4F9FAA3DC39FDF149F3DACCF03F9826 /* WLMixtape.swift */,
-				46D62394A1A4505C5BB31BC632EA3707 /* WLService.swift */,
-				6ACBFD9DD5FE46E36DA41A11B2DECA75 /* WLTrack.swift */,
+				A59374961F21E56B00424E82 /* WhiteLabel.swift */,
+				3723AC0BBC0C327C32074AF5EC2B8504 /* Date+Extensions.swift */,
 			);
-			name = WhiteLabel;
 			path = WhiteLabel;
 			sourceTree = "<group>";
 		};
@@ -542,17 +558,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				0D3EAFBC7CFA792001CD6E4F7A69DAF1 /* Constants.swift in Sources */,
+				A593748F1F21D6B500424E82 /* WLLabel+CoreDataProperties.swift in Sources */,
 				6D732E8078B7BBDBA4CFC79FE8D43045 /* PagingGenerator.swift in Sources */,
 				83AC01AB4887820C3D7E363531478226 /* Router.swift in Sources */,
+				A59374951F21D6B500424E82 /* WLCollection+CoreDataProperties.swift in Sources */,
+				A593748D1F21D6B500424E82 /* WLMixtape+CoreDataProperties.swift in Sources */,
 				4B48C40B754B6C2C203D806C67715F20 /* Serializers.swift in Sources */,
-				32BD2AC71F31FE37B40AE053B74A64E0 /* Utility.swift in Sources */,
+				A59374911F21D6B500424E82 /* WLTrack+CoreDataProperties.swift in Sources */,
+				A59374901F21D6B500424E82 /* WLTrack+CoreDataClass.swift in Sources */,
+				A593748E1F21D6B500424E82 /* WLLabel+CoreDataClass.swift in Sources */,
+				A59374931F21D6B500424E82 /* WLService+CoreDataProperties.swift in Sources */,
+				32BD2AC71F31FE37B40AE053B74A64E0 /* Date+Extensions.swift in Sources */,
+				A59374451F21C42900424E82 /* WhiteLabel.xcdatamodeld in Sources */,
+				A59374941F21D6B500424E82 /* WLCollection+CoreDataClass.swift in Sources */,
 				540BBE4C424099C250A955B61510ADE5 /* WhiteLabel-dummy.m in Sources */,
-				290A27B290E18B58DDD03C8E1DAE549D /* WhiteLabel.swift in Sources */,
-				0C0BC66E892DA1EB19A8EE7A252F0F3C /* WLCollection.swift in Sources */,
-				F4874269195683A8C8C6C91DEC51AC8E /* WLLabel.swift in Sources */,
-				128F1A3F5B55EFBB2FDDB0E6E9F265FB /* WLMixtape.swift in Sources */,
-				2CA346E61F72280B696D4CD8965E850B /* WLService.swift in Sources */,
-				2A9694DD31F7F81A0D14D6ACAC0AA760 /* WLTrack.swift in Sources */,
+				A59374921F21D6B500424E82 /* WLService+CoreDataClass.swift in Sources */,
+				A59374971F21E56B00424E82 /* WhiteLabel.swift in Sources */,
+				A593748C1F21D6B500424E82 /* WLMixtape+CoreDataClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -992,6 +1014,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		A59374431F21C42900424E82 /* WhiteLabel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				A59374441F21C42900424E82 /* WhiteLabel.xcdatamodel */,
+			);
+			currentVersion = A59374441F21C42900424E82 /* WhiteLabel.xcdatamodel */;
+			path = WhiteLabel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 }
