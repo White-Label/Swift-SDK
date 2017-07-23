@@ -10,9 +10,12 @@ import Foundation
 import CoreData
 
 @objc(WLLabel)
-public class WLLabel: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
+final public class WLLabel: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
 
     required public init?(response: HTTPURLResponse, representation: Any) {
+        
+        let entity = NSEntityDescription.entity(forEntityName: "WLLabel", in: persistentContainer.viewContext)!
+        super.init(entity: entity, insertInto: persistentContainer.viewContext)
         
         guard
             let representation = representation as? [String: Any],

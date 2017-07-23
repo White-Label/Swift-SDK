@@ -44,12 +44,13 @@ class MixtapeTableViewController: UITableViewController {
         refreshControl?.addTarget(self, action: #selector(MixtapeTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
         
         // Setup the paging generator with White Label
-        paging.next = { page in
-            WhiteLabel.ListMixtapesInCollection(self.parentCollection, page: page, complete: { totalCount, mixtapes in
+        paging.next = { page, completionMarker in
+            WhiteLabel.ListMixtapesInCollection(self.parentCollection, page: page) { totalCount, mixtapes in
                 if mixtapes != nil {
                     self.mixtapes += mixtapes!
                 }
-            })
+                completionMarker()
+            }
         }
         
         paging.getNext() // Initial load
@@ -57,7 +58,7 @@ class MixtapeTableViewController: UITableViewController {
     
     func handleRefresh(_ refreshControl: UIRefreshControl) {
         paging.reset()
-        mixtapes = []
+        mixtapes.removeAll()
         paging.getNext() {
             refreshControl.endRefreshing()
         }
@@ -82,9 +83,10 @@ class MixtapeTableViewController: UITableViewController {
     //MARK: Delegate
 
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && mixtapes.count >= Int(WhiteLabel.Constants.pageSize) {
+        if // Quick and easy infinite scroll trigger
+            indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2,
+            mixtapes.count >= Int(WhiteLabel.Constants.PageSize)
+        {
             paging.getNext()
         }
     }
@@ -92,11 +94,12 @@ class MixtapeTableViewController: UITableViewController {
     //MARK: Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == SegueIdentifier.MixtapesToTracks,
+        if
+            segue.identifier == SegueIdentifier.MixtapesToTracks,
             let trackTableViewController = segue.destination as? TrackTableViewController,
             let selectedIndexPath = tableView.indexPathsForSelectedRows?[0]
         {
-                trackTableViewController.parentMixtape = mixtapes[selectedIndexPath.row]
+            trackTableViewController.parentMixtape = mixtapes[selectedIndexPath.row]
         }
     }
 }

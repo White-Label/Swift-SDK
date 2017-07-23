@@ -48,12 +48,13 @@ class CollectionTableViewController: UITableViewController {
         }
         
         // Setup the paging generator with White Label
-        paging.next = { page in
-            WhiteLabel.ListCollections(page: page, complete: { collections in
+        paging.next = { page, completionHandler in
+            WhiteLabel.ListCollections(page: page) { collections in
                 if collections != nil {
                     self.collections += collections!
                 }
-            })
+                completionHandler()
+            }
         }
         
         paging.getNext() // Initial load
@@ -61,7 +62,7 @@ class CollectionTableViewController: UITableViewController {
     
     func handleRefresh(_ refreshControl: UIRefreshControl) {
         paging.reset()
-        collections = []
+        collections.removeAll()
         paging.getNext() {
             refreshControl.endRefreshing()
         }
@@ -86,9 +87,10 @@ class CollectionTableViewController: UITableViewController {
     //Mark: Delegate
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && collections.count >= Int(WhiteLabel.Constants.pageSize) {
+        if // Quick and easy infinite scroll trigger
+            indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2,
+            collections.count >= Int(WhiteLabel.Constants.PageSize)
+        {
             paging.getNext()
         }
     }
@@ -96,7 +98,8 @@ class CollectionTableViewController: UITableViewController {
     //MARK: Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == SegueIdentifier.CollectionsToMixtapes,
+        if
+            segue.identifier == SegueIdentifier.CollectionsToMixtapes,
             let mixtapeTableViewController = segue.destination as? MixtapeTableViewController,
             let selectedIndexPath = tableView.indexPathsForSelectedRows?[0]
         {

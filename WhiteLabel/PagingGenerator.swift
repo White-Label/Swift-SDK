@@ -27,7 +27,8 @@
 import Foundation
 
 open class PagingGenerator<T> {
-    open var next: ((_ page: UInt, _ completionMarker: (() -> Void) ) -> Void)!
+    
+    open var next: ((_ page: UInt, _ completionMarker: @escaping (() -> Void) ) -> Void)!
     open var page: UInt
     open var startPage: UInt = 1
     open var didReachEnd: Bool = false

@@ -1,6 +1,6 @@
 {
   "name": "WhiteLabel",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
@@ -13,15 +13,17 @@
   },
   "source": {
     "git": "https://github.com/White-Label/Swift-SDK.git",
-    "tag": "2.1.0"
+    "tag": "2.1.1"
   },
   "platforms": {
-    "ios": "9.0",
+    "ios": "10.0",
     "osx": "10.11",
     "tvos": "9.0",
     "watchos": "2.0"
   },
-  "source_files": "WhiteLabel/**/*",
+  "source_files": "WhiteLabel/**/*.swift",
+  "resources": "WhiteLabel/**/*.xcdatamodeld",
+  "frameworks": "CoreData",
   "dependencies": {
     "Alamofire": [
       "~> 4.0"

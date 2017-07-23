@@ -10,9 +10,12 @@ import Foundation
 import CoreData
 
 @objc(WLTrack)
-public class WLTrack: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
+final public class WLTrack: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
 
     required public init?(response: HTTPURLResponse, representation: Any) {
+        
+        let entity = NSEntityDescription.entity(forEntityName: "WLTrack", in: persistentContainer.viewContext)!
+        super.init(entity: entity, insertInto: persistentContainer.viewContext)
         
         guard
             let representation = representation as? [String: Any],

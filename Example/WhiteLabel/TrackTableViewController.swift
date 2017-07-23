@@ -44,12 +44,13 @@ class TrackTableViewController: UITableViewController {
         refreshControl?.addTarget(self, action: #selector(TrackTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
         
         // Setup the paging generator with White Label
-        paging.next = { page in
-            WhiteLabel.ListTracksInMixtape(self.parentMixtape, page: page, complete: { tracks in
+        paging.next = { page, completionMarker in
+            WhiteLabel.ListTracksInMixtape(self.parentMixtape, page: page) { tracks in
                 if tracks != nil {
                     self.tracks += tracks!
                 }
-            })
+                completionMarker()
+            }
         }
         
         paging.getNext() // Initial load
@@ -57,7 +58,7 @@ class TrackTableViewController: UITableViewController {
     
     func handleRefresh(_ refreshControl: UIRefreshControl) {
         paging.reset()
-        tracks = []
+        tracks.removeAll()
         paging.getNext() {
             refreshControl.endRefreshing()
         }
@@ -82,9 +83,10 @@ class TrackTableViewController: UITableViewController {
     //MARK: Delegate
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && tracks.count >= Int(WhiteLabel.Constants.pageSize) {
+        if // Quick and easy infinite scroll trigger
+            indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2,
+            tracks.count >= Int(WhiteLabel.Constants.PageSize)
+        {
             paging.getNext()
         }
     }
@@ -94,10 +96,11 @@ class TrackTableViewController: UITableViewController {
         let message = "Now that your networking code is done, check out our NPAudioStream library to start streaming your White Label tracks!"
         
         let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
-        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.cancel, handler: nil));
+        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.cancel, handler: nil))
         alertController.addAction(UIAlertAction(title: "View", style: UIAlertActionStyle.default, handler: {(action:UIAlertAction) in
-            UIApplication.shared.openURL(URL(string: "https://github.com/NoonPacific/NPAudioStream")!)
-        }));
+            let url = URL(string: "https://github.com/NoonPacific/NPAudioStream")!
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }))
         
         present(alertController, animated: true, completion: nil)
     }

@@ -10,9 +10,12 @@ import Foundation
 import CoreData
 
 @objc(WLMixtape)
-public class WLMixtape: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
+final public class WLMixtape: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
 
     required public init?(response: HTTPURLResponse, representation: Any) {
+        
+        let entity = NSEntityDescription.entity(forEntityName: "WLMixtape", in: persistentContainer.viewContext)!
+        super.init(entity: entity, insertInto: persistentContainer.viewContext)
         
         guard
             let representation = representation as? [String: Any],

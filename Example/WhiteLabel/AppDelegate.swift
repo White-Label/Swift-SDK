@@ -40,7 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
         
-        WhiteLabel.Constants.clientID = clientID
+        WhiteLabel.Constants.ClientID = clientID
 
         return true
     }
