@@ -75,7 +75,7 @@ class MixtapeTableViewController: UITableViewController {
         }
     }
     
-    //MARK: Data Source
+    // MARK: Data Source
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return mixtapes.count
@@ -89,7 +89,7 @@ class MixtapeTableViewController: UITableViewController {
         return cell
     }
     
-    //MARK: Delegate
+    // MARK: Delegate
 
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if // Quick and easy infinite scroll trigger
@@ -101,7 +101,7 @@ class MixtapeTableViewController: UITableViewController {
         }
     }
     
-    //MARK: Navigation
+    // MARK: Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if

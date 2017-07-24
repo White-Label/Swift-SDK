@@ -61,6 +61,13 @@ public func ListCollections(
     
     Alamofire.request(Router.listCollections(parameters: params)).validate().responseCollection { (response: DataResponse<[WLCollection]>) in
         let totalCount = (response.response?.allHeaderFields["Count"] as? NSString)?.integerValue ?? 0
+        if response.result.value != nil {
+            do {
+                try CoreDataStack.sharedStack.managedObjectContext.save()
+            } catch let error as NSError {
+                debugPrint(error)
+            }
+        }
         complete(response.result, totalCount)
     }
 }
@@ -95,6 +102,13 @@ public func ListMixtapes(
     
     Alamofire.request(Router.listMixtapes(parameters: params)).validate().responseCollection { (response: DataResponse<[WLMixtape]>) in
         let totalCount = (response.response?.allHeaderFields["Count"] as? NSString)?.integerValue ?? 0
+        if response.result.value != nil {
+            do {
+                try CoreDataStack.sharedStack.managedObjectContext.save()
+            } catch let error as NSError {
+                debugPrint(error)
+            }
+        }
         complete(response.result, totalCount)
     }
 }
@@ -118,6 +132,7 @@ public func ListTracks(
     parameters: Parameters? = nil,
     page: UInt = 1,
     pageSize: UInt = Constants.PageSize,
+    
     complete: @escaping (_ result: Result<[WLTrack]>, _ total: Int) -> Void)
 {
     var params = parameters ?? Parameters()
@@ -129,6 +144,13 @@ public func ListTracks(
     
     Alamofire.request(Router.listTracks(parameters: params)).validate().responseCollection { (response: DataResponse<[WLTrack]>) in
         let totalCount = (response.response?.allHeaderFields["Count"] as? NSString)?.integerValue ?? 0
+        if response.result.value != nil {
+            do {
+                try CoreDataStack.sharedStack.managedObjectContext.save()
+            } catch let error as NSError {
+                debugPrint(error)
+            }
+        }
         complete(response.result, totalCount)
     }
 }
