@@ -14,18 +14,19 @@ final public class WLMixtape: NSManagedObject, ResponseObjectSerializable, Respo
 
     required public init?(response: HTTPURLResponse, representation: Any) {
         
-        let entity = NSEntityDescription.entity(forEntityName: "WLMixtape", in: persistentContainer.viewContext)!
-        super.init(entity: entity, insertInto: persistentContainer.viewContext)
+        let context = CoreDataStack.sharedStack.managedObjectContext
+        let entity = NSEntityDescription.entity(forEntityName: "WLMixtape", in: context)!
+        super.init(entity: entity, insertInto: context)
         
         guard
             let representation = representation as? [String: Any],
             let id = representation["id"] as? Int32,
             let slug = representation["slug"] as? String,
-            let title = representation["title"] as? String,
+            let title = representation["title"] as? String /* ,
             let createdDateString = representation["created"] as? String,
             let created = NSDate.dateFrom(string: createdDateString),
             let modifiedDateString = representation["modified"] as? String,
-            let modified = NSDate.dateFrom(string: modifiedDateString)
+            let modified = NSDate.dateFrom(string: modifiedDateString) */
         else {
             return nil
         }
@@ -33,8 +34,8 @@ final public class WLMixtape: NSManagedObject, ResponseObjectSerializable, Respo
         self.id = id
         self.slug = slug
         self.title = title
-        self.created = created
-        self.modified = modified
+//        self.created = created
+//        self.modified = modified
         
         descriptionText = representation["description"] as? String
         artworkURL = representation["artwork_url"] as? String
@@ -45,9 +46,9 @@ final public class WLMixtape: NSManagedObject, ResponseObjectSerializable, Respo
         product = representation["product"] as? String
         productURL = representation["product_url"] as? String
         
-        if let releasedDateString = representation["release"] as? String {
-            released = NSDate.dateFrom(string: releasedDateString)
-        }
+//        if let releasedDateString = representation["release"] as? String {
+//            released = NSDate.dateFrom(string: releasedDateString)
+//        }
         
         if let trackCount = representation["track_count"] as? Int32 {
             self.trackCount = trackCount

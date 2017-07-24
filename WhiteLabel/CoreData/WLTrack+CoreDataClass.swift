@@ -14,8 +14,9 @@ final public class WLTrack: NSManagedObject, ResponseObjectSerializable, Respons
 
     required public init?(response: HTTPURLResponse, representation: Any) {
         
-        let entity = NSEntityDescription.entity(forEntityName: "WLTrack", in: persistentContainer.viewContext)!
-        super.init(entity: entity, insertInto: persistentContainer.viewContext)
+        let context = CoreDataStack.sharedStack.managedObjectContext
+        let entity = NSEntityDescription.entity(forEntityName: "WLTrack", in: context)!
+        super.init(entity: entity, insertInto: context)
         
         guard
             let representation = representation as? [String: Any],
@@ -24,11 +25,11 @@ final public class WLTrack: NSManagedObject, ResponseObjectSerializable, Respons
             let title = representation["title"] as? String,
             let artist = representation["artist"] as? String,
             let duration = representation["duration"] as? Int32,
-            let order = representation["order"] as? Int32,
+            let order = representation["order"] as? Int32 /* ,
             let createdDateString = representation["created"] as? String,
             let created = NSDate.dateFrom(string: createdDateString),
             let modifiedDateString = representation["modified"] as? String,
-            let modified = NSDate.dateFrom(string: modifiedDateString)
+            let modified = NSDate.dateFrom(string: modifiedDateString) */
         else {
             return nil
         }
@@ -38,8 +39,8 @@ final public class WLTrack: NSManagedObject, ResponseObjectSerializable, Respons
         self.title = title
         self.artist = artist
         self.duration = duration
-        self.created = created
-        self.modified = modified
+//        self.created = created
+//        self.modified = modified
         self.order = order
 
         if let externalIDInt = representation["external_id"] as? Int32 {

@@ -23,32 +23,43 @@
 //  THE SOFTWARE.
 //
 
-
 import UIKit
 import WhiteLabel
 
 class MixtapeTableViewController: UITableViewController {
 
-    var parentCollection: WLCollection!
+    var collection: WLCollection!
+    
     var mixtapes = [WLMixtape]() {
         didSet {
             tableView.reloadData()
         }
     }
-    var paging = PagingGenerator<WLMixtape>(startPage: 1)
+    
+    let paging = PagingGenerator(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = parentCollection.title
-        refreshControl?.addTarget(self, action: #selector(MixtapeTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        title = collection.title
+        refreshControl?.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
         
         // Setup the paging generator with White Label
         paging.next = { page, completionMarker in
-            WhiteLabel.ListMixtapesInCollection(self.parentCollection, page: page) { totalCount, mixtapes in
-                if mixtapes != nil {
-                    self.mixtapes += mixtapes!
+            
+            WhiteLabel.ListMixtapes(inCollection: self.collection, page: page) { result, totalMixtapes in
+                switch result {
+                    
+                case .success(let mixtapes):
+                    self.mixtapes += mixtapes
+                    if self.mixtapes.count == totalMixtapes {
+                        self.paging.reachedEnd()
+                    }
+                    
+                case .failure(let error):
+                    debugPrint(error)
                 }
+                
                 completionMarker()
             }
         }
@@ -73,10 +84,8 @@ class MixtapeTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Mixtape, for: indexPath)
         let mixtape = mixtapes[indexPath.row]
-        
         cell.textLabel?.text = mixtape.title
         cell.detailTextLabel?.text = String(mixtape.trackCount)
-        
         return cell
     }
     
@@ -84,8 +93,9 @@ class MixtapeTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if // Quick and easy infinite scroll trigger
-            indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2,
-            mixtapes.count >= Int(WhiteLabel.Constants.PageSize)
+            let cellCount = tableView.dataSource?.tableView(tableView, numberOfRowsInSection: indexPath.section),
+            indexPath.row == cellCount - 1,
+            paging.didReachEnd == false
         {
             paging.getNext()
         }
@@ -99,7 +109,7 @@ class MixtapeTableViewController: UITableViewController {
             let trackTableViewController = segue.destination as? TrackTableViewController,
             let selectedIndexPath = tableView.indexPathsForSelectedRows?[0]
         {
-            trackTableViewController.parentMixtape = mixtapes[selectedIndexPath.row]
+            trackTableViewController.mixtape = mixtapes[selectedIndexPath.row]
         }
     }
 }

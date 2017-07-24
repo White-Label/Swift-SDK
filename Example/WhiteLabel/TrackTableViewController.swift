@@ -23,32 +23,43 @@
 //  THE SOFTWARE.
 //
 
-
 import UIKit
 import WhiteLabel
 
 class TrackTableViewController: UITableViewController {
 
-    var parentMixtape : WLMixtape!
+    var mixtape: WLMixtape!
+    
     var tracks = [WLTrack]()  {
         didSet {
             tableView.reloadData()
         }
     }
-    var paging = PagingGenerator<WLTrack>(startPage: 1)
+    
+    let paging = PagingGenerator(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = parentMixtape.title
-        refreshControl?.addTarget(self, action: #selector(TrackTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        title = mixtape.title
+        refreshControl?.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
         
         // Setup the paging generator with White Label
         paging.next = { page, completionMarker in
-            WhiteLabel.ListTracksInMixtape(self.parentMixtape, page: page) { tracks in
-                if tracks != nil {
-                    self.tracks += tracks!
+            
+            WhiteLabel.ListTracks(inMixtape: self.mixtape, page: page) { result, totalTracks in
+                switch result {
+                    
+                case .success(let tracks):
+                    self.tracks += tracks
+                    if self.tracks.count == totalTracks {
+                        self.paging.reachedEnd()
+                    }
+                    
+                case .failure(let error):
+                    debugPrint(error)
                 }
+                
                 completionMarker()
             }
         }
@@ -73,10 +84,8 @@ class TrackTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Track, for: indexPath)
         let track = tracks[indexPath.row]
-        
         cell.textLabel?.text = track.title
         cell.detailTextLabel?.text = track.artist
-        
         return cell
     }
     
@@ -84,8 +93,9 @@ class TrackTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if // Quick and easy infinite scroll trigger
-            indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2,
-            tracks.count >= Int(WhiteLabel.Constants.PageSize)
+            let cellCount = tableView.dataSource?.tableView(tableView, numberOfRowsInSection: indexPath.section),
+            indexPath.row == cellCount - 1,
+            paging.didReachEnd == false
         {
             paging.getNext()
         }

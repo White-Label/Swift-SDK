@@ -14,8 +14,9 @@ final public class WLService: NSManagedObject, ResponseObjectSerializable, Respo
 
     required public init?(response: HTTPURLResponse, representation: Any) {
         
-        let entity = NSEntityDescription.entity(forEntityName: "WLService", in: persistentContainer.viewContext)!
-        super.init(entity: entity, insertInto: persistentContainer.viewContext)
+        let context = CoreDataStack.sharedStack.managedObjectContext
+        let entity = NSEntityDescription.entity(forEntityName: "WLService", in: context)!
+        super.init(entity: entity, insertInto: context)
         
         guard
             let representation = representation as? [String: Any],

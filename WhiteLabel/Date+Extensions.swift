@@ -25,15 +25,31 @@
 
 import Foundation
 
-extension NSDate {
+//extension NSDate {
+//    
+//    public static func dateFrom(string: String) -> NSDate? {
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+//        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+//        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+//        guard let date = dateFormatter.date(from: string) else { return nil }
+//        return date as NSDate
+//    }
+//    
+//}
+
+extension Date {
     
-    public static func dateFrom(string: String) -> NSDate? {
+    init(string: String) {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.timeZone = TimeZone(identifier: "UTC")
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-        guard let date = dateFormatter.date(from: string) else { return nil }
-        return date as NSDate
+        if let date = dateFormatter.date(from: string) {
+            self = date
+        } else {
+            self = Date()
+        }
     }
     
 }

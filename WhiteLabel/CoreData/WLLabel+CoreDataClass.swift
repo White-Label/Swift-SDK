@@ -14,8 +14,9 @@ final public class WLLabel: NSManagedObject, ResponseObjectSerializable, Respons
 
     required public init?(response: HTTPURLResponse, representation: Any) {
         
-        let entity = NSEntityDescription.entity(forEntityName: "WLLabel", in: persistentContainer.viewContext)!
-        super.init(entity: entity, insertInto: persistentContainer.viewContext)
+        let context = CoreDataStack.sharedStack.managedObjectContext
+        let entity = NSEntityDescription.entity(forEntityName: "WLLabel", in: context)!
+        super.init(entity: entity, insertInto: context)
         
         guard
             let representation = representation as? [String: Any],

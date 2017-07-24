@@ -26,7 +26,7 @@
 
 import Foundation
 
-open class PagingGenerator<T> {
+open class PagingGenerator {
     
     open var next: ((_ page: UInt, _ completionMarker: @escaping (() -> Void) ) -> Void)!
     open var page: UInt

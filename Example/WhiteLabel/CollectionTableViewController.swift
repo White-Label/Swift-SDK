@@ -23,10 +23,8 @@
 //  THE SOFTWARE.
 //
 
-
 import UIKit
 import WhiteLabel
-import Alamofire
 
 class CollectionTableViewController: UITableViewController {
     
@@ -35,25 +33,37 @@ class CollectionTableViewController: UITableViewController {
             tableView.reloadData()
         }
     }
-    var paging = PagingGenerator<WLCollection>(startPage: 1)
+    
+    let paging = PagingGenerator(startPage: 1)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        title = "Loading..."
         refreshControl?.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
         
         // Get your label
-        WhiteLabel.GetLabel { label in
+        WhiteLabel.GetLabel { result in
+            let label = result.value
             self.title = label?.name
         }
         
         // Setup the paging generator with White Label
-        paging.next = { page, completionHandler in
-            WhiteLabel.ListCollections(page: page) { collections in
-                if collections != nil {
-                    self.collections += collections!
+        paging.next = { page, completionMarker in
+            WhiteLabel.ListCollections(page: page) { result, totalCollections in
+                switch result {
+                    
+                case .success(let collections):
+                    self.collections += collections
+                    if self.collections.count == totalCollections {
+                        self.paging.reachedEnd()
+                    }
+                    
+                case .failure(let error):
+                    debugPrint(error)
                 }
-                completionHandler()
+
+                completionMarker()
             }
         }
         
@@ -77,10 +87,8 @@ class CollectionTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Collection, for: indexPath)
         let collection = collections[indexPath.row]
-        
-        cell.textLabel!.text = collection.title
-        cell.detailTextLabel!.text = String(collection.mixtapeCount)
-        
+        cell.textLabel?.text = collection.title
+        cell.detailTextLabel?.text = String(collection.mixtapeCount)
         return cell
     }
     
@@ -88,8 +96,9 @@ class CollectionTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if // Quick and easy infinite scroll trigger
-            indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2,
-            collections.count >= Int(WhiteLabel.Constants.PageSize)
+            let cellCount = tableView.dataSource?.tableView(tableView, numberOfRowsInSection: indexPath.section),
+            indexPath.row == cellCount - 1,
+            paging.didReachEnd == false
         {
             paging.getNext()
         }
@@ -103,7 +112,7 @@ class CollectionTableViewController: UITableViewController {
             let mixtapeTableViewController = segue.destination as? MixtapeTableViewController,
             let selectedIndexPath = tableView.indexPathsForSelectedRows?[0]
         {
-            mixtapeTableViewController.parentCollection = collections[selectedIndexPath.row]
+            mixtapeTableViewController.collection = collections[selectedIndexPath.row]
         }
     }
 }
