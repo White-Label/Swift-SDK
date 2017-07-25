@@ -11,7 +11,6 @@
         <attribute name="modified" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="slug" attributeType="String" syncable="YES"/>
         <attribute name="title" attributeType="String" syncable="YES"/>
-        <relationship name="label" maxCount="1" deletionRule="Nullify" destinationEntity="WLLabel" inverseName="collections" inverseEntity="WLLabel" syncable="YES"/>
         <relationship name="mixtapes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WLMixtape" inverseName="collection" inverseEntity="WLMixtape" syncable="YES"/>
     </entity>
     <entity name="WLLabel" representedClassName="WLLabel" syncable="YES">
@@ -19,7 +18,6 @@
         <attribute name="id" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="slug" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="collections" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WLCollection" inverseName="label" inverseEntity="WLCollection" syncable="YES"/>
         <relationship name="service" maxCount="1" deletionRule="Nullify" destinationEntity="WLService" inverseName="label" inverseEntity="WLService" syncable="YES"/>
     </entity>
     <entity name="WLMixtape" representedClassName="WLMixtape" syncable="YES">
@@ -69,10 +67,10 @@
         <relationship name="mixtape" maxCount="1" deletionRule="Nullify" destinationEntity="WLMixtape" inverseName="tracks" inverseEntity="WLMixtape" syncable="YES"/>
     </entity>
     <elements>
-        <element name="WLCollection" positionX="54" positionY="-70" width="128" height="223"/>
+        <element name="WLCollection" positionX="54" positionY="-70" width="128" height="210"/>
+        <element name="WLLabel" positionX="-135" positionY="-97" width="144" height="120"/>
         <element name="WLMixtape" positionX="223" positionY="-36" width="128" height="298"/>
-        <element name="WLTrack" positionX="396" positionY="41" width="128" height="313"/>
-        <element name="WLLabel" positionX="-135" positionY="-97" width="144" height="133"/>
         <element name="WLService" positionX="-137" positionY="90" width="128" height="118"/>
+        <element name="WLTrack" positionX="396" positionY="41" width="128" height="313"/>
     </elements>
 </model>

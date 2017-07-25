@@ -65,7 +65,7 @@ public func ListCollections(
             do {
                 try CoreDataStack.sharedStack.managedObjectContext.save()
             } catch let error as NSError {
-                debugPrint(error)
+                print("Core Data error: \(error.localizedDescription)")
             }
         }
         complete(response.result, totalCount)
@@ -106,7 +106,7 @@ public func ListMixtapes(
             do {
                 try CoreDataStack.sharedStack.managedObjectContext.save()
             } catch let error as NSError {
-                debugPrint(error)
+                print("Core Data error: \(error.localizedDescription)")
             }
         }
         complete(response.result, totalCount)
@@ -132,7 +132,6 @@ public func ListTracks(
     parameters: Parameters? = nil,
     page: UInt = 1,
     pageSize: UInt = Constants.PageSize,
-    
     complete: @escaping (_ result: Result<[WLTrack]>, _ total: Int) -> Void)
 {
     var params = parameters ?? Parameters()
@@ -148,7 +147,7 @@ public func ListTracks(
             do {
                 try CoreDataStack.sharedStack.managedObjectContext.save()
             } catch let error as NSError {
-                debugPrint(error)
+                print("Core Data error: \(error.localizedDescription)")
             }
         }
         complete(response.result, totalCount)
