@@ -80,7 +80,7 @@ class TrackTableViewController: UITableViewController {
         paging.getNext() // Initial load
     }
     
-    func handleRefresh(_ refreshControl: UIRefreshControl) {
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         WLTrack.deleteCache()
         paging.reset()
         paging.getNext() {

@@ -3,7 +3,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WhiteLabel'
-  s.version          = '2.2.0'
+  s.version          = '3.0.0'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.summary          = 'Swift SDK for the White Label API.'
   s.homepage         = 'https://github.com/White-Label/Swift-SDK'
@@ -18,5 +18,5 @@ Pod::Spec.new do |s|
   s.source_files = 'WhiteLabel/**/*.swift'
   s.resources = 'WhiteLabel/**/*.xcdatamodeld'
   s.frameworks = 'CoreData'
-  s.dependency 'Alamofire', '~> 4.0'
+  s.dependency 'Alamofire', '~> 4.4'
 end
