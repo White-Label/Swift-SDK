@@ -23,7 +23,6 @@
 //  THE SOFTWARE.
 //
 
-
 import UIKit
 import WhiteLabel
 
@@ -35,12 +34,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Setup White Label SDK
-        guard let clientID = getClientID() else {
-            print("Client ID was not loaded from keys.plist. Please ensure you provide a White Label API Client ID as per the README.")
-            return false
-        }
-        
-        WhiteLabel.Constants.ClientID = clientID
+        let whiteLabelClientID = getKeyForID("WhiteLabelClientID")
+        assert(whiteLabelClientID != nil, "Client ID was not loaded from keys.plist. Please ensure you provide a White Label API Client ID as per the README.")
+        WhiteLabel.Constants.ClientID = whiteLabelClientID!
 
         return true
     }
@@ -66,17 +62,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-    func getClientID() -> String? {
-        // Retrieve White Label Client ID from keys.plist
-        
-        if let path = Bundle.main.path(forResource: "keys", ofType: "plist") {
-            if let keysDictionary = NSDictionary(contentsOfFile: path) {
-                let clientID = keysDictionary["WhiteLabelClientID"] as? String
-                return clientID
-            }
+    
+    func getKeyForID(_ identifier: String) -> String? {
+        if
+            let path = Bundle.main.path(forResource: "keys", ofType: "plist"),
+            let keysDictionary = NSDictionary(contentsOfFile: path)
+        {
+            return keysDictionary[identifier] as? String
         }
-        
         return nil
     }
 }

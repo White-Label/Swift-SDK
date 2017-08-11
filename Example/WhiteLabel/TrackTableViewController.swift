@@ -23,83 +23,118 @@
 //  THE SOFTWARE.
 //
 
-
 import UIKit
+import CoreData
 import WhiteLabel
 
 class TrackTableViewController: UITableViewController {
 
-    var parentMixtape : WLMixtape!
-    var tracks = [WLTrack]()  {
-        didSet {
-            tableView.reloadData()
-        }
-    }
-    var paging = PagingGenerator(startPage: 1)
+    var mixtape: WLMixtape!
+    var fetchedResultsController: NSFetchedResultsController<WLTrack>!
+    let paging = PagingGenerator(startPage: 1)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = parentMixtape.title
-        refreshControl?.addTarget(self, action: #selector(TrackTableViewController.handleRefresh(_:)), for: UIControlEvents.valueChanged)
+        title = mixtape.title
+        refreshControl?.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
+        
+        // Clear existing track cache
+        WLTrack.deleteCache()
+        
+        // Setup fetched results controller
+        let request: NSFetchRequest<WLTrack> = WLTrack.fetchRequest()
+        let releasedSort = NSSortDescriptor(key: "order", ascending: true)
+        request.sortDescriptors = [releasedSort]
+        let predicate = NSPredicate(format: "mixtapeID == \(mixtape.id)")
+        request.predicate = predicate
+        let moc = CoreDataStack.sharedStack.managedObjectContext
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController.delegate = self
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("Failed to initialize FetchedResultsController: \(error)")
+        }
         
         // Setup the paging generator with White Label
-        paging.next = { page in
-            WhiteLabel.ListTracksInMixtape(self.parentMixtape, page: page, complete: { tracks in
-                if tracks != nil {
-                    self.tracks += tracks!
+        paging.next = { page, completionMarker in
+            
+            WhiteLabel.ListTracks(inMixtape: self.mixtape, page: page) { result, totalTracks in
+                switch result {
+                    
+                case .success(let tracks):
+                    if tracks.count < Constants.PageSize {
+                        self.paging.reachedEnd()
+                    }
+                    
+                case .failure(let error):
+                    debugPrint(error)
                 }
-            })
+                
+                completionMarker()
+            }
         }
         
         paging.getNext() // Initial load
     }
     
     func handleRefresh(_ refreshControl: UIRefreshControl) {
+        WLTrack.deleteCache()
         paging.reset()
-        tracks = []
         paging.getNext() {
             refreshControl.endRefreshing()
         }
     }
 
-    //MARK: Data Source
+    // MARK: Data Source
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tracks.count
+        return fetchedResultsController.sections?[section].numberOfObjects ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Track, for: indexPath)
-        let track = tracks[indexPath.row]
-        
-        cell.textLabel!.text = track.title
-        cell.detailTextLabel!.text = track.artist
-        
-        return cell;
+        let track = fetchedResultsController.object(at: indexPath)
+        cell.textLabel?.text = track.title
+        cell.detailTextLabel?.text = track.artist
+        return cell
     }
     
-    //MARK: Delegate
+    // MARK: Delegate
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        // Quick and easy infinite scroll trigger
-        if indexPath.row == tableView.dataSource!.tableView(tableView, numberOfRowsInSection: indexPath.section) - 2 && tracks.count >= Int(WhiteLabel.Constants.PageSize) {
+        if // Quick and easy infinite scroll trigger
+            let cellCount = tableView.dataSource?.tableView(tableView, numberOfRowsInSection: indexPath.section),
+            indexPath.row == cellCount - 1,
+            paging.isFetchingPage == false,
+            paging.didReachEnd == false
+        {
             paging.getNext()
         }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let title = "Just Add Music 🔊"
-        let message = "Now that your networking code is done, check out our NPAudioStream library to start streaming your White Label tracks!"
+        let title = "Just Add Music!"
+        let message = "Now that your networking code is done, check out our NPAudioStream library to start streaming your White Label tracks."
         
         let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
-        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.cancel, handler: nil));
-        alertController.addAction(UIAlertAction(title: "View", style: UIAlertActionStyle.default, handler: {(action:UIAlertAction) in
-            UIApplication.shared.openURL(URL(string: "https://github.com/NoonPacific/NPAudioStream")!)
-        }));
+        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: "Go", style: UIAlertActionStyle.default) { action in
+            let url = URL(string: "https://github.com/NoonPacific/NPAudioStream")!
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        })
         
         present(alertController, animated: true, completion: nil)
     }
 }
 
+extension TrackTableViewController: NSFetchedResultsControllerDelegate {
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.reloadData()
+    }
+    
+}

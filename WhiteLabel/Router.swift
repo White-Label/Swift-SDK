@@ -153,8 +153,8 @@ public enum Router: URLRequestConvertible {
         
         assert(Constants.ClientID.isEmpty == false, "No Client ID provided.")
         
-        urlRequest.setValue(Constants.ClientID, forHTTPHeaderField: "Client")
         urlRequest.setValue("application/json; version=" + Constants.Version, forHTTPHeaderField: "Accept")
+        urlRequest.setValue(Constants.ClientID, forHTTPHeaderField: "Client")
         
         switch self {
             

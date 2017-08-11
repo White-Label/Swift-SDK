@@ -26,25 +26,19 @@
 
 import Foundation
 import Alamofire
+import CoreData
 
+// MARK: Label
 
-public func GetLabel(complete: @escaping (WLLabel?) -> Void) {
+public func GetLabel(complete: @escaping (Result<WLLabel>) -> Void) {
     Alamofire.request(Router.getLabel).validate().responseObject { (response: DataResponse<WLLabel>) in
-        complete(response.result.value)
+        complete(response.result)
     }
 }
 
-public func ListCollections(parameters: Parameters? = nil, page: UInt = 1, complete: @escaping ([WLCollection]?) -> Void) {
-    
-    var params = parameters ?? Parameters()
-    params["page"] = page
-    
-    Alamofire.request(Router.listCollections(parameters: params)).validate().responseCollection { (response: DataResponse<[WLCollection]>) in
-        complete(response.result.value)
-    }
-}
+// MARK: Collections
 
-public func GetCollection(_ id: Any, complete: @escaping (WLCollection?) -> Void) {
+public func GetCollection(id: Any, complete: @escaping (Result<WLCollection>) -> Void) {
     
     var identifier = id
     if let collection = id as? WLCollection {
@@ -52,29 +46,36 @@ public func GetCollection(_ id: Any, complete: @escaping (WLCollection?) -> Void
     }
     
     Alamofire.request(Router.getCollection(id: identifier)).validate().responseObject { (response: DataResponse<WLCollection>) in
-        complete(response.result.value)
+        complete(response.result)
     }
 }
 
-public func ListMixtapesInCollection(_ collection: WLCollection, parameters: Parameters? = nil, page: UInt = 1, complete: @escaping ([WLMixtape]?) -> Void) {
-    
-    var params = parameters ?? Parameters()
-    params["collection"] = collection.id
-    
-    WhiteLabel.ListMixtapes(parameters: params, page: page, complete: complete)
-}
-
-public func ListMixtapes(parameters: Parameters? = nil, page: UInt = 1, complete: @escaping ([WLMixtape]?) -> Void) {
-    
+public func ListCollections(
+    parameters: Parameters? = nil,
+    page: Int = 1,
+    pageSize: Int = Constants.PageSize,
+    complete: @escaping (_ result: Result<[WLCollection]>, _ total: Int) -> Void)
+{
     var params = parameters ?? Parameters()
     params["page"] = page
+    params["page_size"] = pageSize
     
-    Alamofire.request(Router.listMixtapes(parameters: params)).validate().responseCollection { (response: DataResponse<[WLMixtape]>) in
-        complete(response.result.value)
+    Alamofire.request(Router.listCollections(parameters: params)).validate().responseCollection { (response: DataResponse<[WLCollection]>) in
+        let totalCount = (response.response?.allHeaderFields["Count"] as? NSString)?.integerValue ?? 0
+        if response.result.value != nil {
+            do {
+                try CoreDataStack.sharedStack.managedObjectContext.save()
+            } catch let error as NSError {
+                print("Core Data error: \(error.userInfo)")
+            }
+        }
+        complete(response.result, totalCount)
     }
 }
 
-public func GetMixtape(_ id: Any, complete: @escaping (WLMixtape?) -> Void) {
+// MARK: Mixtapes
+
+public func GetMixtape(id: Any, complete: @escaping (Result<WLMixtape>) -> Void) {
     
     var identifier = id
     if let mixtape = id as? WLMixtape {
@@ -82,29 +83,40 @@ public func GetMixtape(_ id: Any, complete: @escaping (WLMixtape?) -> Void) {
     }
     
     Alamofire.request(Router.getMixtape(id: identifier)).validate().responseObject { (response: DataResponse<WLMixtape>) in
-        complete(response.result.value)
+        complete(response.result)
     }
 }
 
-public func ListTracksInMixtape(_ mixtape: WLMixtape, parameters: Parameters? = nil, page: UInt = 1, complete: @escaping ([WLTrack]?) -> Void) {
-    
+public func ListMixtapes(
+    inCollection collection: WLCollection? = nil,
+    parameters: Parameters? = nil,
+    page: Int = 1,
+    pageSize: Int = Constants.PageSize,
+    complete: @escaping (_ result: Result<[WLMixtape]>, _ total: Int) -> Void)
+{
     var params = parameters ?? Parameters()
-    params["mixtape"] = mixtape.id
-    
-    WhiteLabel.ListTracks(parameters: params, page: page, complete: complete)
-}
-
-public func ListTracks(parameters: Parameters? = nil, page: UInt = 1, complete: @escaping ([WLTrack]?) -> Void) {
-    
-    var params = parameters ?? Parameters()
+    if collection != nil {
+        params["collection"] = collection!.id
+    }
     params["page"] = page
+    params["page_size"] = pageSize
     
-    Alamofire.request(Router.listTracks(parameters: params)).validate().responseCollection { (response: DataResponse<[WLTrack]>) in
-        complete(response.result.value)
+    Alamofire.request(Router.listMixtapes(parameters: params)).validate().responseCollection { (response: DataResponse<[WLMixtape]>) in
+        let totalCount = (response.response?.allHeaderFields["Count"] as? NSString)?.integerValue ?? 0
+        if response.result.value != nil {
+            do {
+                try CoreDataStack.sharedStack.managedObjectContext.save()
+            } catch let error as NSError {
+                print("Core Data error: \(error.localizedDescription)")
+            }
+        }
+        complete(response.result, totalCount)
     }
 }
 
-public func GetTrack(_ id: Any, complete: @escaping (WLTrack?) -> Void) {
+// MARK: Tracks
+
+public func GetTrack(id: Any, complete: @escaping (Result<WLTrack>) -> Void) {
     
     var identifier = id
     if let track = id as? WLTrack {
@@ -112,6 +124,34 @@ public func GetTrack(_ id: Any, complete: @escaping (WLTrack?) -> Void) {
     }
     
     Alamofire.request(Router.getTrack(id: identifier)).validate().responseObject { (response: DataResponse<WLTrack>) in
-        complete(response.result.value)
+        complete(response.result)
     }
 }
+
+public func ListTracks(
+    inMixtape mixtape: WLMixtape? = nil,
+    parameters: Parameters? = nil,
+    page: Int = 1,
+    pageSize: Int = Constants.PageSize,
+    complete: @escaping (_ result: Result<[WLTrack]>, _ total: Int) -> Void)
+{
+    var params = parameters ?? Parameters()
+    if mixtape != nil {
+        params["mixtape"] = mixtape!.id
+    }
+    params["page"] = page
+    params["page_size"] = pageSize
+    
+    Alamofire.request(Router.listTracks(parameters: params)).validate().responseCollection { (response: DataResponse<[WLTrack]>) in
+        let totalCount = (response.response?.allHeaderFields["Count"] as? NSString)?.integerValue ?? 0
+        if response.result.value != nil {
+            do {
+                try CoreDataStack.sharedStack.managedObjectContext.save()
+            } catch let error as NSError {
+                print("Core Data error: \(error.localizedDescription)")
+            }
+        }
+        complete(response.result, totalCount)
+    }
+}
+

@@ -1,8 +1,8 @@
 //
-//  WLService.swift
+//  WLService+CoreDataClass.swift
 //
-//  Created by Alex Givens http://alexgivens.com on 7/1/16
-//  Copyright © 2016 Noon Pacific LLC http://noonpacific.com
+//  Created by Alex Givens http://alexgivens.com on 7/24/17
+//  Copyright © 2017 Noon Pacific LLC http://noonpacific.com
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -23,30 +23,37 @@
 //  THE SOFTWARE.
 //
 
+import Foundation
+import CoreData
 
-public struct WLService: Equatable {
-    
-    public var id : Int!
-    public var name : String!
-    public var slug : String!
-    public var externalURL : URL?
-    
-    public init?(response: HTTPURLResponse, representation: Any) {
+@objc(WLService)
+final public class WLService: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
+
+    convenience init?(response: HTTPURLResponse, representation: Any) {
         
-        guard let representation = representation as? [String: Any] else {
+        let context = CoreDataStack.sharedStack.managedObjectContext
+        let entity = NSEntityDescription.entity(forEntityName: "WLService", in: context)!
+        self.init(entity: entity, insertInto: context)
+        
+        guard
+            let representation = representation as? [String: Any],
+            let id = representation["id"] as? Int32,
+            let slug = representation["slug"] as? String,
+            let name = representation["name"] as? String
+        else {
             return nil
         }
         
-        id = representation["id"] as! Int
-        name = representation["name"] as! String
-        slug = representation["slug"] as! String
-        if let externalURLString = representation["external_url"] as? String {
-            externalURL = URL(string: externalURLString)
-        }
+        self.id = id
+        self.slug = slug
+        self.name = name
+        
+        externalURL = representation["external_url"] as? String
+        
     }
     
-}
-
-public func ==(lhs: WLService, rhs: WLService) -> Bool {
-    return lhs.id == rhs.id
+    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
+        return nil
+    }
+    
 }

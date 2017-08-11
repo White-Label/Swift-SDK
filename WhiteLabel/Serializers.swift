@@ -24,13 +24,17 @@
 //
 
 import Foundation
+import CoreData
 import Alamofire
 
 protocol ResponseObjectSerializable {
     init?(response: HTTPURLResponse, representation: Any)
+    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self?
 }
 
 extension DataRequest {
+    
+    @discardableResult
     func responseObject<T: ResponseObjectSerializable>(
         queue: DispatchQueue? = nil,
         completionHandler: @escaping (DataResponse<T>) -> Void)
@@ -55,6 +59,7 @@ extension DataRequest {
         
         return response(queue: queue, responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
+    
 }
 
 protocol ResponseCollectionSerializable {
@@ -62,19 +67,27 @@ protocol ResponseCollectionSerializable {
 }
 
 extension ResponseCollectionSerializable where Self: ResponseObjectSerializable {
+    
     static func collection(from response: HTTPURLResponse, withRepresentation representation: Any) -> [Self] {
         var collection: [Self] = []
         
-        debugPrint(representation)
-        
-        if let representation = representation as? [String: Any] {
-            let results = representation["results"]
-            if let results = results as? [[String: Any]] {
-                for itemRepresentation in results {
-                    if let item = Self(response: response, representation: itemRepresentation) {
-                        collection.append(item)
-                    }
+        if
+            let representation = representation as? [String: Any],
+            let results = representation["results"] as? [[String: Any]]
+        {
+            for itemRepresentation in results {
+                
+                // TODO: Last modified cache identifiers
+//                if let item = Self.existingInstance(response: response, representation: itemRepresentation) {
+//                    collection.append(item)
+//                } else if let item = Self(response: response, representation: itemRepresentation) {
+//                    collection.append(item)
+//                }
+                
+                if let item = Self(response: response, representation: itemRepresentation) {
+                    collection.append(item)
                 }
+                
             }
         }
         
@@ -82,7 +95,9 @@ extension ResponseCollectionSerializable where Self: ResponseObjectSerializable 
     }
 }
 
+
 extension DataRequest {
+    
     @discardableResult
     func responseCollection<T: ResponseCollectionSerializable>(
         queue: DispatchQueue? = nil,
@@ -109,3 +124,4 @@ extension DataRequest {
         return response(responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
 }
+
