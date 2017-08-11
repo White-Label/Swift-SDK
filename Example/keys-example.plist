@@ -4,5 +4,7 @@
 <dict>
 	<key>WhiteLabelClientID</key>
 	<string>YOUR-CLIENT-ID</string>
+	<key>SpotifyClientID</key>
+	<string>YOUR-CLIENT-ID</string>
 </dict>
 </plist>
