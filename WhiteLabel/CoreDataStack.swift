@@ -89,7 +89,7 @@ final public class CoreDataStack {
         }
         
         return NSManagedObjectModel(contentsOf: modelURL) ?? NSManagedObjectModel()
-
+c
     }()
     
     lazy public var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
