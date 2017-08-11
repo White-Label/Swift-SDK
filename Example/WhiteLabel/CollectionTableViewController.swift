@@ -24,16 +24,12 @@
 //
 
 import UIKit
+import CoreData
 import WhiteLabel
 
 class CollectionTableViewController: UITableViewController {
     
-    var collections = [WLCollection]() {
-        didSet {
-            tableView.reloadData()
-        }
-    }
-    
+    var fetchedResultsController: NSFetchedResultsController<WLCollection>!
     let paging = PagingGenerator(startPage: 1)
 
     override func viewDidLoad() {
@@ -48,15 +44,28 @@ class CollectionTableViewController: UITableViewController {
             self.title = label?.name
         }
         
+        // Setup fetched results controller
+        let request: NSFetchRequest<WLCollection> = WLCollection.fetchRequest()
+        let createdSort = NSSortDescriptor(key: "created", ascending: true)
+        request.sortDescriptors = [createdSort]
+        let moc = CoreDataStack.sharedStack.managedObjectContext
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController.delegate = self
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("Failed to initialize FetchedResultsController: \(error)")
+        }
+        
         // Setup the paging generator with White Label
         paging.next = { page, completionMarker in
             
-            WhiteLabel.ListCollections(page: page) { result, totalCollections in
+             WhiteLabel.ListCollections(page: page) { result, totalCollections in
                 switch result {
                     
                 case .success(let collections):
-                    self.collections += collections
-                    if self.collections.count == totalCollections {
+                    if collections.count < Constants.PageSize {
                         self.paging.reachedEnd()
                     }
                     
@@ -72,8 +81,8 @@ class CollectionTableViewController: UITableViewController {
     }
     
     func handleRefresh(_ refreshControl: UIRefreshControl) {
+        WLCollection.deleteCache()
         paging.reset()
-        collections.removeAll()
         paging.getNext() {
             refreshControl.endRefreshing()
         }
@@ -82,12 +91,12 @@ class CollectionTableViewController: UITableViewController {
     // MARK: Data Source
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return collections.count
+        return fetchedResultsController.sections?[section].numberOfObjects ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Collection, for: indexPath)
-        let collection = collections[indexPath.row]
+        let collection = fetchedResultsController.object(at: indexPath)
         cell.textLabel?.text = collection.title
         cell.detailTextLabel?.text = String(collection.mixtapeCount)
         return cell
@@ -96,9 +105,11 @@ class CollectionTableViewController: UITableViewController {
     // MARK: Delegate
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
         if // Quick and easy infinite scroll trigger
             let cellCount = tableView.dataSource?.tableView(tableView, numberOfRowsInSection: indexPath.section),
             indexPath.row == cellCount - 1,
+            paging.isFetchingPage == false,
             paging.didReachEnd == false
         {
             paging.getNext()
@@ -113,7 +124,16 @@ class CollectionTableViewController: UITableViewController {
             let mixtapeTableViewController = segue.destination as? MixtapeTableViewController,
             let selectedIndexPath = tableView.indexPathsForSelectedRows?[0]
         {
-            mixtapeTableViewController.collection = collections[selectedIndexPath.row]
+            let collection = fetchedResultsController.object(at: selectedIndexPath)
+            mixtapeTableViewController.collection = collection
         }
     }
+}
+
+extension CollectionTableViewController: NSFetchedResultsControllerDelegate {
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.reloadData()
+    }
+    
 }

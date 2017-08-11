@@ -28,7 +28,21 @@ import CoreData
 
 @objc(WLCollection)
 final public class WLCollection: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
-
+    
+    public var mixtapes: [WLMixtape]? {
+        let context = CoreDataStack.sharedStack.managedObjectContext
+        let fetchRequest: NSFetchRequest<WLMixtape> = WLMixtape.fetchRequest()
+        let predicate = NSPredicate(format: "collectionID == \(self.id)")
+        fetchRequest.predicate = predicate
+        do {
+            let mixtapes = try context.fetch(fetchRequest)
+            return mixtapes
+        } catch let error as NSError {
+            print("Unable to retrieve mixtapes: \(error.userInfo)")
+            return nil
+        }
+    }
+    
     convenience init?(response: HTTPURLResponse, representation: Any) {
         
         let context = CoreDataStack.sharedStack.managedObjectContext
@@ -62,6 +76,47 @@ final public class WLCollection: NSManagedObject, ResponseObjectSerializable, Re
         if let mixtapeCount = representation["mixtape_count"] as? Int32 {
             self.mixtapeCount = mixtapeCount
         }
+    }
+    
+    // Helper function, as per https://stackoverflow.com/a/33200426
+    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
+        return existingInstanceHelper(response: response, representation: representation)
+    }
+    
+    private static func existingInstanceHelper<T>(response: HTTPURLResponse, representation: Any) -> T? {
+        
+        guard
+            let representation = representation as? [String: Any],
+            let id = representation["id"] as? Int32,
+            let modifiedDateString = representation["modified"] as? String,
+            let modified = Date.date(from: modifiedDateString)
+        else {
+            return nil
+        }
+        
+        let moc = CoreDataStack.sharedStack.managedObjectContext
+        let fetchRequest: NSFetchRequest<WLCollection> = WLCollection.fetchRequest()
+        let predicate = NSPredicate(format: "id == \(id)")
+        fetchRequest.predicate = predicate
+        
+        do {
+            let collections = try moc.fetch(fetchRequest)
+            if
+                let collection = collections.first,
+                let cachedModified = collection.modified,
+                (cachedModified as Date) >= modified
+            {
+                return collection as? T
+            }
+        } catch let error as NSError {
+            print("Unable to retrieve collections: \(error.userInfo)")
+        }
+        
+        return nil
+    }
+    
+    public class func deleteCache() {
+        CoreDataStack.deleteEntity(name: "WLCollection")
     }
     
 }

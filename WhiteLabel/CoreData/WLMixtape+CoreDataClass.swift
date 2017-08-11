@@ -28,6 +28,34 @@ import CoreData
 
 @objc(WLMixtape)
 final public class WLMixtape: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
+    
+    public var collection: WLCollection? {
+        let context = CoreDataStack.sharedStack.managedObjectContext
+        let fetchRequest: NSFetchRequest<WLCollection> = WLCollection.fetchRequest()
+        let predicate = NSPredicate(format: "id == \(self.collectionID)")
+        fetchRequest.predicate = predicate
+        do {
+            let collections = try context.fetch(fetchRequest)
+            return collections.first
+        } catch let error as NSError {
+            print("Unable to retrieve collection: \(error.userInfo)")
+            return nil
+        }
+    }
+    
+    public var tracks: [WLTrack]? {
+        let context = CoreDataStack.sharedStack.managedObjectContext
+        let fetchRequest: NSFetchRequest<WLTrack> = WLTrack.fetchRequest()
+        let predicate = NSPredicate(format: "mixtapeID == \(self.id)")
+        fetchRequest.predicate = predicate
+        do {
+            let tracks = try context.fetch(fetchRequest)
+            return tracks
+        } catch let error as NSError {
+            print("Unable to retrieve tracks: \(error.userInfo)")
+            return nil
+        }
+    }
 
     convenience init?(response: HTTPURLResponse, representation: Any) {
         
@@ -43,7 +71,8 @@ final public class WLMixtape: NSManagedObject, ResponseObjectSerializable, Respo
             let createdDateString = representation["created"] as? String,
             let created = Date.date(from: createdDateString),
             let modifiedDateString = representation["modified"] as? String,
-            let modified = Date.date(from: modifiedDateString)
+            let modified = Date.date(from: modifiedDateString),
+            let collectionID = representation["collection"] as? Int32
         else {
             return nil
         }
@@ -53,6 +82,7 @@ final public class WLMixtape: NSManagedObject, ResponseObjectSerializable, Respo
         self.title = title
         self.created = created as NSDate
         self.modified = modified as NSDate
+        self.collectionID = collectionID
         
         descriptionText = representation["description"] as? String
         artworkURL = representation["artwork_url"] as? String
@@ -74,6 +104,47 @@ final public class WLMixtape: NSManagedObject, ResponseObjectSerializable, Respo
             self.trackCount = trackCount
         }
         
+    }
+    
+    // Helper function, as per https://stackoverflow.com/a/33200426
+    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
+        return existingInstanceHelper(response: response, representation: representation)
+    }
+    
+    private static func existingInstanceHelper<T>(response: HTTPURLResponse, representation: Any) -> T? {
+        
+        guard
+            let representation = representation as? [String: Any],
+            let id = representation["id"] as? Int32,
+            let modifiedDateString = representation["modified"] as? String,
+            let modified = Date.date(from: modifiedDateString)
+            else {
+                return nil
+        }
+        
+        let moc = CoreDataStack.sharedStack.managedObjectContext
+        let fetchRequest: NSFetchRequest<WLMixtape> = WLMixtape.fetchRequest()
+        let predicate = NSPredicate(format: "id == \(id)")
+        fetchRequest.predicate = predicate
+        
+        do {
+            let mixtapes = try moc.fetch(fetchRequest)
+            if
+                let mixtape = mixtapes.first,
+                let cachedModified = mixtape.modified,
+                (cachedModified as Date) >= modified
+            {
+                return mixtape as? T
+            }
+        } catch let error as NSError {
+            print("Unable to retrieve mixtapes: \(error.userInfo)")
+        }
+        
+        return nil
+    }
+    
+    public class func deleteCache() {
+        CoreDataStack.deleteEntity(name: "WLMixtape")
     }
     
 }

@@ -28,21 +28,24 @@ import Foundation
 
 open class PagingGenerator {
     
-    open var next: ((_ page: UInt, _ completionMarker: @escaping (() -> Void) ) -> Void)!
-    open var page: UInt
-    open var startPage: UInt = 1
+    open var next: ((_ page: Int, _ completionMarker: @escaping (() -> Void) ) -> Void)!
+    open var page: Int
+    open var startPage: Int = 1
     open var didReachEnd: Bool = false
+    open var isFetchingPage: Bool = false
     
-    public init(startPage: UInt) {
+    public init(startPage: Int) {
         self.startPage = startPage
         self.page = startPage
     }
     
     open func getNext(_ complete: (() -> Void)? = nil) {
         if didReachEnd { return }
+        isFetchingPage = true
         next(page) {
-            complete?()
             self.page += 1
+            self.isFetchingPage = false
+            complete?()
         }
     }
     

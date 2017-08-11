@@ -28,7 +28,7 @@ import CoreData
 
 @objc(WLLabel)
 final public class WLLabel: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
-
+    
     convenience init?(response: HTTPURLResponse, representation: Any) {
         
         let context = CoreDataStack.sharedStack.managedObjectContext
@@ -39,8 +39,8 @@ final public class WLLabel: NSManagedObject, ResponseObjectSerializable, Respons
             let representation = representation as? [String: Any],
             let id = representation["id"] as? Int32,
             let slug = representation["slug"] as? String,
-            let name = representation["name"] as? String,
-            let serviceRepresentation = representation["service"]
+            let name = representation["name"] as? String
+//            let serviceRepresentation = representation["service"]
         else {
             return nil
         }
@@ -51,7 +51,11 @@ final public class WLLabel: NSManagedObject, ResponseObjectSerializable, Respons
         
         iconURL = representation["icon"] as? String
         
-        self.service = WLService(response: response, representation: serviceRepresentation)
+//        self.service = WLService(response: response, representation: serviceRepresentation)
+    }
+    
+    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
+        return nil
     }
     
 }

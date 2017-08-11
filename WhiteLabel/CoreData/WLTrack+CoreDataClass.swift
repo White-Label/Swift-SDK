@@ -28,6 +28,20 @@ import CoreData
 
 @objc(WLTrack)
 final public class WLTrack: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
+    
+    public var mixtape: WLMixtape? {
+        let context = CoreDataStack.sharedStack.managedObjectContext
+        let fetchRequest: NSFetchRequest<WLMixtape> = WLMixtape.fetchRequest()
+        let predicate = NSPredicate(format: "id == \(self.mixtapeID)")
+        fetchRequest.predicate = predicate
+        do {
+            let mixtapes = try context.fetch(fetchRequest)
+            return mixtapes.first
+        } catch let error as NSError {
+            print("Unable to retrieve mixtape: \(error.userInfo)")
+            return nil
+        }
+    }
 
     convenience init?(response: HTTPURLResponse, representation: Any) {
         
@@ -46,7 +60,8 @@ final public class WLTrack: NSManagedObject, ResponseObjectSerializable, Respons
             let createdDateString = representation["created"] as? String,
             let created = Date.date(from: createdDateString),
             let modifiedDateString = representation["modified"] as? String,
-            let modified = Date.date(from: modifiedDateString)
+            let modified = Date.date(from: modifiedDateString),
+            let mixtapeID = representation["mixtape"] as? Int32
         else {
             return nil
         }
@@ -59,6 +74,7 @@ final public class WLTrack: NSManagedObject, ResponseObjectSerializable, Respons
         self.created = created as NSDate
         self.modified = modified as NSDate
         self.order = order
+        self.mixtapeID = mixtapeID
 
         if let externalIDInt = representation["external_id"] as? Int32 {
             self.externalID = "\(externalIDInt)"
@@ -77,6 +93,48 @@ final public class WLTrack: NSManagedObject, ResponseObjectSerializable, Respons
             self.playCount = playCount
         }
         
+    }
+    
+    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
+        return existingInstanceHelper(response: response, representation: representation)
+    }
+    
+    // Helper function, as per https://stackoverflow.com/a/33200426
+    private static func existingInstanceHelper<T>(response: HTTPURLResponse, representation: Any) -> T? {
+        
+        guard
+            let representation = representation as? [String: Any],
+            let id = representation["id"] as? Int32,
+            let modifiedDateString = representation["modified"] as? String,
+            let modified = Date.date(from: modifiedDateString)
+        else {
+            return nil
+        }
+        
+        let context = CoreDataStack.sharedStack.managedObjectContext
+        let fetchRequest: NSFetchRequest<WLTrack> = WLTrack.fetchRequest()
+        let predicate = NSPredicate(format: "id == \(id)")
+        fetchRequest.predicate = predicate
+        
+        do {
+            let tracks = try context.fetch(fetchRequest)
+            if
+                let track = tracks.first,
+                let cachedModified = track.modified,
+                (cachedModified as Date) >= modified
+            {
+                return track as? T
+            }
+        } catch let error as NSError {
+            print("Unable to retrieve mixtapes: \(error.userInfo)")
+        }
+        
+        return nil
+        
+    }
+    
+    public class func deleteCache() {
+        CoreDataStack.deleteEntity(name: "WLTrack")
     }
     
 }

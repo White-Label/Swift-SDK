@@ -24,10 +24,12 @@
 //
 
 import Foundation
+import CoreData
 import Alamofire
 
 protocol ResponseObjectSerializable {
     init?(response: HTTPURLResponse, representation: Any)
+    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self?
 }
 
 extension DataRequest {
@@ -69,13 +71,23 @@ extension ResponseCollectionSerializable where Self: ResponseObjectSerializable 
     static func collection(from response: HTTPURLResponse, withRepresentation representation: Any) -> [Self] {
         var collection: [Self] = []
         
-        if let representation = representation as? [String: Any],
+        if
+            let representation = representation as? [String: Any],
             let results = representation["results"] as? [[String: Any]]
         {
             for itemRepresentation in results {
+                
+                // TODO: Last modified cache identifiers
+//                if let item = Self.existingInstance(response: response, representation: itemRepresentation) {
+//                    collection.append(item)
+//                } else if let item = Self(response: response, representation: itemRepresentation) {
+//                    collection.append(item)
+//                }
+                
                 if let item = Self(response: response, representation: itemRepresentation) {
                     collection.append(item)
                 }
+                
             }
         }
         

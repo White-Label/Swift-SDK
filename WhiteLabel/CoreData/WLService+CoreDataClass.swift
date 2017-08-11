@@ -52,4 +52,8 @@ final public class WLService: NSManagedObject, ResponseObjectSerializable, Respo
         
     }
     
+    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
+        return nil
+    }
+    
 }

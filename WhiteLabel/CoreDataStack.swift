@@ -31,9 +31,9 @@ import Foundation
 import CoreData
 
 
-final class CoreDataStack {
+final public class CoreDataStack {
     
-    static let sharedStack = CoreDataStack()
+    static public let sharedStack = CoreDataStack()
     
     var errorHandler: (Error) -> Void = {_ in }
     
@@ -69,8 +69,8 @@ final class CoreDataStack {
             guard
                 let resourceBundleURL = Bundle(for: type(of: self)).url(forResource: "WhiteLabel", withExtension: "bundle"),
                 let realBundle = Bundle(url: resourceBundleURL)
-                else {
-                    return nil
+            else {
+                return nil
             }
             
             return realBundle
@@ -84,25 +84,25 @@ final class CoreDataStack {
         guard
             let modelURL = bundle.url(forResource: "WhiteLabel", withExtension: "momd"),
             let model = NSManagedObjectModel(contentsOf: modelURL)
-            else {
-                print("Could not get bundle for managed object model")
-                return NSManagedObjectModel()
+        else {
+            print("Could not get bundle for managed object model")
+            return NSManagedObjectModel()
         }
         
         return model
     }()
     
-    lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
+    lazy public var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
         let url = self.libraryDirectory.appendingPathComponent("WhiteLabel.sqlite")
         do {
-            try coordinator.addPersistentStore(ofType:
-                NSSQLiteStoreType,
-                                               configurationName: nil,
-                                               at: url,
-                                               options: [
-                                                NSMigratePersistentStoresAutomaticallyOption: true,
-                                                NSInferMappingModelAutomaticallyOption: true
+            try coordinator.addPersistentStore(
+                ofType: NSSQLiteStoreType,
+                configurationName: nil,
+                at: url,
+                options: [
+                    NSMigratePersistentStoresAutomaticallyOption: true,
+                    NSInferMappingModelAutomaticallyOption: true
                 ]
             )
         } catch {
@@ -113,14 +113,14 @@ final class CoreDataStack {
         return coordinator
     }()
     
-    lazy var backgroundManagedObjectContext: NSManagedObjectContext = {
+    lazy public var backgroundManagedObjectContext: NSManagedObjectContext = {
         let coordinator = self.persistentStoreCoordinator
         var privateManagedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         privateManagedObjectContext.persistentStoreCoordinator = coordinator
         return privateManagedObjectContext
     }()
     
-    lazy var managedObjectContext: NSManagedObjectContext = {
+    lazy public var managedObjectContext: NSManagedObjectContext = {
         let coordinator = self.persistentStoreCoordinator
         var mainManagedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         mainManagedObjectContext.persistentStoreCoordinator = coordinator
@@ -132,9 +132,27 @@ final class CoreDataStack {
             self.backgroundManagedObjectContext.mergeChanges(fromContextDidSave: notification as Notification)
         }
     }
+    
     @objc func bgContextChanged(notification: NSNotification) {
         managedObjectContext.perform{ [unowned self] in
             self.managedObjectContext.mergeChanges(fromContextDidSave: notification as Notification)
         }
     }
+    
+    public class func deleteEntity(name: String) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: name)
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        deleteRequest.resultType = .resultTypeObjectIDs
+        let moc = CoreDataStack.sharedStack.managedObjectContext
+        do {
+            let result = try moc.execute(deleteRequest) as? NSBatchDeleteResult
+            if let objectIDArray = result?.result as? [NSManagedObjectID] {
+                let changes = [NSDeletedObjectsKey : objectIDArray]
+                NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [moc])
+            }
+        } catch let error as NSError {
+            print("Unable to delete \(name)s: \(error.userInfo)")
+        }
+    }
+    
 }

@@ -24,18 +24,13 @@
 //
 
 import UIKit
+import CoreData
 import WhiteLabel
 
 class TrackTableViewController: UITableViewController {
 
     var mixtape: WLMixtape!
-    
-    var tracks = [WLTrack]()  {
-        didSet {
-            tableView.reloadData()
-        }
-    }
-    
+    var fetchedResultsController: NSFetchedResultsController<WLTrack>!
     let paging = PagingGenerator(startPage: 1)
     
     override func viewDidLoad() {
@@ -44,6 +39,25 @@ class TrackTableViewController: UITableViewController {
         title = mixtape.title
         refreshControl?.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
         
+        // Clear existing track cache
+        WLTrack.deleteCache()
+        
+        // Setup fetched results controller
+        let request: NSFetchRequest<WLTrack> = WLTrack.fetchRequest()
+        let releasedSort = NSSortDescriptor(key: "order", ascending: true)
+        request.sortDescriptors = [releasedSort]
+        let predicate = NSPredicate(format: "mixtapeID == \(mixtape.id)")
+        request.predicate = predicate
+        let moc = CoreDataStack.sharedStack.managedObjectContext
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController.delegate = self
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("Failed to initialize FetchedResultsController: \(error)")
+        }
+        
         // Setup the paging generator with White Label
         paging.next = { page, completionMarker in
             
@@ -51,8 +65,7 @@ class TrackTableViewController: UITableViewController {
                 switch result {
                     
                 case .success(let tracks):
-                    self.tracks += tracks
-                    if self.tracks.count == totalTracks {
+                    if tracks.count < Constants.PageSize {
                         self.paging.reachedEnd()
                     }
                     
@@ -68,8 +81,8 @@ class TrackTableViewController: UITableViewController {
     }
     
     func handleRefresh(_ refreshControl: UIRefreshControl) {
+        WLTrack.deleteCache()
         paging.reset()
-        tracks.removeAll()
         paging.getNext() {
             refreshControl.endRefreshing()
         }
@@ -78,12 +91,12 @@ class TrackTableViewController: UITableViewController {
     // MARK: Data Source
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tracks.count
+        return fetchedResultsController.sections?[section].numberOfObjects ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.Track, for: indexPath)
-        let track = tracks[indexPath.row]
+        let track = fetchedResultsController.object(at: indexPath)
         cell.textLabel?.text = track.title
         cell.detailTextLabel?.text = track.artist
         return cell
@@ -92,9 +105,11 @@ class TrackTableViewController: UITableViewController {
     // MARK: Delegate
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
         if // Quick and easy infinite scroll trigger
             let cellCount = tableView.dataSource?.tableView(tableView, numberOfRowsInSection: indexPath.section),
             indexPath.row == cellCount - 1,
+            paging.isFetchingPage == false,
             paging.didReachEnd == false
         {
             paging.getNext()
@@ -102,16 +117,24 @@ class TrackTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let title = "Just Add Music 🔊"
-        let message = "Now that your networking code is done, check out our NPAudioStream library to start streaming your White Label tracks!"
+        let title = "Just Add Music!"
+        let message = "Now that your networking code is done, check out our NPAudioStream library to start streaming your White Label tracks."
         
         let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
         alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.cancel, handler: nil))
-        alertController.addAction(UIAlertAction(title: "View", style: UIAlertActionStyle.default, handler: {(action:UIAlertAction) in
+        alertController.addAction(UIAlertAction(title: "Go", style: UIAlertActionStyle.default) { action in
             let url = URL(string: "https://github.com/NoonPacific/NPAudioStream")!
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }))
+        })
         
         present(alertController, animated: true, completion: nil)
     }
+}
+
+extension TrackTableViewController: NSFetchedResultsControllerDelegate {
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.reloadData()
+    }
+    
 }

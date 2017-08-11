@@ -26,6 +26,7 @@
 
 import Foundation
 import Alamofire
+import CoreData
 
 // MARK: Label
 
@@ -51,8 +52,8 @@ public func GetCollection(id: Any, complete: @escaping (Result<WLCollection>) ->
 
 public func ListCollections(
     parameters: Parameters? = nil,
-    page: UInt = 1,
-    pageSize: UInt = Constants.PageSize,
+    page: Int = 1,
+    pageSize: Int = Constants.PageSize,
     complete: @escaping (_ result: Result<[WLCollection]>, _ total: Int) -> Void)
 {
     var params = parameters ?? Parameters()
@@ -65,7 +66,7 @@ public func ListCollections(
             do {
                 try CoreDataStack.sharedStack.managedObjectContext.save()
             } catch let error as NSError {
-                print("Core Data error: \(error.localizedDescription)")
+                print("Core Data error: \(error.userInfo)")
             }
         }
         complete(response.result, totalCount)
@@ -89,8 +90,8 @@ public func GetMixtape(id: Any, complete: @escaping (Result<WLMixtape>) -> Void)
 public func ListMixtapes(
     inCollection collection: WLCollection? = nil,
     parameters: Parameters? = nil,
-    page: UInt = 1,
-    pageSize: UInt = Constants.PageSize,
+    page: Int = 1,
+    pageSize: Int = Constants.PageSize,
     complete: @escaping (_ result: Result<[WLMixtape]>, _ total: Int) -> Void)
 {
     var params = parameters ?? Parameters()
@@ -130,8 +131,8 @@ public func GetTrack(id: Any, complete: @escaping (Result<WLTrack>) -> Void) {
 public func ListTracks(
     inMixtape mixtape: WLMixtape? = nil,
     parameters: Parameters? = nil,
-    page: UInt = 1,
-    pageSize: UInt = Constants.PageSize,
+    page: Int = 1,
+    pageSize: Int = Constants.PageSize,
     complete: @escaping (_ result: Result<[WLTrack]>, _ total: Int) -> Void)
 {
     var params = parameters ?? Parameters()
@@ -153,3 +154,4 @@ public func ListTracks(
         complete(response.result, totalCount)
     }
 }
+
