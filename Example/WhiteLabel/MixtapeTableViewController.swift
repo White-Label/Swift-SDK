@@ -81,7 +81,7 @@ class MixtapeTableViewController: UITableViewController {
         paging.getNext() // Initial load
     }
     
-    func handleRefresh(_ refreshControl: UIRefreshControl) {
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         WLMixtape.deleteCache()
         paging.reset()
         paging.getNext() {

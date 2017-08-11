@@ -44,6 +44,9 @@ class CollectionTableViewController: UITableViewController {
             self.title = label?.name
         }
         
+        // Clear existing collection cache
+        WLCollection.deleteCache()
+        
         // Setup fetched results controller
         let request: NSFetchRequest<WLCollection> = WLCollection.fetchRequest()
         let createdSort = NSSortDescriptor(key: "created", ascending: true)
@@ -80,7 +83,7 @@ class CollectionTableViewController: UITableViewController {
         paging.getNext() // Initial load
     }
     
-    func handleRefresh(_ refreshControl: UIRefreshControl) {
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         WLCollection.deleteCache()
         paging.reset()
         paging.getNext() {
