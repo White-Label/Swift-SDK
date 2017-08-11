@@ -12,8 +12,8 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/White-Label/Swift-SDK.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '10.0'
-  s.osx.deployment_target = '10.11'
-  s.tvos.deployment_target = '9.0'
+# s.osx.deployment_target = '10.11'
+# s.tvos.deployment_target = '9.0'
 
   s.source_files = 'WhiteLabel/**/*.swift'
   s.resources = 'WhiteLabel/**/*.xcdatamodeld'
