@@ -88,9 +88,8 @@ final public class CoreDataStack {
             return NSManagedObjectModel()
         }
         
-        let model = NSManagedObjectModel(contentsOf: modelURL)
-        
-        return model
+        return NSManagedObjectModel(contentsOf: modelURL) ?? NSManagedObjectModel()
+
     }()
     
     lazy public var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
