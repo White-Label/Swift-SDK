@@ -82,12 +82,13 @@ final public class CoreDataStack {
         }
         
         guard
-            let modelURL = bundle.url(forResource: "WhiteLabel", withExtension: "momd"),
-            let model = NSManagedObjectModel(contentsOf: modelURL)
+            let modelURL = bundle.url(forResource: "WhiteLabel", withExtension: "momd")
         else {
             print("Could not get bundle for managed object model")
             return NSManagedObjectModel()
         }
+        
+        let model = NSManagedObjectModel(contentsOf: modelURL)
         
         return model
     }()
