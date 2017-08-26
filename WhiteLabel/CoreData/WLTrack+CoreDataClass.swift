@@ -29,25 +29,125 @@ import CoreData
 @objc(WLTrack)
 final public class WLTrack: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
     
+    public static let entityName = "WLTrack"
+    
+    public var collection: WLCollection? {
+        return self.mixtape?.collection
+    }
+    
     public var mixtape: WLMixtape? {
-        let context = CoreDataStack.sharedStack.managedObjectContext
-        let fetchRequest: NSFetchRequest<WLMixtape> = WLMixtape.fetchRequest()
-        let predicate = NSPredicate(format: "id == \(self.mixtapeID)")
+        return WLMixtape.mixtape(forID: self.mixtapeID)
+    }
+    
+    // MARK: Track retrieval
+    
+    public class func track(forID id: Int32) -> WLTrack? {
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
+        let fetchRequest: NSFetchRequest<WLTrack> = WLTrack.fetchRequest()
+        let predicate = NSPredicate(format: "id == \(id)")
         fetchRequest.predicate = predicate
         do {
-            let mixtapes = try context.fetch(fetchRequest)
-            return mixtapes.first
+            let track = try context.fetch(fetchRequest).first
+            return track
         } catch let error as NSError {
-            print("Unable to retrieve mixtape: \(error.userInfo)")
+            print("Unable to retrieve track for ID \(id): \(error.userInfo)")
             return nil
         }
     }
+    
+    public class func tracks(forMixtape mixtape: WLMixtape) -> [WLTrack]? {
+        return WLTrack.tracks(forMixtapeID: mixtape.id)
+    }
+    
+    public class func tracks(forMixtapeID mixtapeID: Int32) -> [WLTrack]? {
+        let fetchRequest = WLTrack.sortedFetchRequest(forMixtapeID: mixtapeID)
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
+        do {
+            let tracks = try context.fetch(fetchRequest)
+            return tracks
+        } catch let error as NSError {
+            print("Unable to retrieve tracks for mixtape ID \(mixtapeID): \(error.userInfo)")
+            return nil
+        }
+    }
+    
+    public class func sortedFetchRequest(forMixtape mixtape: WLMixtape) -> NSFetchRequest<WLTrack> {
+        return WLTrack.sortedFetchRequest(forMixtapeID: mixtape.id)
+    }
+    
+    public class func sortedFetchRequest(forMixtapeID mixtapeID: Int32) -> NSFetchRequest<WLTrack> {
+        let fetchRequest: NSFetchRequest<WLTrack> = WLTrack.fetchRequest()
+        let orderSort = NSSortDescriptor(key: "order", ascending: true)
+        fetchRequest.sortDescriptors = [orderSort]
+        let predicate = NSPredicate(format: "mixtapeID == \(mixtapeID)")
+        fetchRequest.predicate = predicate
+        return fetchRequest
+    }
+    
+    // MARK: Track removal
+    
+    public class func deleteTracks() {
+        CoreDataStack.deleteEntity(name: WLTrack.entityName)
+    }
+    
+    public class func deleteTracks(forMixtape mixtape: WLMixtape) {
+        WLTrack.deleteTracks(forMixtapeID: mixtape.id)
+    }
+    
+    public class func deleteTracks(forMixtapeID mixtapeID: Int32) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: WLTrack.entityName)
+        let predicate = NSPredicate(format: "mixtapeID == \(mixtapeID)")
+        fetchRequest.predicate = predicate
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        deleteRequest.resultType = .resultTypeObjectIDs
+        let moc = CoreDataStack.shared.backgroundManagedObjectContext
+        do {
+            let result = try moc.execute(deleteRequest) as? NSBatchDeleteResult
+            if let objectIDArray = result?.result as? [NSManagedObjectID] {
+                let changes = [NSDeletedObjectsKey : objectIDArray]
+                NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [moc])
+            }
+        } catch let error as NSError {
+            print("Unable to delete tracks: \(error.userInfo)")
+        }
+    }
+    
+    // MARK: ResponseObjectSerializable
 
     convenience init?(response: HTTPURLResponse, representation: Any) {
-        
-        let context = CoreDataStack.sharedStack.managedObjectContext
-        let entity = NSEntityDescription.entity(forEntityName: "WLTrack", in: context)!
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
+        let entity = NSEntityDescription.entity(forEntityName: WLTrack.entityName, in: context)!
         self.init(entity: entity, insertInto: context)
+        
+        if !setupWithRespresentation(representation) {
+            return nil
+        }
+    }
+    
+    func updateInstanceWith(response: HTTPURLResponse, representation: Any) {
+        setupWithRespresentation(representation)
+    }
+    
+    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
+        return existingInstanceHelper(response: response, representation: representation)
+    }
+    
+    // Helper function, as per https://stackoverflow.com/a/33200426
+    private static func existingInstanceHelper<T>(response: HTTPURLResponse, representation: Any) -> T? {
+        guard
+            let representation = representation as? [String: Any],
+            let id = representation["id"] as? Int32,
+            let existingTrack = WLTrack.track(forID: id) as? T
+        else {
+            return nil
+        }
+        return existingTrack
+    }
+    
+    // MARK: Utility
+    
+    @discardableResult
+    fileprivate func setupWithRespresentation(_ representation: Any) -> Bool {
         
         guard
             let representation = representation as? [String: Any],
@@ -63,7 +163,7 @@ final public class WLTrack: NSManagedObject, ResponseObjectSerializable, Respons
             let modified = Date.date(from: modifiedDateString),
             let mixtapeID = representation["mixtape"] as? Int32
         else {
-            return nil
+            return false
         }
         
         self.id = id
@@ -75,7 +175,7 @@ final public class WLTrack: NSManagedObject, ResponseObjectSerializable, Respons
         self.modified = modified as NSDate
         self.order = order
         self.mixtapeID = mixtapeID
-
+        
         if let externalIDInt = representation["external_id"] as? Int32 {
             self.externalID = "\(externalIDInt)"
         } else if let externalIDString = representation["external_id"] as? String {
@@ -93,48 +193,7 @@ final public class WLTrack: NSManagedObject, ResponseObjectSerializable, Respons
             self.playCount = playCount
         }
         
-    }
-    
-    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
-        return existingInstanceHelper(response: response, representation: representation)
-    }
-    
-    // Helper function, as per https://stackoverflow.com/a/33200426
-    private static func existingInstanceHelper<T>(response: HTTPURLResponse, representation: Any) -> T? {
-        
-        guard
-            let representation = representation as? [String: Any],
-            let id = representation["id"] as? Int32,
-            let modifiedDateString = representation["modified"] as? String,
-            let modified = Date.date(from: modifiedDateString)
-        else {
-            return nil
-        }
-        
-        let context = CoreDataStack.sharedStack.managedObjectContext
-        let fetchRequest: NSFetchRequest<WLTrack> = WLTrack.fetchRequest()
-        let predicate = NSPredicate(format: "id == \(id)")
-        fetchRequest.predicate = predicate
-        
-        do {
-            let tracks = try context.fetch(fetchRequest)
-            if
-                let track = tracks.first,
-                let cachedModified = track.modified,
-                (cachedModified as Date) >= modified
-            {
-                return track as? T
-            }
-        } catch let error as NSError {
-            print("Unable to retrieve mixtapes: \(error.userInfo)")
-        }
-        
-        return nil
-        
-    }
-    
-    public class func deleteCache() {
-        CoreDataStack.deleteEntity(name: "WLTrack")
+        return true
     }
     
 }

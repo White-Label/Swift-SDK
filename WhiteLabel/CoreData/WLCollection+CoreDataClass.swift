@@ -29,25 +29,103 @@ import CoreData
 @objc(WLCollection)
 final public class WLCollection: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
     
+    public static let entityName = "WLCollection"
+    
     public var mixtapes: [WLMixtape]? {
-        let context = CoreDataStack.sharedStack.managedObjectContext
-        let fetchRequest: NSFetchRequest<WLMixtape> = WLMixtape.fetchRequest()
-        let predicate = NSPredicate(format: "collectionID == \(self.id)")
+        return WLMixtape.mixtapes(forCollection: self)
+    }
+    
+    public var tracks: [WLTrack]? {
+        guard let mixtapes = self.mixtapes else { return nil }
+        var collectionTracks = [WLTrack]()
+        for mixtape in mixtapes {
+            if let mixtapeTracks = mixtape.tracks {
+                collectionTracks.append(contentsOf: mixtapeTracks)
+            }
+        }
+        if collectionTracks.count == 0 {
+            return nil
+        }
+        return collectionTracks
+    }
+    
+    // MARK: Collection retrieval
+    
+    public class func collection(forID id: Int32) -> WLCollection? {
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
+        let fetchRequest: NSFetchRequest<WLCollection> = WLCollection.fetchRequest()
+        let predicate = NSPredicate(format: "id == \(id)")
         fetchRequest.predicate = predicate
         do {
-            let mixtapes = try context.fetch(fetchRequest)
-            return mixtapes
+            let collection = try context.fetch(fetchRequest).first
+            return collection
         } catch let error as NSError {
-            print("Unable to retrieve mixtapes: \(error.userInfo)")
+            print("Unable to retrieve collection for id \(id): \(error.userInfo)")
             return nil
         }
     }
     
+    public class func collections() -> [WLCollection]? {
+        let fetchRequest =  WLCollection.sortedFetchRequest()
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
+        do {
+            let collections = try context.fetch(fetchRequest)
+            return collections
+        } catch let error as NSError {
+            print("Unable to get collections: \(error.userInfo)")
+            return nil
+        }
+    }
+    
+    public class func sortedFetchRequest() -> NSFetchRequest<WLCollection> {
+        let fetchRequest: NSFetchRequest<WLCollection> = WLCollection.fetchRequest()
+        let createdSort = NSSortDescriptor(key: "created", ascending: true)
+        fetchRequest.sortDescriptors = [createdSort]
+        return fetchRequest
+    }
+    
+    // MARK: Collection removal
+    
+    public class func deleteCollections() {
+        CoreDataStack.deleteEntity(name: WLCollection.entityName)
+    }
+    
+    // MARK: ResponseObjectSerializable
+    
     convenience init?(response: HTTPURLResponse, representation: Any) {
-        
-        let context = CoreDataStack.sharedStack.managedObjectContext
-        let entity = NSEntityDescription.entity(forEntityName: "WLCollection", in: context)!
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
+        let entity = NSEntityDescription.entity(forEntityName: WLCollection.entityName, in: context)!
         self.init(entity: entity, insertInto: context)
+        
+        if !setupWithRespresentation(representation) {
+            return nil
+        }
+    }
+    
+    func updateInstanceWith(response: HTTPURLResponse, representation: Any) {
+        setupWithRespresentation(representation)
+    }
+    
+    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
+        return existingInstanceHelper(response: response, representation: representation)
+    }
+    
+    // Helper function, as per https://stackoverflow.com/a/33200426
+    fileprivate static func existingInstanceHelper<T>(response: HTTPURLResponse, representation: Any) -> T? {
+        guard
+            let representation = representation as? [String: Any],
+            let id = representation["id"] as? Int32,
+            let existingCollection = WLCollection.collection(forID: id) as? T
+        else {
+            return nil
+        }
+        return existingCollection
+    }
+    
+    // MARK: Utility
+    
+    @discardableResult
+    fileprivate func setupWithRespresentation(_ representation: Any) -> Bool {
         
         guard
             let representation = representation as? [String: Any],
@@ -59,64 +137,25 @@ final public class WLCollection: NSManagedObject, ResponseObjectSerializable, Re
             let modifiedDateString = representation["modified"] as? String,
             let modified = Date.date(from: modifiedDateString)
         else {
-            return nil
+            return false
         }
-
+        
         self.id = id
         self.slug = slug
         self.title = title
         self.created = created as NSDate
         self.modified = modified as NSDate
-
+        
         descriptionText = representation["description"] as? String
         artworkURL = representation["artwork_url"] as? String
         artworkCredit = representation["artwork_credit"] as? String
         artworkCreditURL = representation["artwork_credit_url"] as? String
-
+        
         if let mixtapeCount = representation["mixtape_count"] as? Int32 {
             self.mixtapeCount = mixtapeCount
         }
-    }
-    
-    // Helper function, as per https://stackoverflow.com/a/33200426
-    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
-        return existingInstanceHelper(response: response, representation: representation)
-    }
-    
-    private static func existingInstanceHelper<T>(response: HTTPURLResponse, representation: Any) -> T? {
         
-        guard
-            let representation = representation as? [String: Any],
-            let id = representation["id"] as? Int32,
-            let modifiedDateString = representation["modified"] as? String,
-            let modified = Date.date(from: modifiedDateString)
-        else {
-            return nil
-        }
-        
-        let moc = CoreDataStack.sharedStack.managedObjectContext
-        let fetchRequest: NSFetchRequest<WLCollection> = WLCollection.fetchRequest()
-        let predicate = NSPredicate(format: "id == \(id)")
-        fetchRequest.predicate = predicate
-        
-        do {
-            let collections = try moc.fetch(fetchRequest)
-            if
-                let collection = collections.first,
-                let cachedModified = collection.modified,
-                (cachedModified as Date) >= modified
-            {
-                return collection as? T
-            }
-        } catch let error as NSError {
-            print("Unable to retrieve collections: \(error.userInfo)")
-        }
-        
-        return nil
-    }
-    
-    public class func deleteCache() {
-        CoreDataStack.deleteEntity(name: "WLCollection")
+        return true
     }
     
 }

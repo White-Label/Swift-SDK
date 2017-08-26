@@ -33,7 +33,7 @@ import CoreData
 
 final public class CoreDataStack {
     
-    static public let sharedStack = CoreDataStack()
+    static public let shared = CoreDataStack()
     
     var errorHandler: (Error) -> Void = {_ in }
     
@@ -142,7 +142,7 @@ final public class CoreDataStack {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: name)
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         deleteRequest.resultType = .resultTypeObjectIDs
-        let moc = CoreDataStack.sharedStack.managedObjectContext
+        let moc = CoreDataStack.shared.backgroundManagedObjectContext
         do {
             let result = try moc.execute(deleteRequest) as? NSBatchDeleteResult
             if let objectIDArray = result?.result as? [NSManagedObjectID] {

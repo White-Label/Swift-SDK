@@ -29,39 +29,125 @@ import CoreData
 @objc(WLMixtape)
 final public class WLMixtape: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
     
+    public static let entityName = "WLMixtape"
+    
     public var collection: WLCollection? {
-        let context = CoreDataStack.sharedStack.managedObjectContext
-        let fetchRequest: NSFetchRequest<WLCollection> = WLCollection.fetchRequest()
-        let predicate = NSPredicate(format: "id == \(self.collectionID)")
+        return WLCollection.collection(forID: self.collectionID)
+    }
+    
+    public var tracks: [WLTrack]? {
+        return WLTrack.tracks(forMixtape: self)
+    }
+    
+    // MARK: Mixtape retrieval
+    
+    public class func mixtape(forID id: Int32) -> WLMixtape? {
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
+        let fetchRequest: NSFetchRequest<WLMixtape> = WLMixtape.fetchRequest()
+        let predicate = NSPredicate(format: "id == \(id)")
         fetchRequest.predicate = predicate
         do {
-            let collections = try context.fetch(fetchRequest)
-            return collections.first
+            let mixtape = try context.fetch(fetchRequest).first
+            return mixtape
         } catch let error as NSError {
-            print("Unable to retrieve collection: \(error.userInfo)")
+            print("Unable to retrieve mixtape for ID \(id): \(error.userInfo)")
             return nil
         }
     }
     
-    public var tracks: [WLTrack]? {
-        let context = CoreDataStack.sharedStack.managedObjectContext
-        let fetchRequest: NSFetchRequest<WLTrack> = WLTrack.fetchRequest()
-        let predicate = NSPredicate(format: "mixtapeID == \(self.id)")
-        fetchRequest.predicate = predicate
+    public class func mixtapes(forCollection collection: WLCollection) -> [WLMixtape]? {
+        return WLMixtape.mixtapes(forCollectionID: collection.id)
+    }
+    
+    public class func mixtapes(forCollectionID collectionID: Int32) -> [WLMixtape]? {
+        let fetchRequest = WLMixtape.sortedFetchRequest(forCollectionID: collectionID)
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
         do {
-            let tracks = try context.fetch(fetchRequest)
-            return tracks
+            let mixtapes = try context.fetch(fetchRequest)
+            return mixtapes
         } catch let error as NSError {
-            print("Unable to retrieve tracks: \(error.userInfo)")
+            print("Unable to get mixtapes for collection ID \(collectionID): \(error.userInfo)")
             return nil
         }
     }
+    
+    public class func sortedFetchRequest(forCollection collection: WLCollection) -> NSFetchRequest<WLMixtape> {
+        return WLMixtape.sortedFetchRequest(forCollectionID: collection.id)
+    }
+    
+    public class func sortedFetchRequest(forCollectionID collectionID: Int32) -> NSFetchRequest<WLMixtape> {
+        let fetchRequest: NSFetchRequest<WLMixtape> = WLMixtape.fetchRequest()
+        let releasedSort = NSSortDescriptor(key: "released", ascending: false)
+        fetchRequest.sortDescriptors = [releasedSort]
+        let predicate = NSPredicate(format: "collectionID == \(collectionID)")
+        fetchRequest.predicate = predicate
+        return fetchRequest
+    }
+    
+    // MARK: Mixtape removal
+    
+    public class func deleteMixtapes() {
+        CoreDataStack.deleteEntity(name: WLMixtape.entityName)
+    }
+    
+    public class func deleteMixtapes(forCollection collection: WLCollection) {
+        WLMixtape.deleteMixtapes(forCollectionID: collection.id)
+    }
+    
+    public class func deleteMixtapes(forCollectionID collectionID: Int32) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: WLMixtape.entityName)
+        let predicate = NSPredicate(format: "collectionID == \(collectionID)")
+        fetchRequest.predicate = predicate
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        deleteRequest.resultType = .resultTypeObjectIDs
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
+        do {
+            let result = try context.execute(deleteRequest) as? NSBatchDeleteResult
+            if let objectIDArray = result?.result as? [NSManagedObjectID] {
+                let changes = [NSDeletedObjectsKey : objectIDArray]
+                NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [context])
+            }
+        } catch let error as NSError {
+            print("Unable to delete mixtapes: \(error.userInfo)")
+        }
+    }
+    
+    // MARK: ResponseObjectSerializable
 
     convenience init?(response: HTTPURLResponse, representation: Any) {
-        
-        let context = CoreDataStack.sharedStack.managedObjectContext
-        let entity = NSEntityDescription.entity(forEntityName: "WLMixtape", in: context)!
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
+        let entity = NSEntityDescription.entity(forEntityName: WLMixtape.entityName, in: context)!
         self.init(entity: entity, insertInto: context)
+        
+        if !setupWithRespresentation(representation) {
+            return nil
+        }
+    }
+    
+    func updateInstanceWith(response: HTTPURLResponse, representation: Any) {
+        setupWithRespresentation(representation)
+    }
+    
+    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
+        return existingInstanceHelper(response: response, representation: representation)
+    }
+    
+    // Helper function, as per https://stackoverflow.com/a/33200426
+    private static func existingInstanceHelper<T>(response: HTTPURLResponse, representation: Any) -> T? {
+        guard
+            let representation = representation as? [String: Any],
+            let id = representation["id"] as? Int32,
+            let existingMixtape = WLMixtape.mixtape(forID: id) as? T
+        else {
+            return nil
+        }
+        return existingMixtape
+    }
+    
+    // MARK: Utility
+    
+    @discardableResult
+    fileprivate func setupWithRespresentation(_ representation: Any) -> Bool {
         
         guard
             let representation = representation as? [String: Any],
@@ -74,7 +160,7 @@ final public class WLMixtape: NSManagedObject, ResponseObjectSerializable, Respo
             let modified = Date.date(from: modifiedDateString),
             let collectionID = representation["collection"] as? Int32
         else {
-            return nil
+            return false
         }
         
         self.id = id
@@ -104,47 +190,7 @@ final public class WLMixtape: NSManagedObject, ResponseObjectSerializable, Respo
             self.trackCount = trackCount
         }
         
-    }
-    
-    // Helper function, as per https://stackoverflow.com/a/33200426
-    static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {
-        return existingInstanceHelper(response: response, representation: representation)
-    }
-    
-    private static func existingInstanceHelper<T>(response: HTTPURLResponse, representation: Any) -> T? {
-        
-        guard
-            let representation = representation as? [String: Any],
-            let id = representation["id"] as? Int32,
-            let modifiedDateString = representation["modified"] as? String,
-            let modified = Date.date(from: modifiedDateString)
-            else {
-                return nil
-        }
-        
-        let moc = CoreDataStack.sharedStack.managedObjectContext
-        let fetchRequest: NSFetchRequest<WLMixtape> = WLMixtape.fetchRequest()
-        let predicate = NSPredicate(format: "id == \(id)")
-        fetchRequest.predicate = predicate
-        
-        do {
-            let mixtapes = try moc.fetch(fetchRequest)
-            if
-                let mixtape = mixtapes.first,
-                let cachedModified = mixtape.modified,
-                (cachedModified as Date) >= modified
-            {
-                return mixtape as? T
-            }
-        } catch let error as NSError {
-            print("Unable to retrieve mixtapes: \(error.userInfo)")
-        }
-        
-        return nil
-    }
-    
-    public class func deleteCache() {
-        CoreDataStack.deleteEntity(name: "WLMixtape")
+        return true
     }
     
 }
