@@ -29,6 +29,7 @@ import Alamofire
 
 protocol ResponseObjectSerializable {
     init?(response: HTTPURLResponse, representation: Any)
+    func updateInstanceWith(response: HTTPURLResponse, representation: Any)
     static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self?
 }
 
@@ -77,17 +78,16 @@ extension ResponseCollectionSerializable where Self: ResponseObjectSerializable 
         {
             for itemRepresentation in results {
                 
-                // TODO: Last modified cache identifiers
-//                if let item = Self.existingInstance(response: response, representation: itemRepresentation) {
-//                    collection.append(item)
-//                } else if let item = Self(response: response, representation: itemRepresentation) {
-//                    collection.append(item)
-//                }
-                
-                if let item = Self(response: response, representation: itemRepresentation) {
-                    collection.append(item)
+                if let existingItem = Self.existingInstance(response: response, representation: itemRepresentation) {
+                    
+                    existingItem.updateInstanceWith(response: response, representation: itemRepresentation)
+                    collection.append(existingItem)
+                    
+                } else if let newItem = Self(response: response, representation: itemRepresentation) {
+                    
+                    collection.append(newItem)
+                    
                 }
-                
             }
         }
         

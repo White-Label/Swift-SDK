@@ -28,7 +28,7 @@ import Foundation
 
 open class PagingGenerator {
     
-    open var next: ((_ page: Int, _ completionMarker: @escaping (() -> Void) ) -> Void)!
+    open var next: ((_ page: Int, _ completionMarker: @escaping ((_ success: Bool) -> Void) ) -> Void)!
     open var page: Int
     open var startPage: Int = 1
     open var didReachEnd: Bool = false
@@ -42,8 +42,10 @@ open class PagingGenerator {
     open func getNext(_ complete: (() -> Void)? = nil) {
         if didReachEnd { return }
         isFetchingPage = true
-        next(page) {
-            self.page += 1
+        next(page) { success in
+            if success {
+                self.page += 1
+            }
             self.isFetchingPage = false
             complete?()
         }

@@ -37,19 +37,16 @@ class MixtapeTableViewController: UITableViewController {
         super.viewDidLoad()
         
         title = collection.title
-        refreshControl?.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
-        
-        // Clear existing mixtape cache
-        WLMixtape.deleteCache()
+        refreshControl?.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         
         // Setup fetched results controller
-        let request: NSFetchRequest<WLMixtape> = WLMixtape.fetchRequest()
-        let releasedSort = NSSortDescriptor(key: "released", ascending: false)
-        request.sortDescriptors = [releasedSort]
-        let predicate = NSPredicate(format: "collectionID == \(collection.id)")
-        request.predicate = predicate
-        let moc = CoreDataStack.sharedStack.managedObjectContext
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: nil)
+        let fetchRequest = WLMixtape.sortedFetchRequest(forCollection: self.collection)
+        let managedObjectContext = CoreDataStack.shared.backgroundManagedObjectContext
+        fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: managedObjectContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
         fetchedResultsController.delegate = self
         
         do {
@@ -61,28 +58,30 @@ class MixtapeTableViewController: UITableViewController {
         // Setup the paging generator with White Label
         paging.next = { page, completionMarker in
             
-            WhiteLabel.ListMixtapes(inCollection: self.collection, page: page) { result, totalMixtapes in
-                
+            if page == 1 {
+                WLMixtape.deleteMixtapes(forCollection: self.collection)
+            }
+            
+            WhiteLabel.ListMixtapes(inCollection: self.collection, page: page) { result, total, pageSize in
                 switch result {
                     
                 case .success(let mixtapes):
-                    if mixtapes.count < Constants.PageSize {
+                    if mixtapes.count < pageSize {
                         self.paging.reachedEnd()
                     }
+                    completionMarker(true)
                     
                 case .failure(let error):
                     debugPrint(error)
+                    completionMarker(false)
                 }
-                
-                completionMarker()
             }
         }
         
         paging.getNext() // Initial load
     }
     
-    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
-        WLMixtape.deleteCache()
+    @objc func handleRefresh(refreshControl: UIRefreshControl) {
         paging.reset()
         paging.getNext() {
             refreshControl.endRefreshing()
@@ -107,7 +106,7 @@ class MixtapeTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        if // Quick and easy infinite scroll trigger
+        if // Infinite scroll trigger
             let cellCount = tableView.dataSource?.tableView(tableView, numberOfRowsInSection: indexPath.section),
             indexPath.row == cellCount - 1,
             paging.isFetchingPage == false,
@@ -120,15 +119,17 @@ class MixtapeTableViewController: UITableViewController {
     // MARK: Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if
+        guard
             segue.identifier == SegueIdentifier.MixtapesToTracks,
             let trackTableViewController = segue.destination as? TrackTableViewController,
             let selectedIndexPath = tableView.indexPathsForSelectedRows?[0]
-        {
-            let mixtape = fetchedResultsController.object(at: selectedIndexPath)
-            trackTableViewController.mixtape = mixtape
+        else {
+            return
         }
+        let mixtape = fetchedResultsController.object(at: selectedIndexPath)
+        trackTableViewController.mixtape = mixtape
     }
+    
 }
 
 extension MixtapeTableViewController: NSFetchedResultsControllerDelegate {

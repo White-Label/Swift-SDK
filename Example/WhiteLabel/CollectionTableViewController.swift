@@ -35,8 +35,8 @@ class CollectionTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Loading..."
-        refreshControl?.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
+        title = "Loading label..."
+        refreshControl?.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         
         // Get your label
         WhiteLabel.GetLabel { result in
@@ -44,15 +44,14 @@ class CollectionTableViewController: UITableViewController {
             self.title = label?.name
         }
         
-        // Clear existing collection cache
-        WLCollection.deleteCache()
-        
         // Setup fetched results controller
-        let request: NSFetchRequest<WLCollection> = WLCollection.fetchRequest()
-        let createdSort = NSSortDescriptor(key: "created", ascending: true)
-        request.sortDescriptors = [createdSort]
-        let moc = CoreDataStack.sharedStack.managedObjectContext
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: nil)
+        let fetchRequest =  WLCollection.sortedFetchRequest()
+        let managedObjectContext = CoreDataStack.shared.backgroundManagedObjectContext
+        fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: managedObjectContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
         fetchedResultsController.delegate = self
         
         do {
@@ -64,27 +63,30 @@ class CollectionTableViewController: UITableViewController {
         // Setup the paging generator with White Label
         paging.next = { page, completionMarker in
             
-             WhiteLabel.ListCollections(page: page) { result, totalCollections in
+            if page == 1 {
+                WLCollection.deleteCollections()
+            }
+            
+            WhiteLabel.ListCollections(page: page) { result, total, pageSize in
                 switch result {
-                    
+
                 case .success(let collections):
-                    if collections.count < Constants.PageSize {
+                    if collections.count < pageSize {
                         self.paging.reachedEnd()
                     }
-                    
+                    completionMarker(true)
+
                 case .failure(let error):
                     debugPrint(error)
+                    completionMarker(false)
                 }
-
-                completionMarker()
             }
         }
         
         paging.getNext() // Initial load
     }
     
-    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
-        WLCollection.deleteCache()
+    @objc func handleRefresh(refreshControl: UIRefreshControl) {
         paging.reset()
         paging.getNext() {
             refreshControl.endRefreshing()
@@ -109,7 +111,7 @@ class CollectionTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        if // Quick and easy infinite scroll trigger
+        if // Infinite scroll trigger
             let cellCount = tableView.dataSource?.tableView(tableView, numberOfRowsInSection: indexPath.section),
             indexPath.row == cellCount - 1,
             paging.isFetchingPage == false,
@@ -122,15 +124,17 @@ class CollectionTableViewController: UITableViewController {
     // MARK: Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if
+        guard
             segue.identifier == SegueIdentifier.CollectionsToMixtapes,
             let mixtapeTableViewController = segue.destination as? MixtapeTableViewController,
             let selectedIndexPath = tableView.indexPathsForSelectedRows?[0]
-        {
-            let collection = fetchedResultsController.object(at: selectedIndexPath)
-            mixtapeTableViewController.collection = collection
+        else {
+            return
         }
+        let collection = fetchedResultsController.object(at: selectedIndexPath)
+        mixtapeTableViewController.collection = collection
     }
+
 }
 
 extension CollectionTableViewController: NSFetchedResultsControllerDelegate {

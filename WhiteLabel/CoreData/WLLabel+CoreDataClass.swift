@@ -29,10 +29,12 @@ import CoreData
 @objc(WLLabel)
 final public class WLLabel: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
     
+    public static let entityName = "WLLabel"
+    
     convenience init?(response: HTTPURLResponse, representation: Any) {
         
-        let context = CoreDataStack.sharedStack.managedObjectContext
-        let entity = NSEntityDescription.entity(forEntityName: "WLLabel", in: context)!
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
+        let entity = NSEntityDescription.entity(forEntityName: WLLabel.entityName, in: context)!
         self.init(entity: entity, insertInto: context)
         
         guard
@@ -52,6 +54,10 @@ final public class WLLabel: NSManagedObject, ResponseObjectSerializable, Respons
         iconURL = representation["icon"] as? String
         
 //        self.service = WLService(response: response, representation: serviceRepresentation)
+    }
+    
+    func updateInstanceWith(response: HTTPURLResponse, representation: Any) {
+        
     }
     
     static func existingInstance(response: HTTPURLResponse, representation: Any) -> Self? {

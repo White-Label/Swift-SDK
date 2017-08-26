@@ -28,7 +28,7 @@ import Foundation
 public enum Constants {
     public static var BaseURLString: String = "https://beta.whitelabel.cool/api"
     public static var Version: String = "1.0"
-    public static var ErrorDomain: String = "cool.whitelabel.swift"
+    public static var ErrorDomain: String = "cool.whitelabel.error"
     public static var PageSize: Int = 24
     public static var ClientID = ""
 }

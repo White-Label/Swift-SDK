@@ -28,11 +28,13 @@ import CoreData
 
 @objc(WLService)
 final public class WLService: NSManagedObject, ResponseObjectSerializable, ResponseCollectionSerializable {
+    
+    public static let entityName = "WLService"
 
     convenience init?(response: HTTPURLResponse, representation: Any) {
         
-        let context = CoreDataStack.sharedStack.managedObjectContext
-        let entity = NSEntityDescription.entity(forEntityName: "WLService", in: context)!
+        let context = CoreDataStack.shared.backgroundManagedObjectContext
+        let entity = NSEntityDescription.entity(forEntityName: WLService.entityName, in: context)!
         self.init(entity: entity, insertInto: context)
         
         guard
@@ -49,6 +51,10 @@ final public class WLService: NSManagedObject, ResponseObjectSerializable, Respo
         self.name = name
         
         externalURL = representation["external_url"] as? String
+        
+    }
+    
+    func updateInstanceWith(response: HTTPURLResponse, representation: Any) {
         
     }
     
