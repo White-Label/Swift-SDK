@@ -3,7 +3,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'WhiteLabel'
-  s.version          = '2.2.2'
+  s.version          = '2.3.0'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.summary          = 'Swift SDK for the White Label API.'
   s.homepage         = 'https://github.com/White-Label/Swift-SDK'
