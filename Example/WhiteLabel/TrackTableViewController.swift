@@ -122,11 +122,11 @@ class TrackTableViewController: UITableViewController {
         let title = "Just Add Music!"
         let message = "Now that your networking code is done, check out our NPAudioStream library to start streaming your White Label tracks."
         
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
-        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.cancel, handler: nil))
-        alertController.addAction(UIAlertAction(title: "Go", style: UIAlertActionStyle.default) { action in
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Back", style: .cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: "Go", style: .default) { action in
             let url = URL(string: "https://github.com/NoonPacific/NPAudioStream")!
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            UIApplication.shared.open(url)
         })
         
         present(alertController, animated: true, completion: nil)
