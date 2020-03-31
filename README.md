@@ -18,6 +18,8 @@ it, simply add the following line to your Podfile:
 pod 'WhiteLabel', '~> 3.0'
 ```
 
+**Note**: Be sure to set `use_frameworks!`, otherwise you'll have to manually include the `xcdatamodel` in your desired target.
+
 ## Author
 
 Alex Givens, alex@noonpacific.com
